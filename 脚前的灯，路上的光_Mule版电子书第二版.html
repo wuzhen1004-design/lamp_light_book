@@ -1,0 +1,2959 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f4ecd8">
+<title>脚前的灯，路上的光 —— 日常生活中的圣经智慧</title>
+<style>/* === Reset === */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Noto Serif SC", "Songti SC", "Source Han Serif SC", "SimSun", "STSong", "Georgia", serif;
+  line-height: 1.9;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  transition: background 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* === Themes === */
+.theme-light {
+  --bg: #f4ecd8;
+  --bg-elev: #faf3e0;
+  --paper: #fbf5e5;
+  --ink: #3a2f22;
+  --ink-soft: #6b5a45;
+  --muted: #8a7a62;
+  --accent: #8b5a2b;
+  --accent-soft: #b98a5a;
+  --rule: #c9b892;
+  --scripture-bg: #efe4c8;
+  --scripture-border: #b98a5a;
+  --label-bg: #e6d8b4;
+  --shadow: rgba(90, 60, 20, 0.12);
+  background: var(--bg);
+  color: var(--ink);
+}
+.theme-dark {
+  --bg: #1a1611;
+  --bg-elev: #24201a;
+  --paper: #211d17;
+  --ink: #e7dcc4;
+  --ink-soft: #b8ac93;
+  --muted: #8a8069;
+  --accent: #d8a86b;
+  --accent-soft: #b5834a;
+  --rule: #4a4133;
+  --scripture-bg: #2a241b;
+  --scripture-border: #8a6a3e;
+  --label-bg: #302921;
+  --shadow: rgba(0, 0, 0, 0.5);
+  background: var(--bg);
+  color: var(--ink);
+}
+.theme-sepia { /* fallback identical to light */ }
+
+/* === Font sizes === */
+.font-sm { --fs-base: 16px; --fs-h1: 1.9em; --fs-h2: 1.5em; }
+.font-md { --fs-base: 18px; --fs-h1: 2.0em; --fs-h2: 1.55em; }
+.font-lg { --fs-base: 20px; --fs-h1: 2.1em; --fs-h2: 1.6em; }
+.font-xl { --fs-base: 23px; --fs-h1: 2.2em; --fs-h2: 1.7em; }
+
+body { font-size: var(--fs-base); }
+
+/* === Progress bar === */
+#progress-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px;
+  background: transparent; z-index: 100; pointer-events: none;
+}
+@media (min-width: 900px) {
+  #progress-bar { left: 300px; }
+}
+#progress-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--accent-soft), var(--accent));
+  transition: width 0.12s ease-out;
+}
+
+/* === Topbar === */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; padding-top: calc(10px + env(safe-area-inset-top));
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rule);
+}
+.topbar-title {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.05em;
+}
+.topbar-actions { display: flex; gap: 4px; }
+.icon-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ink-soft);
+  padding: 6px 9px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 36px; min-height: 36px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.icon-btn:hover, .icon-btn:active {
+  background: var(--label-bg);
+  color: var(--accent);
+  border-color: var(--rule);
+}
+.theme-light .icon-moon { display: none; }
+.theme-dark .icon-sun { display: none; }
+
+/* === Drawer / TOC ===
+   - Mobile (<900px): slide-out drawer, hidden by default
+   - Desktop (>=900px): pinned to left, always visible
+*/
+.drawer {
+  position: fixed;
+  top: 0; left: 0;
+  height: 100dvh;
+  width: min(340px, 88vw);
+  background: var(--bg-elev);
+  border-right: 1px solid var(--rule);
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.22, 0.6, 0.2, 1);
+  z-index: 90;
+  display: flex; flex-direction: column;
+  box-shadow: 4px 0 20px var(--shadow);
+}
+.drawer.open { transform: translateX(0); }
+.drawer-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s;
+  z-index: 80;
+}
+.drawer-backdrop.open { opacity: 1; pointer-events: auto; }
+
+@media (min-width: 900px) {
+  .drawer {
+    width: 300px;
+    transform: none !important;
+    box-shadow: none;
+    border-right: 1px solid var(--rule);
+  }
+  .drawer-backdrop { display: none !important; }
+  .toc-close { display: none; }
+  /* Shift everything right to make room for the pinned TOC */
+  body { padding-left: 300px; }
+  /* Hide the hamburger menu on desktop since drawer is always open */
+  #menu-btn { display: none; }
+  /* Cover and part-cover use viewport width — constrain them too */
+  .cover, .section-part { padding-left: 20px; padding-right: 20px; }
+}
+
+.toc { display: flex; flex-direction: column; height: 100%; }
+.toc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; padding-top: calc(14px + env(safe-area-inset-top));
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+.toc-header h2 {
+  margin: 0; font-size: 18px; font-weight: 600;
+  letter-spacing: 0.25em;
+  color: var(--accent);
+}
+.toc-close {
+  background: transparent; border: none; color: var(--ink-soft);
+  font-size: 28px; line-height: 1; cursor: pointer;
+  padding: 0 6px; min-width: 36px; min-height: 36px;
+}
+.toc-body {
+  flex: 1; overflow-y: auto;
+  padding: 12px 6px 40px;
+  -webkit-overflow-scrolling: touch;
+}
+.toc-list { list-style: none; margin: 0; padding: 0; }
+.toc-list li { margin: 0; }
+.toc-link {
+  display: block;
+  padding: 9px 16px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 15px;
+  line-height: 1.4;
+  border-radius: 6px;
+  transition: background 0.12s, color 0.12s;
+}
+.toc-link:hover { background: var(--label-bg); color: var(--accent); }
+.toc-link.active { background: var(--label-bg); color: var(--accent); font-weight: 600; }
+.toc-chap-sub {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+  font-weight: normal;
+}
+.toc-part-group { margin-top: 16px; padding: 0 4px; }
+.toc-part {
+  display: block;
+  padding: 8px 12px 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  border-top: 1px solid var(--rule);
+  padding-top: 14px;
+  margin-top: 4px;
+}
+.toc-part-subtitle {
+  padding: 0 12px 8px;
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+}
+.toc-front, .toc-back {
+  padding: 4px 4px;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 8px;
+}
+.toc-back { border-bottom: none; border-top: 1px solid var(--rule); padding-top: 12px; margin-top: 12px; }
+
+/* === Book layout === */
+.book {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 22px 80px;
+}
+@media (min-width: 900px) {
+  .book { padding: 40px 60px 120px; }
+}
+
+/* === Cover === */
+.cover {
+  min-height: calc(100dvh - 80px);
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+.cover-inner {
+  padding: 60px 32px;
+  border: 2px double var(--rule);
+  border-radius: 4px;
+  background: var(--paper);
+  box-shadow: 0 4px 24px var(--shadow);
+  max-width: 480px;
+  width: 100%;
+}
+.cover-ornament {
+  font-size: 28px;
+  color: var(--accent);
+  margin-bottom: 24px;
+  letter-spacing: 0.5em;
+}
+.cover-ornament.small { font-size: 18px; margin: 16px 0 8px; }
+.cover-title {
+  font-size: clamp(2.2em, 8vw, 3.2em);
+  font-weight: 700;
+  margin: 0 0 24px;
+  color: var(--ink);
+  letter-spacing: 0.15em;
+  line-height: 1.4;
+}
+.cover-rule {
+  width: 60px; height: 2px;
+  background: var(--accent);
+  margin: 20px auto;
+}
+.cover-subtitle {
+  font-size: 1.05em;
+  color: var(--ink-soft);
+  margin: 8px 0 32px;
+  letter-spacing: 0.1em;
+  text-indent: 0.1em; /* compensate for trailing letter-spacing */
+  text-align: center;
+}
+.cover-author {
+  font-size: 1em;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em; /* compensate for trailing letter-spacing */
+  text-align: center;
+}
+.part-subtitle {
+  text-indent: 0.05em;
+  text-align: center;
+}
+.cover-footer {
+  margin-top: 40px;
+  color: var(--muted);
+  font-size: 0.9em;
+  letter-spacing: 0.2em;
+}
+.cover-footer p { margin: 0; }
+
+/* === Part cover === */
+.section-part {
+  min-height: calc(100dvh - 100px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 60px 20px;
+  scroll-margin-top: 60px;
+}
+.part-cover {
+  width: 100%; text-align: center;
+}
+.part-cover-inner {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 60px 30px;
+  border-top: 3px double var(--rule);
+  border-bottom: 3px double var(--rule);
+  background: var(--paper);
+  box-shadow: 0 2px 20px var(--shadow);
+  border-radius: 2px;
+}
+.part-ornament {
+  font-size: 32px;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+.part-title {
+  font-size: clamp(1.8em, 6vw, 2.4em);
+  font-weight: 700;
+  margin: 0 0 20px;
+  color: var(--ink);
+  letter-spacing: 0.15em;
+}
+.part-subtitle {
+  font-size: 1em;
+  color: var(--ink-soft);
+  margin: 0;
+  letter-spacing: 0.05em;
+  font-style: italic;
+}
+
+/* === Chapter === */
+.section-chapter, .section-front, .section-back {
+  padding-top: 40px;
+  margin-bottom: 24px;
+  scroll-margin-top: 60px;
+}
+.chapter-header, .front-header {
+  text-align: center;
+  margin-bottom: 36px;
+  padding-bottom: 8px;
+}
+.chapter-title, .front-title {
+  font-size: var(--fs-h1);
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 12px;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+}
+.chapter-subtitle {
+  font-size: 1.02em;
+  color: var(--accent);
+  margin: 0 0 20px;
+  font-style: italic;
+  letter-spacing: 0.05em;
+}
+.chapter-rule {
+  width: 80px; height: 1px;
+  background: var(--accent-soft);
+  margin: 20px auto;
+  position: relative;
+}
+.chapter-rule::before {
+  content: "❦";
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg);
+  padding: 0 12px;
+  color: var(--accent);
+  font-size: 14px;
+}
+
+/* === Body text ===
+   Only apply the justified/indented paragraph style to paragraphs INSIDE actual
+   sections — not on the cover or part-cover, which need centered text.
+*/
+.book .section p {
+  text-align: justify;
+  text-justify: inter-ideograph;
+  margin: 0 0 1.05em;
+  text-indent: 2em;
+  line-height: 1.95;
+  color: var(--ink);
+  hanging-punctuation: allow-end;
+}
+.book .section p:first-of-type { }
+/* Reset paragraph indent inside scripture / list items */
+.book .section blockquote.scripture p,
+.book .section ul.bullets p,
+.book .section ol.numbered p { text-indent: 0; }
+
+/* Labeled section headings (from [xxx]) */
+h3.label {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 2em 0 0.8em;
+  padding: 8px 14px;
+  background: var(--label-bg);
+  border-left: 4px solid var(--accent);
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+}
+h4.subhead {
+  font-size: 1.05em;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 1.5em 0 0.6em;
+}
+
+/* Scripture blockquote */
+blockquote.scripture {
+  margin: 1.4em 0;
+  padding: 16px 20px;
+  background: var(--scripture-bg);
+  border-left: 4px solid var(--scripture-border);
+  border-radius: 2px;
+  color: var(--ink);
+  font-style: italic;
+  line-height: 1.85;
+  text-indent: 0;
+  position: relative;
+}
+
+/* Bullet list */
+ul.bullets {
+  list-style: none;
+  padding: 0 0 0 1.2em;
+  margin: 0 0 1.2em;
+}
+ul.bullets li {
+  position: relative;
+  padding: 4px 0 4px 20px;
+  line-height: 1.85;
+  text-indent: 0;
+}
+ul.bullets li::before {
+  content: "·";
+  position: absolute;
+  left: 0; top: 4px;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.4em;
+}
+
+/* Numbered list */
+ol.numbered {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.2em;
+  counter-reset: item;
+}
+ol.numbered li {
+  padding: 4px 0 4px 2.2em;
+  position: relative;
+  line-height: 1.85;
+  text-indent: 0;
+}
+ol.numbered li .num {
+  position: absolute;
+  left: 0.4em;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Emphasis */
+strong { color: var(--ink); font-weight: 700; }
+em { font-style: italic; color: var(--ink-soft); }
+
+/* Book end */
+.book-end {
+  text-align: center;
+  padding: 60px 0 20px;
+  color: var(--muted);
+  font-size: 0.95em;
+  letter-spacing: 0.5em;
+  border-top: 1px solid var(--rule);
+  margin-top: 60px;
+}
+.book-end p { text-indent: 0; margin: 0; }
+
+/* Back to top */
+.back-to-top {
+  position: fixed;
+  bottom: 20px; right: 20px;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.15s;
+  box-shadow: 0 4px 16px var(--shadow);
+  z-index: 40;
+}
+.back-to-top.visible { opacity: 0.9; pointer-events: auto; }
+.back-to-top:active { transform: scale(0.94); }
+
+/* Selection */
+::selection { background: var(--accent-soft); color: var(--paper); }
+
+/* Scrollbar (webkit) */
+.toc-body::-webkit-scrollbar { width: 6px; }
+.toc-body::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+.toc-body::-webkit-scrollbar-track { background: transparent; }
+
+/* Mobile tweaks */
+@media (max-width: 600px) {
+  .topbar-title { font-size: 13px; letter-spacing: 0.03em; }
+  .icon-btn { min-width: 34px; min-height: 34px; padding: 5px 7px; font-size: 12px; }
+  .book { padding: 18px 18px 60px; }
+  .chapter-title, .front-title { letter-spacing: 0.05em; }
+  h3.label { font-size: 1.02em; padding: 7px 12px; }
+  blockquote.scripture { padding: 12px 16px; margin: 1.2em 0; }
+}
+
+/* Print (optional) */
+@media print {
+  .topbar, .drawer, .drawer-backdrop, .back-to-top, #progress-bar { display: none !important; }
+  body { background: white; color: black; }
+  .book { max-width: none; padding: 0; }
+  .section-chapter, .section-front, .section-back, .section-part { page-break-before: always; }
+}
+</style>
+</head>
+<body class="theme-light font-md">
+<div id="progress-bar"><div id="progress-fill"></div></div>
+
+<header class="topbar" id="topbar">
+  <button class="icon-btn" id="menu-btn" aria-label="目录">
+    <svg viewBox="0 0 24 24" width="22" height="22"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+  </button>
+  <div class="topbar-title">脚前的灯，路上的光</div>
+  <div class="topbar-actions">
+    <button class="icon-btn" id="font-dec" aria-label="缩小字体">A−</button>
+    <button class="icon-btn" id="font-inc" aria-label="放大字体">A+</button>
+    <button class="icon-btn" id="theme-toggle" aria-label="切换主题">
+      <svg viewBox="0 0 24 24" width="20" height="20" class="icon-sun"><circle cx="12" cy="12" r="4" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.9" y1="4.9" x2="7" y2="7"/><line x1="17" y1="17" x2="19.1" y2="19.1"/><line x1="4.9" y1="19.1" x2="7" y2="17"/><line x1="17" y1="7" x2="19.1" y2="4.9"/></g></svg>
+      <svg viewBox="0 0 24 24" width="20" height="20" class="icon-moon"><path d="M20 14.5A8 8 0 019.5 4a8 8 0 108.5 12.5c-.4.06-.8.09-1.2.09a6.4 6.4 0 01-6.4-6.4c0-2 .9-3.8 2.3-5A8 8 0 0120 14.5z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<aside class="drawer" id="drawer">
+<nav class="toc">
+<div class="toc-header"><h2>目 录</h2><button class="toc-close" aria-label="关闭">×</button></div>
+<div class="toc-body">
+<ul class="toc-list toc-front">
+<li><a href="#sec-1" class="toc-link">序一　你知道吗？</a></li>
+<li><a href="#sec-2" class="toc-link">序二　这不是一本让你跪着读的书</a></li>
+</ul>
+<div class="toc-part-group">
+  <a href="#part-1" class="toc-part">第一部分　自我篇</a>
+  <div class="toc-part-subtitle">我是谁？如何与自己相处？</div>
+  <ul class="toc-list toc-chapters">
+    <li><a href="#ch-1" class="toc-link">第一章　你本来就值钱 <span class="toc-chap-sub">照着老天爷的形象</span></a></li>
+    <li><a href="#ch-2" class="toc-link">第二章　不可含怒到日落 <span class="toc-chap-sub">生气却不要犯罪</span></a></li>
+    <li><a href="#ch-3" class="toc-link">第三章　看那天上的飞鸟 <span class="toc-chap-sub">不要为明天忧虑</span></a></li>
+    <li><a href="#ch-4" class="toc-link">第四章　彼得三次不认主 <span class="toc-chap-sub">失败之后怎么办？</span></a></li>
+    <li><a href="#ch-5" class="toc-link">第五章　受造奇妙可畏 <span class="toc-chap-sub">如何建立健康的自尊？</span></a></li>
+    <li><a href="#ch-6" class="toc-link">第六章　负我的轭 <span class="toc-chap-sub">如何面对压力？</span></a></li>
+    <li><a href="#ch-7" class="toc-link">第七章　认定老天爷的路 <span class="toc-chap-sub">如何做出明智的选择？</span></a></li>
+  </ul>
+</div>
+<div class="toc-part-group">
+  <a href="#part-2" class="toc-part">第二部分　关系篇</a>
+  <div class="toc-part-subtitle">如何与人相处？</div>
+  <ul class="toc-list toc-chapters">
+    <li><a href="#ch-8" class="toc-link">第八章　离开父母，二人成为一体 <span class="toc-chap-sub">你的第一优先关系是配偶</span></a></li>
+    <li><a href="#ch-9" class="toc-link">第九章　彼此顺服 <span class="toc-chap-sub">夫妻相处的智慧</span></a></li>
+    <li><a href="#ch-10" class="toc-link">第十章　千古一题——先救谁？</a></li>
+    <li><a href="#ch-11" class="toc-link">第十一章　我也不定你的罪 <span class="toc-chap-sub">当婚姻出现裂痕</span></a></li>
+    <li><a href="#ch-12" class="toc-link">第十二章　母亲，看你的儿子 <span class="toc-chap-sub">如何面对父母的衰老和离世？</span></a></li>
+    <li><a href="#ch-13" class="toc-link">第十三章　不要惹儿女的气 <span class="toc-chap-sub">如何处理与子女的关系？</span></a></li>
+    <li><a href="#ch-14" class="toc-link">第十四章　教养孩童走当行的道 <span class="toc-chap-sub">为人父母的智慧</span></a></li>
+    <li><a href="#ch-15" class="toc-link">第十五章　约瑟的哥哥们 <span class="toc-chap-sub">如何处理兄弟姐妹关系？</span></a></li>
+    <li><a href="#ch-16" class="toc-link">第十六章　不同信也要同行 <span class="toc-chap-sub">如何与信仰不同的家人相处？</span></a></li>
+    <li><a href="#ch-17" class="toc-link">第十七章　金苹果在银网子里 <span class="toc-chap-sub">一句话说得合宜</span></a></li>
+    <li><a href="#ch-18" class="toc-link">第十八章　用爱心说诚实话 <span class="toc-chap-sub">怎么说真话不伤人？</span></a></li>
+    <li><a href="#ch-19" class="toc-link">第十九章　回答柔和 <span class="toc-chap-sub">当意见相反时</span></a></li>
+    <li><a href="#ch-20" class="toc-link">第二十章　爱的清单 <span class="toc-chap-sub">处理分歧的心</span></a></li>
+    <li><a href="#ch-21" class="toc-link">第二十一章　目的不是赢人，是得人 <span class="toc-chap-sub">如何处理冲突？</span></a></li>
+    <li><a href="#ch-22" class="toc-link">第二十二章　转过左脸来 <span class="toc-chap-sub">如何面对羞辱？</span></a></li>
+    <li><a href="#ch-23" class="toc-link">第二十三章　扫罗怒视大卫 <span class="toc-chap-sub">如何面对嫉妒？</span></a></li>
+    <li><a href="#ch-24" class="toc-link">第二十四章　“老天爷的意思原是好的” <span class="toc-chap-sub">如何面对不公？</span></a></li>
+    <li><a href="#ch-25" class="toc-link">第二十五章　有一朋友比弟兄更亲密 <span class="toc-chap-sub">如何识人、择友？</span></a></li>
+    <li><a href="#ch-26" class="toc-link">第二十六章　与刺猬共处 <span class="toc-chap-sub">如何与难相处的人打交道？</span></a></li>
+  </ul>
+</div>
+<div class="toc-part-group">
+  <a href="#part-3" class="toc-part">第三部分　品格篇</a>
+  <div class="toc-part-subtitle">我要成为什么样的人？</div>
+  <ul class="toc-list toc-chapters">
+    <li><a href="#ch-27" class="toc-link">第二十七章　爱的真谛 <span class="toc-chap-sub">四个“凡事”</span></a></li>
+    <li><a href="#ch-28" class="toc-link">第二十八章　骄傲 <span class="toc-chap-sub">败坏与跌倒的开始</span></a></li>
+    <li><a href="#ch-29" class="toc-link">第二十九章　摩西为人 <span class="toc-chap-sub">谦卑的力量</span></a></li>
+    <li><a href="#ch-30" class="toc-link">第三十章　七十个七次 <span class="toc-chap-sub">放过他人，更放过自己</span></a></li>
+    <li><a href="#ch-31" class="toc-link">第三十一章　知足的秘诀 <span class="toc-chap-sub">不是拥有的多，而是需要的少</span></a></li>
+    <li><a href="#ch-32" class="toc-link">第三十二章　百般试炼中都要大喜乐 <span class="toc-chap-sub">忍耐的功课</span></a></li>
+    <li><a href="#ch-33" class="toc-link">第三十三章　常常喜乐 <span class="toc-chap-sub">怎么在糟心的日子里笑出来？</span></a></li>
+    <li><a href="#ch-34" class="toc-link">第三十四章　凡事谢恩 <span class="toc-chap-sub">喜乐的开关</span></a></li>
+    <li><a href="#ch-35" class="toc-link">第三十五章　和平 <span class="toc-chap-sub">风暴中心的锚</span></a></li>
+    <li><a href="#ch-36" class="toc-link">第三十六章　恩慈 <span class="toc-chap-sub">不是因为可爱才爱，而是选择了爱</span></a></li>
+    <li><a href="#ch-37" class="toc-link">第三十七章　良善 <span class="toc-chap-sub">以善胜恶的力量</span></a></li>
+    <li><a href="#ch-38" class="toc-link">第三十八章　信实 <span class="toc-chap-sub">最珍贵的品质</span></a></li>
+    <li><a href="#ch-39" class="toc-link">第三十九章　节制 <span class="toc-chap-sub">管住自己的本事，是最大的本事</span></a></li>
+  </ul>
+</div>
+<div class="toc-part-group">
+  <a href="#part-4" class="toc-part">第四部分　生活篇</a>
+  <div class="toc-part-subtitle">如何在世界行走？</div>
+  <ul class="toc-list toc-chapters">
+    <li><a href="#ch-40" class="toc-link">第四十章　像是给老天爷做的 <span class="toc-chap-sub">如何对待工作？</span></a></li>
+    <li><a href="#ch-41" class="toc-link">第四十一章　金钱 <span class="toc-chap-sub">是工具，不是主人</span></a></li>
+    <li><a href="#ch-42" class="toc-link">第四十二章　谁愿为大，必作用人 <span class="toc-chap-sub">如何成为好的领导者？</span></a></li>
+    <li><a href="#ch-43" class="toc-link">第四十三章　凡事都有定时 <span class="toc-chap-sub">如何面对人生的转折点？</span></a></li>
+    <li><a href="#ch-44" class="toc-link">第四十四章　一个人，但不孤独 <span class="toc-chap-sub">如何面对孤单？</span></a></li>
+    <li><a href="#ch-45" class="toc-link">第四十五章　如果当时…… <span class="toc-chap-sub">如何面对人生的遗憾？</span></a></li>
+    <li><a href="#ch-46" class="toc-link">第四十六章　当所爱被夺走 <span class="toc-chap-sub">如何面对失去？</span></a></li>
+    <li><a href="#ch-47" class="toc-link">第四十七章　外体虽然毁坏 <span class="toc-chap-sub">如何面对身体的衰老？</span></a></li>
+    <li><a href="#ch-48" class="toc-link">第四十八章　万事都互相效力 <span class="toc-chap-sub">如何面对苦难？</span></a></li>
+    <li><a href="#ch-49" class="toc-link">第四十九章　不是结束，是搬家 <span class="toc-chap-sub">如何面对死亡？</span></a></li>
+  </ul>
+</div>
+<ul class="toc-list toc-back">
+<li><a href="#sec-56" class="toc-link">后  记</a></li>
+<li><a href="#sec-57" class="toc-link">致  谢</a></li>
+<li><a href="#sec-58" class="toc-link">附录：书中主要典故简介</a></li>
+<li><a href="#sec-59" class="toc-link">圣经版本说明</a></li>
+</ul>
+</div></nav>
+</aside>
+
+<main class="book" id="book">
+  <section class="cover">
+    <div class="cover-inner">
+      <div class="cover-ornament">✦</div>
+      <h1 class="cover-title">脚前的灯<br>路上的光</h1>
+      <div class="cover-rule"></div>
+      <p class="cover-subtitle">日常生活中的圣经智慧</p>
+      <p class="cover-author">安子谦　著</p>
+      <div class="cover-footer">
+        <div class="cover-ornament small">❦</div>
+      </div>
+    </div>
+  </section>
+
+<section class="section section-front" id="sec-1">
+<header class="front-header">
+  <h1 class="front-title">序一　你知道吗？</h1>
+  <div class="chapter-rule"></div>
+</header>
+<p>亲爱的读者，您好！</p>
+<p>您知道全世界印刷量最大、阅读人数最多、语言文字版本最多——没有之一的书是哪一部吗？</p>
+<p>这部集上述“三最”于一身的全世界绝无仅有的书就是《圣经》。到底如何“最”法？具体数据您可以上网查，不赘述。</p>
+<p>圣经文化是世界文化的重要组成部分。可以说，缺少了圣经文化，世界文化是不完整的。不了解圣经文化，就无法完整地了解世界——无论是西方的文学、艺术、音乐，还是法律、政治、伦理，处处都有圣经的影子。</p>
+<p>遗憾的是，“圣经”这两个字，在很长时间、在很大空间范围内，是讳莫如深的字眼。很多人对它敬而远之，也有人对它避之不及。它被贴上太多标签——西方的、宗教的、过时的、与我无关的。</p>
+<p>然而，正如其他的西方文化也有值得东方社会学习借鉴的地方一样，圣经同样也有值得学习和借鉴的智慧。这是许多有识之士的共识。</p>
+<p>事实上，《圣经》不仅是全世界印刷量、阅读量最大，也是全世界语言文字版本最多的书籍——没有之一。这个事实本身，就值得关注和思考。它为什么能集上述“三最”于一身？它凭什么？</p>
+<p>不管你是谁，不管你信不信，至少3400年以来，它都在那里——被一代又一代人传抄着、印刷着、翻译着、研读着、信奉着、践行着。</p>
+<p>咱们这本书不传教，不劝信，不站队。它只有一个朴素的愿望：与你一起探讨圣经里那些对过日子有用的道理。</p>
+<p>如果您读了之后，觉得“这话有点道理”、“这个办法可以试试”，那这本书就没白写。</p>
+<p>如果您读了之后，还愿意亲手去翻翻那本古老又奥妙的书，而不只是在我这里“道听途说”，也许你会有意外的收获。</p>
+<p>——安子谦</p>
+</section>
+
+<section class="section section-front" id="sec-2">
+<header class="front-header">
+  <h1 class="front-title">序二　这不是一本让你跪着读的书</h1>
+  <div class="chapter-rule"></div>
+</header>
+<p>亲爱的读者，您好！</p>
+<p>感谢您把这本书拿起来——不管是在书店里偶然翻到，还是在某个深夜刷手机时被推荐，总之，您来了，这就挺好。</p>
+<p>写这本书之前，我问一些朋友：“提到《圣经》，您会想到什么？”</p>
+<p>答案五花八门：“是一本奇妙的书”、“老厚的一本书”、“我在国外酒店房间里的床头柜上见过，但是没敢打开”、“是本宗教书，跟咱没关系”、“听说圣经上有句话：有人打你的右脸时把左脸也转过来由他打。我觉得有点怂”。还有一个朋友特别实在，他说：“我买过一本，想从头读到尾，结果在《利未记》里迷路了，到现在还没走出来。”</p>
+<p>我听完后忍不住想笑，然后又有点难过。因为我发现，这部极其古老又极其奥妙，对人类文明发展已经产生了，而且仍在产生着重大影响的书，在许多人眼里，已经变成了一本“需要沐浴更衣、正襟危坐、用敬畏之心打开，然后三分钟之内睡着的巨著”。</p>
+<p>这太可惜了。</p>
+<p>你知道吗？如果你穿越回两千年前的耶路撒冷，走在菜市场里，你可能会听到这样的对话：“嘿，昨天耶稣讲的那个故事你听了吗？说有个当爹的，小儿子卷钱跑路了，后来灰溜溜回来，老头子居然宰了肥牛犊庆祝！大儿子气得在外头骂街。你说这当爹的讲不讲道理？”“讲啊！听着就像在说咱们那位天上的老爸，对浪子回头这事儿，就是这么‘不讲道理’地高兴。”</p>
+<p>看到了吗？耶稣当年讲的比喻，就是那个时代的“街头段子”——他用农民听得懂的话讲撒种，用渔夫听得懂的话讲撒网。他从来不端着，从来不装。</p>
+<p>所以，这本书的野心很简单：把《圣经》从神坛上请下来，请到人间烟火里。请到你家的沙发、你通勤的地铁、你睡不着觉的床头。</p>
+<p>我不会给你讲神学，不会给你讲历史，不会给你讲宗教。我只做一件事：把你生活里遇到的那些糟心事、烦心事、想不通的事或者是你感兴趣的事，和圣经里的话，放在一起聊聊天。</p>
+<p>比如——你焦虑得睡不着？耶稣说过：“不要为明天忧虑。”他不是站着说话不腰疼，他是真懂——他懂的是人心里那种“明天怎么办”的慌。但他还是说：去看看野地里的百合花，它们不焦虑，但活得比国王所罗门还美。</p>
+<p>你气得想摔手机？保罗说过：“不可含怒到日落。”他不是让你憋着，是让你给怒气一个期限——太阳下山之前，必须了结。吵一架也行，写出来撕掉也行，跑五公里也行。总之，别让那头野兽在你床上过夜。</p>
+<p>你被人欺负了？《圣经》上有一句话，很多人想不明白：“有人打你的右脸，连左脸也转过来由他打”。听着像怂，其实不是。两人对面，用右手打右脸，用手掌是打不到的。打右脸是用手背打的，那是奴隶才挨的打，是最羞辱人的方式。耶稣的意思是你不要按他的规则玩这个游戏。你转过左脸，等于把选择权拿了回来：他要么停下来，要么用尊重的方式打你。你就会从被动转为主动。对方如果继续打你，他就会失去道义。人们就会站在道义的制高点去制止他、去审判他。这是比“以眼还眼，以牙还牙”“睚眦必报”更高的智慧和更先进的文化。</p>
+<p>这些智慧，不是让你跪着读的。是让你站着、坐着、躺着、走着、在地铁上、在厕所里、在睡不着觉的深夜——随时拿起来翻一翻的。</p>
+<p>所以，这本书的结构也简单。你不需要从头读到尾，你只需要像查字典一样用：遇到焦虑翻第三章，遇到愤怒翻第二章，遇到失败翻第四章，遇到不公翻第二十四章，遇到羞辱翻第二十二章……</p>
+<p>每一章都先问几个问题，然后讲讲圣经上怎么说的，再说说可以怎么想、怎么做。</p>
+<p>当然，我不会劝你信教。你可以是无神论者，可以是佛教徒，可以是“什么都不信但我愿意听听”的探索者。这本书只有一个请求：请你把《圣经》当成一本人生工具箱，而不是教条审判书。</p>
+<p>最后，分享一个秘密：这本书其实是我在无数个深夜写成的。那些夜深人静的时候，我坐在电脑前，一边喝着清水，一边和自己说话。累了的时候、写不下去的时候，我就想起《诗篇》里那句：“一宿虽然有哭泣，早晨便必欢呼。”然后我就对自己说：行吧，那先睡，睡醒明天继续写。</p>
+<p>希望这本书，能在你偶尔睡不着的夜里，变成一个小小的手电筒——不刺眼，但够用。</p>
+<p>准备好了吗？咱们出发。</p>
+<p>——安子谦于2026年3月23日拂晓</p>
+</section>
+
+<section class="section section-part" id="part-1" data-part="part-1">
+<div class="part-cover">
+  <div class="part-cover-inner">
+    <div class="part-ornament">❦</div>
+    <h1 class="part-title">第一部分　自我篇</h1>
+    <p class="part-subtitle">我是谁？如何与自己相处？</p>
+  </div>
+</div>
+</section>
+
+<section class="section section-chapter" id="ch-1" data-part="part-1">
+<header class="chapter-header">
+  <h1 class="chapter-title">第一章　你本来就值钱</h1>
+  <p class="chapter-subtitle">照着老天爷的形象</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>你的价值，不是你挣来的，是你本来就有的。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“神就照着自己的形象造人，乃是照着他的形象造男造女。”（创世记1:27）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么我总是在跟别人比，而且比完了心里更难受？</li><li>为什么别人有的东西我也想要，可要到了也没觉得多高兴？</li><li>如果把我现在有的都拿走，我还剩下什么？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>圣经《创世记》第一章里有一句话：“神就照着自己的形象造人，乃是照着他的形象造男造女。”</p>
+<p>这话说白了就是：打你一出生，你就带着一份“出厂设置”。这份设置上没写“你得挣多少钱”“你得有几套房”。它就写了一条：你是照着老天爷的样子造的。</p>
+<p>打个比方：你有个祖上传下来的碗，值钱不是因为它能盛多少饭，是因为它是谁传下来的。你也是。你的贵重，不是你挣来的，是本来就有的。</p>
+<h3 class="label">到底该怎么看自己？</h3>
+<p>第一，把自己和你有的东西，分开看。</p>
+<p>下次你难受的时候，问自己：要是把房子、车子、工作、存款都拿走——我还剩下什么？你可能说：那我啥也没了。你再想想。你会笑吧？你会心疼人吧？你看夕阳会觉得美吧？这些东西，谁也拿不走。</p>
+<p>圣经里有个叫约伯的人，比你惨多了。一天之内，孩子没了，钱没了，身体也垮了。他老婆说：“你还活着干啥？”他说：“我知道，我这条命还有救。”他不是假装没事。他是知道：东西没了，人还在。人还在，就有救。</p>
+<p>第二，照镜子的时候，换句话跟自己说。</p>
+<p>每天刷牙的时候，你都会看见镜子里那个人。你知道他毛病多。试试看，换成这句话：“站在这儿的这个人，不是一堆毛病的集合体，天地间唯此一人。”说多了，你就信了——这不是自己骗自己，是把歪了的眼光掰回来。</p>
+<p>第三，把这眼光“借”给别人用。</p>
+<p>用这眼光看看你讨厌的人。那个开会老跟你抬杠的同事，他也是照着老天爷的样子造的，就是那张脸有点走样了。你可能会说：“凭什么？”因为这么看，不光是为了他，更是为了你。你老把他当敌人，你就天天在打仗。你把他当个走样了的人，你就能从战场上下来，喘口气。</p>
+<p>有个叫马丁·路德·金的人说过一句话，特别在理：“恨一个人，就像自己喝毒药，却盼着对方死。”恨来恨去，最后毒的，是自己。</p>
+<h3 class="label">这一章说到底就三句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 你的价值，不是你挣来的，是你本来就有的。</li><li><span class="num">2.</span> 世界让你看“有什么”，圣经让你看“是什么”。</li><li><span class="num">3.</span> 把这眼光“借”给别人。当你看见别人身上也有值钱的东西，你就不用比来比去了。</li></ol>
+<h3 class="label">金句</h3>
+<p>你不是一堆毛病的集合体，你是照着老天爷的样子造的。</p>
+</section>
+
+<section class="section section-chapter" id="ch-2" data-part="part-1">
+<header class="chapter-header">
+  <h1 class="chapter-title">第二章　不可含怒到日落</h1>
+  <p class="chapter-subtitle">生气却不要犯罪</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>生气可以，但别让气在你床上过夜。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“生气却不要犯罪，不可含怒到日落。”（以弗所书4:26）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么我总是在忍，忍到最后忍不住了，反而把事情搞得更糟？</li><li>为什么有些人能吵完架就当没事，我却能气三天？</li><li>这口气到底该怎么出，才算合适？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>圣经《以弗所书》里有一句话：“生气却不要犯罪，不可含怒到日落。”</p>
+<p>第一，它说“你可以生气”。圣经没让你当受气包。摩西生气，摔了法版；耶稣生气，掀过桌子。被冒犯了会生气，这是人该有的反应。你不是石头。</p>
+<p>第二，但它说“别让生气变成事儿”。生气本身不是毛病，但生气干出来的事儿，可能是毛病——骂人、摔东西、发朋友圈阴阳怪气、回家冲孩子发火……这些，都是气头上的事，但气消了，事还在。</p>
+<p>第三，它给了个期限：太阳下山之前，这事儿得有个了结。别让今天的怒气在你床上过夜。你今天生气，今天处理。吵一架也行，写出来撕掉也行，跑五公里也行。总之，太阳下山之前，让这事儿过去。</p>
+<h3 class="label">到底该怎么处理这口气？</h3>
+<p>第一步：先搞清楚，你气的是什么。</p>
+<p>你问：“为什么我总是在忍，忍到最后忍不住了？”——因为你没给这口气一个名字。停下来问问自己：我现在是什么感觉？这口气是叫“生气”，还是叫“委屈”，还是叫“又生气又委屈”？我为什么会有这感觉？真正让我难受的，是这件事本身，还是这件事让我想起了别的什么？</p>
+<p>生气是你的信使，它在告诉你：这儿有伤口，得看看。</p>
+<p>第二步：把这口气，用对的方式送出去。</p>
+<p>不合适的送法：指着鼻子骂——一时爽，但关系可能就完了；发朋友圈指桑骂槐——大家都看得懂，但没人敢接话；憋着不说，等哪天憋不住了再爆发——伤自己，也伤身边的人。</p>
+<p>合适的送法：如果当事人在面前，就说“你刚才那么说，我挺难受的”。如果当事人不在面前，把想骂的话写下来，然后删掉——你会发现，有些气，写着写着就散了。或者去跑一圈，身体的累能带走心里的堵。</p>
+<p>第三步：在太阳下山之前，让这事儿翻篇。</p>
+<p>你问：“明明是他不对，为什么最后难受的是我？”——因为你在用今天的情绪，为昨天的事买单。“不可含怒到日落”不是让你假装没事。是让你在太阳下山之前做个决定：今天我确实生气了，但这事儿，到此为止。</p>
+<p>你可以把让你生气的那件事写张纸条，撕碎，扔进垃圾桶。对自己说：今天的太阳下去了，今天的火气也一起下去。</p>
+<h3 class="label">这一章说到底就三句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 生气是正常的。</li><li><span class="num">2.</span> 生气本身不是问题，让这口气陪你过夜才是问题。</li><li><span class="num">3.</span> 给生气一个期限：太阳下山之前。</li></ol>
+<h3 class="label">金句</h3>
+<p>生气是你的信使，它在告诉你：这儿有伤口，得看看。</p>
+</section>
+
+<section class="section section-chapter" id="ch-3" data-part="part-1">
+<header class="chapter-header">
+  <h1 class="chapter-title">第三章　看那天上的飞鸟</h1>
+  <p class="chapter-subtitle">不要为明天忧虑</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>焦虑是用今天的时间，提前支付明天的痛苦。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“所以我告诉你们，不要为生命忧虑吃什么喝什么，为身体忧虑穿什么。生命不胜于饮食吗？身体不胜于衣裳吗？你们看那天上的飞鸟，也不种也不收，也不积蓄在仓里，你们的天父尚且养活它。你们不比飞鸟贵重得多吗？”（马太福音6:25-26）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么我总是在担心明天的事，结果今天反而过不好？</li><li>为什么越是想得多，越是睡不着？</li><li>计划明天和瞎操心，到底有啥区别？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>耶稣说过一句话：“不要为明天忧虑。”他不是站着说话不腰疼。说这话的时候，他面前坐着的是一群普通老百姓，和你一样，天天发愁。</p>
+<p>他们愁什么？和你愁的一样：明天吃什么，喝什么，穿什么。两千年前，他们愁的是地里的收成；两千年后，你愁的是房贷、车贷和没工作。人愁的东西，两千年来就没变过——活下来，以及活得比别人好一点。</p>
+<p>耶稣没有说“你们不该愁”然后转身走人。他让他们换个眼光看事。</p>
+<p>第一个眼光：看看天上的鸟。“你们看那天上的飞鸟，也不种也不收，老天爷照样养活它们。”你可能会说：不种不收，那不饿死了？可鸟确实不种不收，但每天都活着。它们不焦虑，但也没饿死。</p>
+<p>第二个眼光：看看野地的花。“你看野地里的百合花怎么长起来，它不劳苦，也不纺线。可我告诉你们，就是所罗门最风光的时候，穿的也不如这一朵花好看。”花的美丽，不是“做”出来的，是“长”出来的。它不焦虑，不比谁红，只是按着它被造的样子，自己就开了。</p>
+<p>第三个眼光：看看今天。“不要为明天忧虑，因为明天自有明天的忧虑；一天的难处一天当就够了。”每天有每天的麻烦，这些麻烦已经够你对付的了。别把明天的麻烦，提前借到今天来背。</p>
+<h3 class="label">到底该怎么对付这焦虑？</h3>
+<p>第一，分清“计划”和“瞎操心”。</p>
+<p>计划是：我现在能做点啥，让明天好过一点？瞎操心是：明天要是坏了怎么办？完了完了完了……下次你又开始焦虑的时候，问自己一句话：“我现在能做点啥？”要是能做，就去做。要是现在做不了，就告诉自己：这事现在不在我手里，我先放一放。</p>
+<p>第二，把焦虑写下来，然后放起来。</p>
+<p>焦虑就像蚊子。一只蚊子在你屋里飞，你睡不着。你不知道它在哪，就把整个屋子都怀疑了一遍。对付焦虑也一样：把它从脑子里请出来。每天晚上睡前，花五分钟，想一想：我在焦虑什么？这事儿最坏能坏到哪去？要是真发生了，我能做点啥？想完了，对自己说：我已经把焦虑放那了。现在，它不归我管了。</p>
+<p>第三，去看一朵花（如果没有花，看一棵树也行）。</p>
+<p>明天，找个时间，出去看一朵花。真的花，不是手机上的。看五分钟。看它的颜色，看它的样子。然后问自己：“这朵花焦虑吗？”它不焦虑。它就是长着。你也是活着。活着，就是此时此刻，站在这，看着一朵花。</p>
+<h3 class="label">这一章说到底就四句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 焦虑是用今天的时间，提前支付明天的痛苦。</li><li><span class="num">2.</span> 分清计划和瞎操心。</li><li><span class="num">3.</span> 去看看鸟，去看看花。</li><li><span class="num">4.</span> 一天的难处一天当就够了。</li></ol>
+<h3 class="label">金句</h3>
+<p>别把明天的麻烦，提前借到今天来背。</p>
+</section>
+
+<section class="section section-chapter" id="ch-4" data-part="part-1">
+<header class="chapter-header">
+  <h1 class="chapter-title">第四章　彼得三次不认主</h1>
+  <p class="chapter-subtitle">失败之后怎么办？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>失败不是终点，退出才是。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“主转过身来看彼得，彼得便想起主对他所说的话：‘今日鸡叫以先，你要三次不认我。’他就出去痛哭。”（路加福音22:61-62）“你喂养我的羊。”（约翰福音21:17）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么我犯了错之后，最难原谅的往往是我自己？</li><li>如果我已经搞砸了，还有翻盘的机会吗？</li><li>栽了跟头之后，第一步该做什么？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>圣经里有个人，他的失败比你的惨多了。他叫彼得。</p>
+<p>他是耶稣最亲近的门徒，脾气火爆，说话不过脑子，但真心实意跟着老师。耶稣被抓的那天晚上，彼得三次否认自己认识耶稣。第三次他赌咒发誓：“我不认识那个人！”就在那一刻，鸡叫了。耶稣转过身来，看了彼得一眼。彼得想起耶稣说的话，“他就出去痛哭。”</p>
+<p>你想想这个画面：他是那个看见耶稣在海面上走就跳下船的人，是那个发誓“就算所有人都离开你，我也不会”的人。这个天不怕地不怕的人，在鸡叫的那一刻，彻底垮了。他哭的不是“我搞砸了”，他哭的是：我背叛了我最爱的人。</p>
+<p>但故事没完。三天后，耶稣复活了。天使告诉几个妇人：“你们去告诉他的门徒，包括彼得。”天使特意点了彼得的名。为什么？因为耶稣知道，彼得可能以为自己已经被开除了。天使的“包括彼得”就是在说：他没开除你。你还在名单上。</p>
+<p>后来，耶稣找到彼得，三次问他“你爱我吗”，三次把事儿托付给他。每一次否认，都被一次“你爱我吗”盖过去。彼得后来成了教会的顶梁柱。</p>
+<p>这个故事告诉我们：失败不是终点，退出才是。彼得失败了，但他没退出。他痛哭，但哭完之后，他还在。</p>
+<h3 class="label">到底该怎么从失败里爬起来？</h3>
+<p>第一步：承认——别假装没事。</p>
+<p>彼得做的第一件事是什么？出去痛哭。他没说“没事，男人不哭”。他承认：我搞砸了，我很难受。很多人卡在失败里出不来，是因为他们跳过这一步。他们对自己说：“没事，过去了。”但过去没过去。那个事还在心里烂着。</p>
+<p>所以，第一步：承认你很难受。可以哭，可以骂自己两句，可以找朋友说“我快崩溃了”。让那个情绪出来，别憋着。</p>
+<p>第二步：分开看——你做的事，和你这个人。</p>
+<p>彼得三次不认主——这是他做的事。彼得是“被耶稣爱的人”——这是他这个人。你做的事，不等于你这个人。这个分别特别重要。如果你把“我做的事”当成“我这个人”，那每一次失败都是在给你这个人判死刑。</p>
+<p>下次你骂自己的时候，试着改个说法：别说“我是个怂包”，说“我这次没敢怼回去，但我不等于这件事”。</p>
+<p>第三步：弥补——能做的，去做。</p>
+<p>问自己三个问题：这件事，我能弥补什么？这件事，我能学到什么？这件事，我怎么让它过去？耶稣没让彼得穿越回去改错，而是给了他一个往前走的方向。你也需要这个。</p>
+<p>第四步：回来——别一个人待太久。</p>
+<p>彼得痛哭之后，他回去找其他门徒了。他没一个人躲在山洞里自闭。失败之后，人最容易做的事就是把自己藏起来。但藏起来是最危险的。因为一个人待着，脑子里的声音全是骂你的。你需要回来。回到人群里，哪怕你觉得尴尬。回到生活里，哪怕你觉得“我不配过正常生活”。回来不是假装没事，回来是让自己知道：我还活着，我还有明天。</p>
+<h3 class="label">这一章说到底就四句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 失败不是终点，退出才是。</li><li><span class="num">2.</span> 你做的事，不等于你这个人。</li><li><span class="num">3.</span> 需要一个恢复仪式。</li><li><span class="num">4.</span> 别一个人待太久。</li></ol>
+<h3 class="label">金句</h3>
+<p>你做的事，不等于你这个人。</p>
+</section>
+
+<section class="section section-chapter" id="ch-5" data-part="part-1">
+<header class="chapter-header">
+  <h1 class="chapter-title">第五章　受造奇妙可畏</h1>
+  <p class="chapter-subtitle">如何建立健康的自尊？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>你不是一堆毛病的集合体，你是照着老天爷的样子造的。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“我的肺腑是你所造的；我在母腹中，你已覆庇我。我要称谢你，因我受造，奇妙可畏；你的作为奇妙，这是我心深知道的。”（诗篇139:13-14）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么我总觉得自己不够好，即使别人都说我挺好？</li><li>为什么被夸的时候，我反而更慌？</li><li>自信和自大到底有啥区别？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>圣经《诗篇》里有一句话，大卫写的：“我要称谢你，因我受造，奇妙可畏。”</p>
+<p>注意这话的逻辑：“因我受造”——不是因为“我干了啥”，而是因为“我被造了”。在你做任何事之前，在你赚任何钱之前，你已经被造了。你活着这件事本身，就值得念叨。</p>
+<p>大卫还说：“你的作为奇妙，这是我心深知道的。”他不是说“我的作为奇妙”。他是说“你的作为奇妙”——是造他的那位，奇妙。他只是一个作品。但如果是大师的作品，这作品本身就带着大师的荣耀。</p>
+<p>你是老天爷的作品。你的价值，不是你挣来的，是本来就带着的。</p>
+<p>有人可能会说：这不就是自恋吗？不是。自信和自大，是两码事。自大的人说：我比别人强，所以我值钱。自信的人说：我和别人一样值钱，所以我不用比。自大的人需要贬低别人来抬高自己。自信的人不需要。自大是虚胖，自信是肌肉。</p>
+<h3 class="label">到底该怎么自己瞧得起自己？</h3>
+<p>第一，把自己干的事，和你这个人，分开看。</p>
+<p>你脑子里可能有个坏程序，它会自动把“我做错了”翻译成“我是错的”。你得把这个程序改掉。下次你犯错的时候，不说“我真蠢”，说“这事儿我干得不聪明”。不说“我是个失败者”，说“这事儿我干砸了”。你不是你的失败，你是那个会犯错但依然值钱的人。</p>
+<p>第二，写两张单子，分开看。</p>
+<p>拿张纸，左边写“我干了啥”，右边写“我是谁”。左边可能很长：我昨天说错话了，我这个月业绩没达标……右边呢？很多人右边是空的。现在，把右边填上：我是一个会笑的人，我是一个会心疼人的人，我是一个看到夕阳会觉得美的人——仅仅是活着，就值得被爱。把这张纸贴镜子旁边，每天早上看一眼。</p>
+<p>第三，找一个“不看你表现”的底。</p>
+<p>人需要被接纳。但同事的接纳看你活儿干得好不好，朋友的接纳看你够不够意思。这些接纳，都会波动。你需要一个不波动的底。对有些人来说，那是老天爷——不管你咋样，祂接纳你。你可以每天对自己说：“不管我今天干得咋样，我都是一个值钱的人。”</p>
+<p>第四，别比了。</p>
+<p>比较是自信的杀手。朋友圈是精选集，不是纪录片。你拿自己的日常，比别人的高光，当然输。下次你又开始比较的时候，对自己说：“他的路是他的路，我的路是我的路。”然后，放下手机。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 你的价值，不是你挣来的，是你本来就有的。</li><li><span class="num">2.</span> 把你干的事，和你这个人，分开看。</li><li><span class="num">3.</span> 别比了。</li><li><span class="num">4.</span> 找一个“不看你表现”的底。</li></ol>
+<h3 class="label">金句</h3>
+<p>你不是你的失败，你是那个会犯错但依然值钱的人。</p>
+</section>
+
+<section class="section section-chapter" id="ch-6" data-part="part-1">
+<header class="chapter-header">
+  <h1 class="chapter-title">第六章　负我的轭</h1>
+  <p class="chapter-subtitle">如何面对压力？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>你不需要一个人扛所有的事，有人愿意帮你抬。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“凡劳苦担重担的人，可以到我这里来，我就使你们得安息。我心里柔和谦卑，你们当负我的轭，学我的样式；这样，你们心里就必得享安息。因为我的轭是容易的，我的担子是轻省的。”（马太福音11:28-30）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么我总觉得身上的担子越来越重，卸不下来？</li><li>压得慌的时候，到底能做点啥让自己好受点？</li><li>把所有事都自己扛，是坚强还是傻？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>耶稣说过一句话：“凡劳苦担重担的人，可以到我这里来，我就使你们得安息。”说这话的时候，听众都是普通老百姓，和你一样，每天扛着生活的压。</p>
+<p>耶稣用了一个当时人都懂的比喻：“负我的轭”。“轭”是拉车或犁地时架在牛脖子上的曲木，俗称“牛梭头”。如果是一头牛，轭是沉的。如果是两头牛一起拉，轭就轻了——因为有人在旁边帮你分担。</p>
+<p>耶稣说：“你们当负我的轭，学我的样式。”意思是：你不需要一个人扛所有的事。你和我一起扛。我在你旁边，帮你抬。他不是说“你的担子会没”。他说的是：你的担子，我帮你一起扛。压力不会消失，但当你不再是一个人扛的时候，那些东西就没那么沉了。</p>
+<h3 class="label">到底该怎么对付这压得慌？</h3>
+<p>第一步：承认——我扛不动了。</p>
+<p>你问：“把所有事都自己扛，是坚强还是傻？”——死扛不撒手，不是坚强，是傻。这是最难的一步。因为我们从小被教育“要坚强”“别给人添麻烦”。承认自己扛不动了，好像就是认输。但承认是卸担子的前提。找个安静的地方，对自己说：“我累了。我扛不动了。我需要帮忙。”</p>
+<p>第二步：分清楚——哪些是我的担子，哪些不是。</p>
+<p>很多时候，我们累，是因为背了不该背的担子。老板的焦虑，你背了——他担心业绩，你跟着睡不着。家里人的期待，你背了——他们希望你咋样，你拼命去够。社会的标准，你背了——三十岁要有房，三十五岁要有家。这些，真的都需要你来扛吗？把不属于你的担子，还回去。</p>
+<p>第三步：交出去——做个仪式。</p>
+<p>找个东西，代表你的压力。可以是一块石头，可以是一张写满字的纸。然后，做个动作：把石头放下，把纸撕掉。同时说一句话：“这事儿，我交给你了。我不一个人扛了。”事还在，但你心里的那个疙瘩，松了。</p>
+<p>第四步：回来——从明天回到今天。</p>
+<p>压力，是活在未来。你焦虑的是明天的事、下个月的事。你把未来的担子，借到今天来背。耶稣说：“一天的难处一天当就够了。”今天的事，今天处理。明天的事，明天再说。怎么回来？做一件此时此刻才能做的事。喝一杯水，感受水的温度。看一朵花，看它的颜色。这些事，只有“今天”能做。当你回到今天，压力就暂时被关在了门外。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 承认自己扛不动了，不是怂，是实在。</li><li><span class="num">2.</span> 分清楚——哪些是你的担子，哪些不是。</li><li><span class="num">3.</span> 交出去——做个仪式。</li><li><span class="num">4.</span> 回来——从明天回到今天。</li><li><span class="num">5.</span> 耶稣说：到我这里来。</li></ol>
+<h3 class="label">金句</h3>
+<p>一天的难处，一天当就够了。</p>
+</section>
+
+<section class="section section-chapter" id="ch-7" data-part="part-1">
+<header class="chapter-header">
+  <h1 class="chapter-title">第七章　认定老天爷的路</h1>
+  <p class="chapter-subtitle">如何做出明智的选择？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>聪明算利弊，智慧分对错。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“你要专心仰赖耶和华，不可倚靠自己的聪明，在你一切所行的事上都要认定他，他必指引你的路。”（箴言3:5-6）“你们中间若有缺少智慧的，应当求那厚赐与众人、也不斥责人的神，主就必赐给他。”（雅各书1:5）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么做选择这么难？选A怕错过B，选B怕后悔没选A？</li><li>怎么知道哪个选择是对的？</li><li>别人的意见到底该听多少？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>圣经《箴言》里有一句话：“你要专心仰赖耶和华，不可倚靠自己的聪明，在你一切所行的事上都要认定他，他必指引你的路。”</p>
+<p>“自己的聪明”是啥？是：哪个选择对我最有利？哪个选择损失最小？哪个选择看起来最安全？这些都是“聪明”。但圣经说：别只靠这个。因为你的聪明有限。你看不到未来。你不知道选了A，后面会跟出啥B。</p>
+<p>所以需要另一个东西：“认定他”。啥叫“认定他”？就是在做决定之前，先问自己一个问题：在老天爷眼里，哪个选择更对？不是更“有利”，是更“对”。</p>
+<p>有个叫所罗门的人，年轻的时候，老天爷对他说：“你愿我赐你啥？”所罗门没选长寿、没选发财，他选了智慧。老天爷高兴了，把长寿和发财也一并赐给他。这个故事告诉我们：当你先求对的事，其他的好事会跟着来。</p>
+<h3 class="label">到底该怎么选？</h3>
+<p>第一步：静下来——让脑子停一停。</p>
+<p>选择最大的敌人，是杂音。别人的意见，自己的害怕，各种可能性，在脑子里跑。你根本没法想。所以第一步：静下来。找个没人的地方，深呼吸。然后问自己：“要是没人给我意见，要是我不用怕后悔——我会选哪个？”第一个跳出来的答案，往往是最真的。</p>
+<p>第二步：分清——“聪明”和“智慧”。</p>
+<p>拿张纸，画两个表。第一个表：利弊分析。选A的好处是啥？坏处是啥？哪个选项更“划算”？这是聪明。第二个表：价值分析。选A，让我成为啥样的人？选B，让我成为啥样的人？哪个选项，更符合我想成为的样子？这是智慧。两个表都做完，再比。你是要“划算”，还是要“对”？</p>
+<p>第三步：问人——找对的人问。</p>
+<p>圣经说：“不先商议，所谋无效。”不是让你自己闷头想。你要找人问。但关键是：找对的人问。别找那些只会说“随便你”的人。别找那些把自己的焦虑倒给你的人。找比你更有智慧的人，找真正关心你的人。听听他们咋说，但记住：最后的决定，还是你的。</p>
+<p>第四步：交托——做个仪式。</p>
+<p>心里默默念叨一句：“老天爷，我把这个选择交给你。我把我所有的担心都交给你。求你让我心里有平安，让我知道该咋选。”然后，等。不是干等，是一边过日子一边等。让那个选择在心里待几天。你会发现，有些选项变得模糊了，有些选项变得更清了。不是老天爷直接告诉你答案，而是你的心慢慢知道了。</p>
+<p>第五步：选——然后不回头。</p>
+<p>最难的一步，是最后这一步。选定了，就不要回头。别再想“要是选B会咋样”。别再后悔“我是不是选错了”。选了，就是选了。如果你选错了——如果真有“错”的话——老天爷也能把错变成对。因为圣经上说：“万事都互相效力。”“万事”包括你选错的那件事。所以，选了之后，就往前走。别回头。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 静下来——让脑子停一停。</li><li><span class="num">2.</span> 分清——“聪明”和“智慧”。</li><li><span class="num">3.</span> 问人——找对的人问。</li><li><span class="num">4.</span> 交托——做个仪式。</li><li><span class="num">5.</span> 选——然后不回头。</li></ol>
+<h3 class="label">金句</h3>
+<p>先求对的事，其他的好事会跟着来。</p>
+</section>
+
+<section class="section section-part" id="part-2" data-part="part-2">
+<div class="part-cover">
+  <div class="part-cover-inner">
+    <div class="part-ornament">❦</div>
+    <h1 class="part-title">第二部分　关系篇</h1>
+    <p class="part-subtitle">如何与人相处？</p>
+  </div>
+</div>
+</section>
+
+<section class="section section-chapter" id="ch-8" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第八章　离开父母，二人成为一体</h1>
+  <p class="chapter-subtitle">你的第一优先关系是配偶</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>结婚之后，你的第一关系是配偶，不是父母。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“因此，人要离开父母，与妻子连合，二人成为一体。”（创世记2:24）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>结婚之后，到底该听父母的还是听配偶的？</li><li>婆婆/岳母总来“帮忙”，怎么办？</li><li>“离开父母”是不是意味着不孝顺？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>圣经《创世记》里有一句话，是整个人类第一场婚礼的证婚词：“因此，人要离开父母，与妻子连合，二人成为一体。”当时世界上只有两个人，没有父母，没有公婆，那老天爷为啥还要说“离开父母”？因为祂在说一个原则：婚姻的本质，是建立一个新的家。这个家，比原来的家更优先。</p>
+<p>什么意思？就是说：结婚之后，你和你配偶的第一优先关系不再是父母，而是你们彼此。这不是不孝顺，这是秩序。你父母的第一优先关系是他们彼此。这个秩序如果乱了，就会出问题。</p>
+<p>以弗所书里，保罗先说：“你们作儿女的，要在主里听从父母。”——这是孝顺。但紧接着，保罗马上对父母说了一句话：“你们作父亲的，不要惹儿女的气。”什么叫“惹儿女的气”？孩子都结婚了，你还想当这个家的总司令；孩子的小家怎么过日子，你还要插一杠子。这就是惹儿女的气。</p>
+<p>在婚姻里，最难的角色是那个被夹在中间的人。ta被夹在配偶和父母中间，左边是“那是我妈”，右边是“你到底站哪边”。最后学会了一招：和稀泥。对他妈说：“她不懂事，您别跟她一般见识。”对配偶说：“我妈就那样，你别往心里去。”结果两边都更生气了。</p>
+<p>其实，圣经给这个“夹心饼干”一个明确的任务：你要离开，你要连合。“离开”不是抛弃，是重新排序。“连合”不是和稀泥，是建立新的同盟。当父母和配偶有冲突的时候，你的第一反应应该是：我和我配偶，是一个团队。</p>
+<h3 class="label">到底该怎么处理这事？</h3>
+<p>第一，小家的门，你们自己管。</p>
+<p>什么叫“小家的门”？就是你们家的决定权。周末回谁家，你们俩商量，不是听父母的。钱怎么花，你们俩商量。孩子怎么养，你们俩商量。这不是不尊重父母，是秩序。下次父母再来“指导工作”的时候，你可以说：“爸/妈，谢谢你们的好意。这事我们自己商量着办。”</p>
+<p>第二，谁的父母，谁负责沟通。</p>
+<p>你爸妈有什么意见，你去沟通，别让你配偶去。为什么？因为你的父母，你说一百句都没事，他们不会记仇。但你配偶说一句，可能记一辈子。你妈嫌你媳妇做饭不好吃——你去说：“妈，我觉得她做得挺好的。”而不是让你媳妇去听你妈念叨。这个法则叫：各人管各人的妈。</p>
+<p>第三，建立仪式，让父母知道你爱他们，但你们是独立的。</p>
+<p>定期回去看他们，而不是让他们天天来你们家。主动打电话问候，而不是等他们打电话来“查岗”。这些仪式告诉父母：我们还爱你们，但我们有自己的生活。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 结婚之后，你的第一关系是配偶，不是父母。</li><li><span class="num">2.</span> 小家的决定权，在你们俩手里。</li><li><span class="num">3.</span> 谁的父母，谁负责沟通。</li><li><span class="num">4.</span> 孝顺不是听话，是爱。</li></ol>
+<h3 class="label">金句</h3>
+<p>人要离开父母，与妻子连合，二人成为一体。</p>
+</section>
+
+<section class="section section-chapter" id="ch-9" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第九章　彼此顺服</h1>
+  <p class="chapter-subtitle">夫妻相处的智慧</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>彼此顺服，互相敬重，丈夫舍己，妻子信任。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“你们作妻子的，当顺服自己的丈夫，如同顺服主。......你们作丈夫的，要爱你们的妻子，正如基督爱教会，为教会舍己。”（以弗所书5:22,25）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么结婚前无话不谈，结婚后无话可说？</li><li>每天除了孩子、钱、家务，好像没什么可聊的，正常吗？</li><li>怎么才能让平淡的日子过得有点温度？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>以弗所书第五章，是圣经里对夫妻关系讲得最详细的一段。但这段话，很多人读歪了。</p>
+<p>歪读法：“你们作妻子的，当顺服自己的丈夫”——你看，女人要听男人的！正确读法：先看前面那句——“又当存敬畏基督的心，彼此顺服。”“彼此顺服”是总原则。然后才具体讲：妻子怎么做，丈夫怎么做。所以，不是“妻子顺服丈夫，丈夫不用”，是彼此顺服。只是顺服的方式不一样。</p>
+<p>对妻子说：“顺服”——尊重他的带领，信任他的决定，不拆台，不贬低。对丈夫说：“爱”——不是一般的爱，是“正如基督爱教会，为教会舍己”的爱。舍己，就是放下自己，为妻子着想，甚至牺牲自己。哪个更难？基督为教会舍己——那是死在十字架上。所以，保罗对丈夫的要求，比对妻子的高得多。</p>
+<p>彼得前书也说：丈夫要“按情理与妻子同住”——就是理解她，懂她；“因她比你软弱”——不是笨，是情绪可能更敏感；“一同承受生命之恩”——你们是一起走人生的；“所以要敬重她”——尊重她，看重她。</p>
+<p>这才是圣经的夫妻观：彼此顺服，互相敬重，丈夫舍己，妻子信任。</p>
+<h3 class="label">到底该怎么过日子？</h3>
+<p>第一，出门有仪式，回家有欢迎。</p>
+<p>早上出门，别悄悄走。一个拥抱，一句“我走了”。一个小小的仪式，告诉ta：我走了，但我在想你。晚上回家，别直接瘫着。一句“我回来了”，一个拥抱。一个简单的欢迎，让ta知道：你回来了，家的气氛就变了。这些小仪式，花不了几秒钟，但能让对方觉得：我在你心里。</p>
+<p>第二，每天十分钟“无目的聊天”。</p>
+<p>很多夫妻没话说，是因为说话的“目的性”太强。“孩子作业写了没？”“水电费交了吗？”全是目的性聊天。每天留十分钟，什么都不为，就是说话。说今天遇到的事，说心里冒出来的想法，说小时候的糗事。不需要结论，就是说话。这十分钟，是关系的润滑油。</p>
+<p>第三，吵架有规则。</p>
+<p>两口子不可能不吵架。但可以有规则地吵架。定几条规矩：不用“你总是”“你从来”；不翻旧账；不带孩子；不摔东西；不当着外人吵；谁先冷静，谁去倒杯水。吵架的时候，互相提醒。</p>
+<p>第四，定期“我们时间”。</p>
+<p>每周固定一个时间，只有你们俩。不谈孩子，不谈工作，不谈家务。吃饭也好，散步也好，看电影也好。这个时间，是你们关系的“存款日”。平时是取款，这一天是存款。存款多了，取款的时候才不心疼。</p>
+<p>第五，为对方祈福。</p>
+<p>每天花几分钟，为配偶祈福。不为改变ta，是为祝福ta。你为ta祈福的时候，你的心会变软。你看ta的眼光会变。你发现ta没那么讨厌了，你发现你其实很爱ta。</p>
+<h3 class="label">关于那方面的事</h3>
+<p>圣经里专门讲了一件事：夫妻不可彼此亏负。“亏负”的意思是：欠对方。在那方面，夫妻是互相“欠”的——你的身体不是你自己的，也是对方的。不是谁求谁，是互相的。圣经说：不要长期分房，除非是双方同意暂时分开。因为长期的疏远，会给试探留地步。要沟通，别猜；要体谅，别勉强；要常在一起，别长期疏远。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 出门有仪式，回家有欢迎。</li><li><span class="num">2.</span> 每天十分钟“无目的聊天”。</li><li><span class="num">3.</span> 吵架有规则。</li><li><span class="num">4.</span> 定期“我们时间”。</li><li><span class="num">5.</span> 为对方祈福。</li><li><span class="num">6.</span> 在那方面不彼此亏负。</li></ol>
+<h3 class="label">金句</h3>
+<p>日子是用来过的，不是用来吵的。</p>
+</section>
+
+<section class="section section-chapter" id="ch-10" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第十章　千古一题——先救谁？</h1>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>爱不是选择题，是填空题——不是选哪个，是怎么填。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“因此，人要离开父母，与妻子连合，二人成为一体。”（创世记2:24）“当孝敬父母，使你的日子在耶和华你神所赐你的地上得以长久。”（出埃及记20:12）</blockquote>
+<h3 class="label">你先看看下面这个问题</h3>
+<ul class="bullets"><li>“你妻子和你妈同时掉水里，你先救谁？”</li><li>你听到这个问题的时候，心里是不是“咯噔”一下，不知道该怎么答？</li><li>你答“救妈”，妻子说你心里没她；答“救妻子”，有人会说你不孝；答“一起救”，对方说“只能选一个”……</li><li>你心里想：这问题到底想问我什么？我到底该怎么答？</li></ul>
+<h3 class="label">这是一个什么样的问题？</h3>
+<p>首先，这是一个陷阱式问题。它把两个你最爱的人放在对立面，逼你在“孝”和“爱”之间二选一。怎么答都是错——选母亲，妻子觉得你不爱她；选妻子，母亲觉得你不孝；说一起救，对方说“只能救一个”；沉默，对方说“你犹豫了，说明你不爱我”。</p>
+<p>其次，这是一个无解题。它把一份感情量化成“二选一”的选择题，但感情不是选择题。感情是过日子，是柴米油盐，是生病时的陪伴，是吵架后的低头，是每一天的点点滴滴。它不是把两个人放在天平上称一称，看谁更重。</p>
+<p>最后，这是一个错位的问题。它把“母亲”和“妻子”放在对立面，但她们本来不该是对立的。母亲生你养你，妻子嫁你陪你，她们是你生命里最重要的两个女人。她们不该是你二选一的对象。</p>
+<p>所以，与其说这是个“难题”，不如说这是个“假问题”。真正问出这个问题的人，要的往往不是一个答案，而是一份安心——她想听的不是你救谁，而是“我在你心里有多重要”。</p>
+<h3 class="label">圣经上有没有答案？</h3>
+<p>圣经里没有“掉水里先救谁”的案例，但有一条原则，能让这个问题变得不成立。</p>
+<p>创世记里说：“因此，人要离开父母，与妻子连合，二人成为一体。”（创世记2:24）这不是说不要父母，是说要重新排序。结婚之后，你的第一关系是配偶，不是父母。这是秩序，不是轻重。</p>
+<p>但圣经也有一条诫命，专门讲父母：“当孝敬父母，使你的日子在耶和华你神所赐你的地上得以长久。”（出埃及记20:12）这是十诫里的第五诫，排在“不可杀人”“不可奸淫”前面。在上帝眼里，孝敬父母，是头等大事。</p>
+<p>这两句话放在一起，就有了张力：一面要“离开”，一面要“孝敬”。不是矛盾，是秩序。你要离开父母，但不是抛弃父母；你要连合妻子，但不是忘记父母。</p>
+<p>以弗所书里也说：“你们作儿女的，要在主里听从父母……你们作父亲的，不要惹儿女的气。”（以弗所书6:1-4）做儿女的要孝顺，做父母的不要惹气。两边都有责任，两边都有边界。</p>
+<p>把这几句话放在一起，就是答案：你不需要选。因为她们在你的生命里，本来就不是二选一的关系。</p>
+<h3 class="label">到底该怎么答这个问题？</h3>
+<p>如果你真被问到这个问题，可以试着这样答：</p>
+<p>第一，告诉她，这是一个假问题。</p>
+<p>“你问这个问题，不是真的想知道我先救谁，是想要一份安心。你想知道，在我心里你有多重要。”</p>
+<p>第二，告诉她，你不选。</p>
+<p>“我不会让你们掉进水里。我会站在岸上，拉紧你们的手。你们是我生命里最重要的两个女人，我不会让你们二选一。”</p>
+<p>第三，告诉她，爱不是选择题。</p>
+<p>“爱不是选谁更重要。爱是每天怎么对你——早上出门的拥抱，晚上回家的问候，生病时的陪伴，吵架后的低头。这些事，比救谁重要得多。”</p>
+<p>这样答，不一定能让对方满意，但至少让她知道：你不是在敷衍，你是真的想过这个问题。</p>
+<h3 class="label">如果真掉进水里呢？</h3>
+<p>这个问题是个比喻。但如果真掉进水里，那只有一个答案：谁近先救谁，谁弱先救谁，谁不会游泳先救谁。这是常识，不是选择。救起一个，马上救另一个。救得起是本事，救不起是命。爱不是二选一，是尽全力。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 这不是一个“难题”，这是一个“假问题”。它把感情做成选择题，但感情不是选择题。</li><li><span class="num">2.</span> 问这个问题的人，要的不是答案，是安心。她想听的不是你救谁，是“你在我心里重要”。</li><li><span class="num">3.</span> 圣经的原则是：要连合，也要孝敬，不是二选一。</li><li><span class="num">4.</span> 如果真要答，可以答：我不选。我不会让你们掉进水里。我会站在岸上，拉紧你们的手。</li><li><span class="num">5.</span> 如果真掉进水里，谁近救谁，谁弱救谁，谁不会游泳先救谁。爱不是二选一，是尽全力。</li><li><span class="num">6.</span> 爱不是选谁重要，是每天怎么对她。一个拥抱，一句问候，一次陪伴，比“先救谁”重要一万倍。</li></ol>
+<h3 class="label">金句</h3>
+<p>我不会让你们掉进水里，我会站在岸上拉紧你们的手。</p>
+</section>
+
+<section class="section section-chapter" id="ch-11" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第十一章　我也不定你的罪</h1>
+  <p class="chapter-subtitle">当婚姻出现裂痕</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>我也不定你的罪。去吧，从此不要再犯罪了。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“我也不定你的罪。去吧，从此不要再犯罪了。”（约翰福音8:11）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>发现伴侣出轨，天塌了，第一步该怎么办？</li><li>想原谅，但心里过不去，怎么办？</li><li>婚姻还能回到从前吗？回不去了怎么办？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>有一天，法利赛人带了一个女人到耶稣面前。这女人是“正在行淫时被拿的”——当场抓住，证据确凿。按照律法，她该被石头打死。他们问耶稣：“你说该把她怎么样？”这是个陷阱。如果耶稣说“打死”，他就违反罗马法律；如果耶稣说“放了吧”，他就违反摩西律法。</p>
+<p>耶稣没说话，弯下腰，在地上画字。他们不停地问，耶稣直起腰来，说了一句话：“你们中间谁是没有罪的，谁就可以先拿石头打她。”说完，又弯腰画字。那些人从老到少，一个一个都出去了。只剩下耶稣和那个女人。</p>
+<p>耶稣问：“妇人，那些人在哪里呢？没有人定你的罪吗？”她说：“主啊，没有。”耶稣说：“我也不定你的罪。去吧，从此不要再犯罪了。”</p>
+<p>这个故事里有几个关键：第一，耶稣没说她没罪。他说“不要再犯罪”，说明她确实犯了罪。第二，耶稣没让任何人用石头打她。因为谁都没资格。第三，耶稣给了她恩典，但恩典之后是命令：不要再犯罪。这就是面对婚外情的三个原则：承认有罪，放下石头，走向新生。</p>
+<h3 class="label">面对这事，你需要知道的几件事</h3>
+<p>第一，这事不是“不小心”，是一步步走过去的。 不是一下子发生的。是从一条消息开始，从一个眼神开始，从一次“只是朋友”开始。所以，防着点，比出了事再补重要一万倍。</p>
+<p>第二，被伤的人，有权愤怒，有权痛苦，有权需要时间。 别逼自己马上原谅。饶恕是过程，不是开关。疼就是疼，承认疼，是疗伤的第一步。</p>
+<p>第三，犯错的人，不要只道歉，要改。 道歉不值钱。切断联系、远离那人、透明、接受监督——这些才是诚意。愿意失去自由来换取信任，才叫悔改。</p>
+<p>第四，婚姻可以挽回，但不一定能挽回。 有些婚姻，经历了这事反而更深。因为双方都学会了珍惜，学会了重建。但也有些婚姻，回不去了。如果真是这样，也别用“上帝恨离婚”来绑架自己。</p>
+<h3 class="label">如果你是受伤的那一方</h3>
+<p>第一步：先活下来。 刚知道的时候，好像天塌了。这时候别做任何重大决定。先让自己活下来。可以哭，可以找朋友，可以看心理医生。活下来，才有以后。</p>
+<p>第二步：知道真相，但不用知道所有细节。 你需要知道：和谁？多久了？现在断了吗？但你不必知道那些细节，那些只会伤害你。</p>
+<p>第三步：设立边界，别急着恢复原状。 ta要回来，可以。但有条件：彻底切断联系；透明（手机随便看）；承担责任；给你时间。不设边界的原谅，是纵容。设了边界的原谅，是恩典。</p>
+<p>第四步：给自己时间难受。 你会经历很多情绪：愤怒、羞辱、怀疑、麻木。都是正常的。允许自己难受。允许自己今天想原谅，明天想离婚。难受不是软弱，是伤口在愈合。</p>
+<p>第五步：决定，然后往前走。 总有一天，你要做一个决定：是选择饶恕，一起重建？还是选择放手，各自生活？没有标准答案。只有你的答案。选了，就别回头。</p>
+<h3 class="label">如果你就是犯错的那一方</h3>
+<p>第一步：别狡辩。 不要说“是她先对我不好”，不要说“我犯了全天下男人都会犯的错”。狡辩只会让伤口更深。认错，是唯一的出路。</p>
+<p>第二步：彻底断。 马上、立刻、彻底地和那个人切断联系。不是“慢慢淡出”，不是“做回朋友”。是彻底消失。你还想挽回婚姻，就证明给ta看：那个人，在你心里已经死了。</p>
+<p>第三步：接受一切后果。 ta可能骂你，可能不理你，可能查你。你都得受着。ta可能最后说“我还是过不去，离了吧”。你都得认。你做的错事，你付代价。</p>
+<p>第四步：改自己，不只是道歉。 去心理咨询，去查自己为什么会走到这一步。是空虚？是自恋？找到根，挖掉它。光道歉不改，下次还会犯。</p>
+<p>第五步：交给时间，别急。 重建信任，需要很久。可能一年，可能三年，可能十年。别问“你怎么还不相信我”。你破坏了信任，就得等信任慢慢长回来。等的时候，好好爱ta。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 这事不是“不小心”，是一步步走过去的。</li><li><span class="num">2.</span> 受伤的人，有权愤怒，有权需要时间。</li><li><span class="num">3.</span> 犯错的人，不要只道歉，要改。</li><li><span class="num">4.</span> 设立边界，别急着恢复原状。</li><li><span class="num">5.</span> 给自己时间难受。</li><li><span class="num">6.</span> 做决定，然后往前走。</li><li><span class="num">7.</span> 记住耶稣的话：我也不定你的罪。去吧，从此不要再犯罪了。</li></ol>
+<h3 class="label">金句</h3>
+<p>不设边界的原谅是纵容。</p>
+</section>
+
+<section class="section section-chapter" id="ch-12" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第十二章　母亲，看你的儿子</h1>
+  <p class="chapter-subtitle">如何面对父母的衰老和离世？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>母亲老了，也不可藐视她。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“你要听从生你的父亲；你母亲老了，也不可藐视她。”（箴言23:22）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>父母越来越爱唠叨，一件事说八遍，我该不该烦？</li><li>父母病了，工作和照顾两头烧，怎么撑得住？</li><li>如果那一天真的来了，我该怎么面对？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>耶稣被钉在十字架上，最痛苦的时候，他还做了一件事。他看见母亲马利亚站在十字架下，对门徒约翰说：“看，你的母亲！”从此，约翰把马利亚接到自己家里照顾。耶稣在临死前，最牵挂的事之一，是母亲的归宿。这是孝顺的极致：在自己最痛苦的时候，还在安排父母的将来。</p>
+<p>另一个例子是路得。路得的丈夫死了，婆婆拿俄米让她回娘家改嫁。路得说：“你往哪里去，我也往那里去……你的国就是我的国，你的神就是我的神。你在哪里死，我也在那里死。”她本可以不跟着一个老太婆受苦，但她选择不离不弃。后来她成了大卫的曾祖母。孝顺父母的人，老天爷不亏待。</p>
+<h3 class="label">为啥面对父母老去这么难？</h3>
+<p>因为要面对几件事：角色反转——他们曾经是你的依靠，现在你要成为他们的依靠。无能为力——你看着他们一天天老去，什么都做不了。愧疚——没时间陪他们，心里愧疚；陪他们，顾不上小家，也愧疚。失去的恐惧——你知道有一天他们会走，但你不知道哪一天。</p>
+<h3 class="label">到底该怎么面对这事？</h3>
+<p>第一，珍惜现在，别等以后。 “以后”可能没有以后。想说的话，现在说。想做的事，现在做。想陪的时间，现在陪。打个电话，五分钟就行。回去看看，半天也行。别等以后。</p>
+<p>第二，接受他们的“老”。 他们会忘事，会唠叨，会固执。别纠正，别不耐烦。接受。这就是老了。</p>
+<p>第三，设立界限，也照顾好自己。 孝顺不是把自己熬死。你可以请假陪床，但不能辞职把自己搭进去。该请护工就请，该休息就休息。你垮了，谁照顾他们？</p>
+<p>第四，和他们好好告别。 如果知道时日不多，尽量好好告别。说“我爱你”，说“谢谢你”，说“对不起”。问他们想听的，听他们想说的。不是每个人都能好好告别，但如果能，就做。</p>
+<p>第五，预备自己面对失去。 他们总会走的。你不可能完全准备好，但可以慢慢接受。想他们留给你的好，相信他们去的地方更好。</p>
+<p>第六，把盼头传给他们。 如果你信，就把这份盼头传给他们。告诉他们：死不是结束，还有以后。告诉他们：还会再见。这是你能给他们的，最好的礼物。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 珍惜现在，别等以后。</li><li><span class="num">2.</span> 接受他们的“老”。</li><li><span class="num">3.</span> 设立界限，照顾好自己。</li><li><span class="num">4.</span> 和他们好好告别。</li><li><span class="num">5.</span> 预备自己面对失去。</li><li><span class="num">6.</span> 把盼头传给他们。</li></ol>
+<h3 class="label">金句</h3>
+<p>珍惜现在，别等以后。</p>
+</section>
+
+<section class="section section-chapter" id="ch-13" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第十三章　不要惹儿女的气</h1>
+  <p class="chapter-subtitle">如何处理与子女的关系？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>不要惹儿女的气，恐怕他们失了志气。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“你们作父亲的，不要惹儿女的气，恐怕他们失了志气。”（歌罗西书3:21）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>孩子长大了，越来越不爱跟我说话，是我做错什么了吗？</li><li>为什么我提的建议，他总是不听？明明是为他好。</li><li>怎么才能让孩子愿意回家，而不是躲着我们？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>圣经里有一个父亲，叫以撒。他的两个儿子，以扫和雅各从小就不对付。雅各骗了长子的名分，以扫要杀他。以撒怎么做的？他让雅各逃到远方舅舅家。不是不要他，是让他走。二十年后，雅各回来，以撒还在等他。父子重逢，没有责备，没有追问，就是在一起吃饭。这就是成年后的父子关系：不再管，但还在爱。</p>
+<p>另一个例子是拿俄米。她的两个儿子都死了，两个儿媳还年轻。她让儿媳们回娘家改嫁。大儿媳回去了，小儿媳路得坚决跟着她。拿俄米没拦路得，也没要求她。她给了路得选择的权利。这就是和成年子女相处的智慧：给建议，但不替他们做决定。</p>
+<h3 class="label">为什么和成年子女相处这么难？</h3>
+<p>父母心里：我养你这么大，你怎么不听我的？我都是为你好，你怎么不领情？孩子心里：你能不能别管我了？我有我的人生，不是你的续集。两边的账对不上，就容易出问题。</p>
+<h3 class="label">到底该怎么和孩子处？</h3>
+<p>第一，重新定义你的角色。 以前你是“管事的”，现在你是“顾问”。以前你是“拍板的”，现在你是“祝福的”。角色变了，方式就得变。</p>
+<p>第二，闭嘴，多听。 孩子跟你说事的时候，先别急着给建议。“你应该”“要我说啊”这些开头，最好都忍住。先听。听他说完。等他问你了，你再开口。</p>
+<p>第三，给建议，但别强求。 你可以说你的想法，但说完就完。听不听，是他自己的事。别说“你怎么不听”，说完了就放手。</p>
+<p>第四，尊重他们的选择，哪怕你不认同。 他们选的工作，你不喜欢；他们找的对象，你看不上。但那是他们的人生。你可以表达担心，但别替他们活。尊重，不是认同，是给他选择的权利。</p>
+<p>第五，别拿他们和别人比。 “人家谁谁谁的孩子……”这些话，杀伤力极大。孩子听了，要么内疚，要么愤怒，要么远离你。比，只会把他推远。</p>
+<p>第六，建立新的连接方式。 小时候，你们连接的方式是你管他。现在管不了了，就得找新的方式。一起看部电影，一起吃顿饭，一起聊个天。找到你们俩都舒服的方式，经常做。</p>
+<p>第七，祝福，是最好的礼物。 “我相信你能处理好。”“不管你做什么决定，我都爱你。”这些话，比什么都值钱。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 重新定义你的角色。</li><li><span class="num">2.</span> 闭嘴，多听。</li><li><span class="num">3.</span> 给建议，但别强求。</li><li><span class="num">4.</span> 尊重他们的选择。</li><li><span class="num">5.</span> 别拿他们和别人比。</li><li><span class="num">6.</span> 建立新的连接方式。</li><li><span class="num">7.</span> 祝福，是最好的礼物。</li></ol>
+<h3 class="label">金句</h3>
+<p>给建议，但不替儿女做决定。</p>
+</section>
+
+<section class="section section-chapter" id="ch-14" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第十四章　教养孩童走当行的道</h1>
+  <p class="chapter-subtitle">为人父母的智慧</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>教养孩童，使他走当行的道，就是到老他也不偏离。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“教养孩童，使他走当行的道，就是到老他也不偏离。”（箴言22:6）“你们作父亲的，不要惹儿女的气，恐怕他们失了志气。”（歌罗西书3:21）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>孩子写作业拖拖拉拉，我该催还是该忍？</li><li>不吼不叫，孩子根本不听，怎么办？</li><li>我想让孩子快乐成长，又怕他输在起跑线上，怎么平衡？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>大卫的儿子所罗门在箴言里写了很多关于教养的话。</p>
+<p>“教养孩童，使他走当行的道，就是到老他也不偏离。”这句话的关键，不是“管住他”，是“使他走”。意思是：你不是替他走，是引导他走。让他自己走，但你在旁边指着方向。</p>
+<p>以弗所书里，保罗给了父母两个提醒：“不要惹儿女的气。”什么叫“惹气”？管得太严，让他喘不过气；批评太多，让他觉得自己什么都不行；不尊重他，让他觉得没尊严。惹气的后果，是孩子“失了志气”——泄气了，不想努力了，破罐破摔了。</p>
+<p>所以，教养的智慧是：既要管教，又不要惹气。既要引导，又要尊重。既要坚持原则，又要给他空间。平衡。</p>
+<h3 class="label">到底该怎么管孩子？</h3>
+<p>第一，身教重于言教。 孩子不看你怎么说，看你怎么做。你告诉他要诚实，但你在电话里跟领导撒谎。你告诉他要尊重人，但你背后说别人坏话。他学的，是你做的。想让孩子成为什么样的人，你先成为那样的人。</p>
+<p>第二，关系先于管教。 没有关系，就没有管教。如果孩子根本不信任你，你说的任何话他都会反弹。你越管，他越反。所以，先经营关系。每天留时间陪他，不是陪写作业，是陪玩。听他说废话，不打断，不评判。关系好了，你说的话，他才听。</p>
+<p>第三，按年龄调整方式。 三岁和十三岁，不一样。三岁的孩子，需要规矩，需要界限。十三岁的孩子，需要空间，需要尊重，需要你让他自己做决定。智慧是：按他的年龄，调整你的方式。</p>
+<p>第四，别拿他和别人比。 “你看看人家谁谁谁”——这句话，杀伤力极大。因为这句话的潜台词是：你不够好，你不如别人。孩子听了，要么不服气，要么泄气。箴言说：“不要惹儿女的气。”这就是典型的“惹气”。让他和自己比。今天比昨天进步，就够了。</p>
+<p>第五，放手让他飞。 教养的最终目的，是让他不需要你。不是让你成为他一辈子的拐杖，是让他有一天能自己走路。所以，从小就要让他做决定，承担后果，学会负责。小的时候，决定穿什么衣服（哪怕搭配得很难看）。大一点，决定怎么花零花钱（哪怕买些没用的东西）。最后，决定自己的人生（哪怕和你想的不一样）。放手，不是不管，是慢慢放。</p>
+<h3 class="label">关于管教的特别说明</h3>
+<p>箴言里有一句话常被误解：“不忍用杖打儿子的，是恨恶他。”有人用这句话支持“打孩子”。但圣经的“杖”，是指权威和管教，不是让你发泄情绪。新约里从来没有鼓励父母打孩子。如果你要管教孩子，记住几点：不带着怒气管教；让他知道为什么被管；管完之后，要拥抱——让他知道，你还是爱他。更好的方式是：不用打，也能管住。用规矩、用后果、用谈话、用失去特权，这些都可以。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 身教重于言教。</li><li><span class="num">2.</span> 关系先于管教。</li><li><span class="num">3.</span> 按年龄调整方式。</li><li><span class="num">4.</span> 别拿他和别人比。</li><li><span class="num">5.</span> 放手让他飞。</li><li><span class="num">6.</span> 管教有原则——不带着怒气。</li></ol>
+<h3 class="label">金句</h3>
+<p>身教重于言教。</p>
+</section>
+
+<section class="section section-chapter" id="ch-15" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第十五章　约瑟的哥哥们</h1>
+  <p class="chapter-subtitle">如何处理兄弟姐妹关系？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>血缘是天生的，但亲情是修来的。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“看哪，弟兄和睦同居，是何等地善，何等地美！”（诗篇133:1）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么小时候那么亲，长大了反而生疏了？</li><li>父母偏心，我该怎么面对？</li><li>兄弟姐妹之间借钱、借车、帮忙，该怎么处理才不伤感情？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>圣经里第一个关于兄弟姐妹的故事，就不太美好。该隐和亚伯，哥哥杀了弟弟。为什么？因为嫉妒。然后是雅各和以扫，双胞胎兄弟还没出生就在妈妈肚子里打架。雅各用一碗红豆汤骗了长子的名分，以扫恨他，要杀他。雅各逃到远方，二十年不敢回家。再然后是约瑟和他的哥哥们，约瑟是父亲最宠爱的儿子，哥哥们恨他，把他卖到埃及当奴隶。</p>
+<p>你看，圣经没有美化兄弟姐妹关系。嫉妒、争宠、伤害，这些都在圣经里写得清清楚楚。说明兄弟姐妹关系从来就不容易。</p>
+<p>但是，圣经也给了我们希望。雅各和以扫，二十年后重逢。雅各以为哥哥还要杀他，结果以扫跑过来抱着他，两人都哭了。约瑟和哥哥们，二十二年后重逢。约瑟已经是埃及宰相，他完全可以报复，但他没有。最后他说：“从前你们的意思是要害我，但老天爷的意思原是好的。”</p>
+<h3 class="label">为什么兄弟姐妹关系这么难？</h3>
+<p>第一，天生的竞争。 谁更受宠，谁更优秀，谁得到更多。父母即使再努力公平，孩子心里也有一杆秤。</p>
+<p>第二，熟悉带来的伤。 外人伤你，你可以远离。兄弟姐妹伤你，躲不开。而且他们知道你所有的软肋。</p>
+<p>第三，成年后的利益纠葛。 养老、遗产、借钱、帮忙，每一件都是考验。</p>
+<p>第四，期待太高。 因为是血亲，我们默认他们应该对我们好。期待越高，失望越重。</p>
+<h3 class="label">到底该怎么和兄弟姐妹处？</h3>
+<p>第一，放下“应该”。 你心里有个“应该”：他们是我的血亲，他们应该对我好。但这个“应该”往往会让你失望。他们也是普通人，有自己的压力、自己的难处。试着把“应该”放下。他们帮你，是恩情；不帮，是本分。</p>
+<p>第二，保持适当距离，不越界。 兄弟姐妹之间最舒服的距离，是“亲密但有间”。可以互相帮助，但不越界；可以互相支持，但不依赖。借钱可以，写个借条；帮忙可以，但别当理所应当。好的界限，才能有好的关系。</p>
+<p>第三，不掺和父母的偏心。 如果父母偏心，那是父母的问题。你不要去指责那个“被偏心的”，也不要去讨好那个“偏心”的。你只做一件事：做你自己该做的，尽你该尽的孝，然后交给老天爷。</p>
+<p>第四，不翻旧账，学着饶恕。 有些伤害，需要时间愈合。可以来往，但先保持一点距离。等伤口不那么疼了，再慢慢靠近。约瑟饶恕了哥哥们，但不是马上。他先试试他们，看他们有没有改。等到确认哥哥们确实悔改了，他才相认。饶恕需要时间，不需要着急。</p>
+<p>第五，你是你，他们是他们。 成年后，兄弟姐妹各自走上不同的路。你不用为他们的人生负责，也不用拿他们的人生和自己比。你是你，他们是他们。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 放下“应该”。</li><li><span class="num">2.</span> 保持适当距离。</li><li><span class="num">3.</span> 不掺和父母的偏心。</li><li><span class="num">4.</span> 不翻旧账，学着饶恕。</li><li><span class="num">5.</span> 你是你，他们是他们。</li></ol>
+<h3 class="label">金句</h3>
+<p>弟兄和睦，何等美善。</p>
+</section>
+
+<section class="section section-chapter" id="ch-16" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第十六章　不同信也要同行</h1>
+  <p class="chapter-subtitle">如何与信仰不同的家人相处？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>爱，比“对”更重要。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“你们作妻子的，要顺服自己的丈夫，这样，若有不信从道理的丈夫，他们虽然不听道，也可以因妻子的品行被感化过来。”（彼得前书3:1）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>家人不信主，我怎么和他们相处？</li><li>信仰不同，过节怎么办？</li><li>父母逼我去做我不信的事，怎么办？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>哥林多前书里，保罗讲了一个很实际的问题：如果夫妻中一人信主，一人不信，怎么办？要不要离婚？保罗的回答很明确：如果对方愿意和你同住，就不要离婚。因为“不信的丈夫就因着妻子成了圣洁”。这话的意思不是说不信的人自动得救，是说：因为你的存在，你的家就不一样了。你就像家里的一个小小的灯塔，照亮周围。</p>
+<p>彼得前书也说：“你们作妻子的，要顺服自己的丈夫，这样，若有不信从道理的丈夫，他们虽然不听道，也可以因妻子的品行被感化过来。”注意这句话的重点：不是靠说的，是靠活的。他们虽然不听道，但可以因你的品行被感化过来。你活出来的爱，比你说的道理更有说服力。</p>
+<h3 class="label">到底该怎么和信仰不同的家人处？</h3>
+<p>第一，分清“爱”和“信”。 你问：“家人不信主，我怎么和他们相处？”——爱他们，不是改造他们。爱是无条件的，信是有条件的。你可以无条件地爱他们，但你不能强迫他们和你信一样的东西。你负责爱，老天爷负责信。</p>
+<p>第二，用活出来的爱说话，别用唠叨的嘴。 你问：“配偶不信，该怎么对待？”——用行动说话。你活出来的平安、喜乐、忍耐、温柔，比你说一百遍“你信吧”都有用。唠叨会把对方推远，活出来的爱会吸引人。</p>
+<p>第三，尊重他们的选择，哪怕你不认同。 你问：“父母逼我去做我不信的事，怎么办？”——温柔地坚持，但尊重他们。你可以说：“爸/妈，我知道你们是为我好，但这件事我做不了。我还是一样爱你们。”不用吵架，不用争对错。温柔地坚持，同时继续爱他们。</p>
+<p>第四，过节时，找到双方的舒适区。 你问：“信仰不同，过节怎么办？”——可以灵活，但守住底线。有些节日活动，你可以参加，表示对家人的尊重和爱。有些活动如果涉及你的信仰底线，可以温柔地拒绝，同时主动提出替代方案。比如：“我不能去庙里，但我可以在家帮你们准备年夜饭。”这样，你守住了底线，也表达了爱。</p>
+<p>第五，交给老天爷，不自己焦虑。 你问：“孩子长大了不信了，我该继续唠叨还是放手？”——放手，交给老天爷。你该说的都说了，该做的都做了，剩下的不归你管。你焦虑也没用，唠叨也没用，反而会把孩子推远。把孩子交给老天爷，相信祂比你有办法。你继续爱他们，继续为他们祷告，然后放手。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 分清“爱”和“信”——你负责爱，老天爷负责信。</li><li><span class="num">2.</span> 用活出来的爱说话——活的比说的有用。</li><li><span class="num">3.</span> 尊重他们的选择——你可以坚持，但别强求。</li><li><span class="num">4.</span> 过节时灵活处理——守住底线，表达爱。</li><li><span class="num">5.</span> 交给老天爷——你该做的做了，剩下的不归你管。</li></ol>
+<h3 class="label">金句</h3>
+<p>用活出来的爱说话。</p>
+</section>
+
+<section class="section section-chapter" id="ch-17" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第十七章　金苹果在银网子里</h1>
+  <p class="chapter-subtitle">一句话说得合宜</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>一句话说得合宜，就如金苹果在银网子里。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“一句话说得合宜，就如金苹果在银网子里。”（箴言25:11）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么我明明是好意，说出来却得罪了人？</li><li>为什么我总是憋不住要说话？</li><li>吵架的时候，怎么才能不口不择言？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>箴言里有一句特别美的话：“一句话说得合宜，就如金苹果在银网子里。”你想象一下这个画面：一个银丝编的小篮子，里面放着几颗金黄色的苹果，美得像件艺术品。这就是“说得合宜的一句话”的效果——美，而且让人舒服。</p>
+<p>圣经里还有一个人的嘴，是出了名的不靠谱。又是他，彼得。耶稣预言自己将要受难，彼得一听，拉住耶稣说：“主啊，万万不可！”听起来像表忠心，但耶稣转头对他说：“撒但，退我后面去吧！”彼得只是想关心老师，结果被骂。还有一次，耶稣变了形象，摩西和以利亚显现，彼得看得目瞪口呆，说：“主啊，我们在这里真好！我搭三座棚……”上帝实在听不下去了，直接一朵云把场面接管了。</p>
+<p>但是，彼得有一个特别好的品质：他愿意学。后来他写了书信，里面有一句话：“若有人说话，要按着神的圣言。”那个当年胡说八道的人，最后学会了怎么好好说话。说话这件事，是可以学的。</p>
+<h3 class="label">开口之前，先问自己四个问题</h3>
+<p>第一个问题：这话是真的吗？ 不是你的猜测，不是道听途说。如果是假的，闭嘴。</p>
+<p>第二个问题：这话有必要说吗？ 很多时候，我们说的话是真的，但没必要说。朋友告诉你一个秘密，你有必要告诉第三个人吗？没有。那就不说。真话不一定都要说出来。</p>
+<p>第三个问题：这话是善意的吗？ 是为了帮助对方，还是为了显得自己厉害？是为了解决问题，还是为了发泄情绪？如果动机不对，就像穿着没有底的鞋子走路。</p>
+<p>第四个问题：这话现在说合适吗？ 有些话，是真的，是必要的，也是善意的，但时间不对。对方正在气头上，你说什么都听不进去。那就等一等。“话合其时，何等美好。”</p>
+<h3 class="label">四种需要练习的场景</h3>
+<p>想八卦的时候： 别人跟你说“哎，你知道吗？”你接一句“真的吗？”恭喜你，你加入了八卦生产线。下次试试说：“这事儿我没听当事人说过，不方便评论。”</p>
+<p>想反驳的时候： 别人说了一个观点，你觉得不对。你第一反应是“不对，你错了”。下次试试说：“你这个角度挺有意思的。我想到的是……”先说“有意思”，再说“我想到的”。</p>
+<p>想安慰的时候： 朋友失恋了，说“我难受死了”。你第一反应是“别难受了”。下次试试说：“我知道你现在很难受。我在这儿，你想说就说，不想说就不说。”有时候，最好的安慰不是说话，是陪着。</p>
+<p>想吵架的时候： 对方说了一句伤人的话，你马上就要反击。试试做一件事：深呼吸三次，然后沉默五秒钟。五秒钟之后，你再开口。你会发现，你选词会谨慎很多。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 四个问题：真的吗？必要的吗？善意的吗？现在合适吗？</li><li><span class="num">2.</span> 时机比内容更重要。</li><li><span class="num">3.</span> 学会闭嘴，是学会说话的第一步。</li></ol>
+<h3 class="label">金句</h3>
+<p>如果动机不对，就像穿着没有底的鞋子走路。</p>
+</section>
+
+<section class="section section-chapter" id="ch-18" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第十八章　用爱心说诚实话</h1>
+  <p class="chapter-subtitle">怎么说真话不伤人？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>缺了爱，实话是刀子；缺了实话，爱是虚假。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“惟用爱心说诚实话。”（以弗所书4:15）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>朋友问我觉得ta新衣服好不好看，真不好看，我该怎么说？</li><li>伴侣问我“我最近是不是胖了”，这个问题怎么回答都是坑！</li><li>说实话和说好话，到底怎么平衡？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>圣经里有一个敢说真话的人——拿单。大卫王干了一件特别混蛋的事：看上了一个有夫之妇，把人家的丈夫派到前线送死，然后娶了她。所有人都知道，但没人敢说。</p>
+<p>拿单来了。他没指着大卫的鼻子骂，而是讲了一个故事：“一个富人舍不得自己的牛羊，却杀了穷人的唯一羊羔。”大卫听后大怒，拿单说：“你就是那人！”</p>
+<p>厉害吗？拿单说了最诚实的实话，但他用故事做铺垫，让大卫自己先判断。他没当众让大卫难堪，他冒着生命危险，但他爱大卫，所以他必须说。结果大卫认罪了。</p>
+<h3 class="label">为什么说诚实话这么难？</h3>
+<p>因为怕得罪人，怕冲突，怕自己说错，怕被报复。但圣经说：“爱里没有惧怕。”不是不害怕，是爱比怕大。</p>
+<h3 class="label">到底该怎么说实话？</h3>
+<p>第一，先问动机——我为什么想说这话？</p>
+<p>是为了帮他，还是为了显得我厉害？是出于爱，还是出于看不惯？如果动机不对，最好别说。因为动机不对的话，就像穿着没底的鞋子走路。</p>
+<p>第二，先问关系——ta能听进去吗？</p>
+<p>不是所有人都能听真话。你们关系够深吗？ta信任你吗？如果关系不够深，ta听不进去，那说了等于白说，还可能把关系搞僵。</p>
+<p>第三，选对时间地点——私下说，不当众说。</p>
+<p>拿单没当众说，是私下说的。当众说诚实话，叫羞辱。私下说诚实话，叫挽回。别说“当着大家的面，我说一句啊”，说“咱俩单独聊聊”。</p>
+<p>第四，用“我”开头，不用“你”开头。</p>
+<p>“你”开头的实话：“你最近太自我了。”对方一听就防御。“我”开头的实话：“我最近感觉被你忽略了，有点难受。”同样是实话，后者更容易听进去。</p>
+<p>第五，换位思考——如果我是ta，我想听这话吗？</p>
+<p>问完这些问题再说话，益人也益己。</p>
+<h3 class="label">什么时候不能说？</h3>
+<ul class="bullets"><li>对方根本听不进去——说了也白说。</li><li>你自己还没处理好情绪——气头上的话是刀子。</li><li>你不是那个该说的人——有些事不是你该说的。</li><li>说了也改变不了什么——比如长相、身高。</li></ul>
+<p>不合宜的诚实话，不如不说。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 先问动机。</li><li><span class="num">2.</span> 先问关系。</li><li><span class="num">3.</span> 私下说，不当众说。</li><li><span class="num">4.</span> 用“我”开头，不用“你”开头。</li><li><span class="num">5.</span> 有些时候，不说比说好。</li></ol>
+<h3 class="label">金句</h3>
+<p>惟用爱心说诚实话。</p>
+</section>
+
+<section class="section section-chapter" id="ch-19" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第十九章　回答柔和</h1>
+  <p class="chapter-subtitle">当意见相反时</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>分歧不是问题，把对方当敌人才是问题。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“回答柔和，使怒消退；言语暴戾，触动怒气。”（箴言15:1）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么一遇到意见不合，说着说着就吵起来了？</li><li>怎么表达不同意见，又不让对方觉得我在针对他？</li><li>如果对方很固执，根本听不进我的话，怎么办？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>圣经里有一个法利赛人，叫尼哥底母。法利赛人是精英阶层，瞧不起普通人。有一天晚上，他来找耶稣。为什么晚上来？因为怕被人看见。他来干什么？不是来辩论，是想了解。耶稣没有说“你懂什么”，而是直接跟他谈了一整夜。后来，耶稣被钉十字架的时候，是尼哥底母带着没药沉香来收尸的。</p>
+<p>另一个例子是亚波罗，他很有学问，但对耶稣的认识不全。一对夫妻——百基拉和亚居拉——听了他的讲道，没有当众驳斥他，而是把他接来，将神的道给他讲解更详细。后来亚波罗成了非常重要的传道人。</p>
+<p>这两个故事告诉我们：意见不同的人，不一定是敌人。私下沟通，比当众驳斥有效。你帮助的人，可能会走得比你更远。</p>
+<h3 class="label">到底该怎么处理分歧？</h3>
+<p>第一，先问自己——“我要的是什么？”</p>
+<p>我要的是证明自己是对的，还是保住这段关系？我要的是让对方认输，还是让对方理解我？如果你的答案是“保住关系”，那你的说话方式就要调整。因为“证明自己是对的”和“保住关系”，有时候是冲突的。你得选一个。</p>
+<p>第二，用“我”开头，不用“你”开头。</p>
+<p>“你”开头的句子，听起来都像指责：“你错了。”对方一听就防御。“我”开头的句子，听起来像分享：“我听到的是另一个版本。”对方更容易听进去。试试看：别说“你错了”，说“我好像看到过辟谣，要不要一起查一下？”</p>
+<p>第三，先找共同点，再说不同点。</p>
+<p>人的心理很有意思：如果你先说“我同意你”，对方就更愿意听你后面说的“但是”。因为你说“我同意你”的时候，对方觉得你是自己人。下次遇到分歧，先找共同点：“咱们目标是一样的，都是为孩子好。具体方法上我有点不同想法……”</p>
+<p>第四，允许对方保留意见。</p>
+<p>有时候，就是说不服。这时候，你要学会说一句话：“看来咱们看法不一样。没关系，不影响咱们的关系。”这句话告诉对方：我和你意见不同，但我仍然接纳你。</p>
+<p>第五，私下说，不当众让人难堪。</p>
+<p>当众让人难堪，是分歧处理的大忌。因为当众的时候，对方不仅要捍卫自己的观点，还要捍卫自己的面子。重要的话，私下说。家庭群里别当众怼二舅，私聊他，发个辟谣链接，加一句：“二舅，这个好像是假的。”给别人留面子，别人才给你留余地。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 先问自己“我要的是什么”。</li><li><span class="num">2.</span> 用“我”开头，不用“你”开头。</li><li><span class="num">3.</span> 先找共同点，再说不同点。</li><li><span class="num">4.</span> 允许对方保留意见。</li><li><span class="num">5.</span> 私下说，不当众让人难堪。</li></ol>
+<h3 class="label">金句</h3>
+<p>回答柔和，使怒消退；言语暴戾，触动怒气。</p>
+</section>
+
+<section class="section section-chapter" id="ch-20" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第二十章　爱的清单</h1>
+  <p class="chapter-subtitle">处理分歧的心</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>处理分歧之前，先处理自己的心。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“爱是恒久忍耐，又有恩慈；爱是不嫉妒；爱是不自夸，不张狂，不做害羞的事，不求自己的益处，不轻易发怒，不计算人的恶，不喜欢不义，只喜欢真理；凡事包容，凡事相信，凡事盼望，凡事忍耐。”（哥林多前书13:4-7）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么我知道该怎么说话，但一到关键时刻就控制不住自己？</li><li>心里有爱和没爱，说话差别真的那么大吗？</li><li>怎么才能让自己在面对分歧的时候，心里不那么烦躁？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>哥林多前书第十三章，是圣经里最著名的“爱的诗篇”。但你知道吗，这段经文是写给一个充满了分歧的教会的。哥林多教会分门结党，互相嫉妒。保罗写信骂了他们半天，然后说：“我现今把最妙的道指示你们。”然后写了这段“爱的诗篇”。</p>
+<p>咱们一条一条来看：</p>
+<p>“爱是恒久忍耐”——分歧的时候，你最缺的就是忍耐。忍一下，不是认输。忍一下，是给对方空间，也是给自己空间。很多话，忍三分钟，就不想说了。恒久忍耐的意思就是：我一直忍你，才是爱。</p>
+<p>“爱是又有恩慈”——恩慈是对你不友好的人，你还对他好。分歧的时候，你最容易做的就是：你对我不好，我也对你不好。但爱说：你对我不好，我偏要对你好。</p>
+<p>“爱是不嫉妒”——他为什么那么坚持？是不是想压我一头？但爱说：不嫉妒。他好，我为他高兴。</p>
+<p>“爱是不自夸，不张狂”——分歧的时候，最容易自夸：“我早就知道”。但爱说：不显摆。赢了道理，别赢了气势。</p>
+<p>“爱是不求自己的益处”——分歧的时候，我们总想让自己赢。但爱问：对方的益处呢？</p>
+<p>“爱是不轻易发怒”——给怒气一个刹车。</p>
+<p>“爱是不计算人的恶”——什么叫“计算人的恶”？就是记账。他三年前说过什么话，你记着。爱说：不记账。不是失忆，是选择不翻旧账。</p>
+<p>“凡事包容，凡事相信，凡事盼望，凡事忍耐”——这四个“凡事”，是爱的最高境界。</p>
+<h3 class="label">三个根基</h3>
+<p>根基一：谦卑——看别人比自己强。</p>
+<p>看别人比自己强？我明明是对的，他是错的，我怎么看他比我强？谦卑是承认：我可能也有盲区，我可能也带着偏见。对方和我意见不同，可能是他看到了我没看到的角度。</p>
+<p>根基二：自省——先去掉自己眼中的梁木。</p>
+<p>每次你想指出对方的错，先问自己：这件事上，我自己有没有问题？我是不是也犯过类似的错？我是不是带着偏见在看对方？先去掉自己眼中的梁木，再看清楚怎么帮对方。</p>
+<p>根基三：快听、慢说、慢动怒。</p>
+<p>“快快地听，慢慢地说，慢慢地动怒。”快快地听——是迫切地想听，认真地听。慢慢地说——是说之前过脑子。慢慢地动怒——是给怒气一个刹车距离。人的怒气，解决不了问题。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 爱的清单——是分歧时的内心检查清单。</li><li><span class="num">2.</span> 谦卑的眼光——看别人比自己强。</li><li><span class="num">3.</span> 自省的习惯——先去掉自己眼中的梁木。</li><li><span class="num">4.</span> 快听慢说慢动怒。</li></ol>
+<h3 class="label">金句</h3>
+<p>快快地听，慢慢地说，慢慢地动怒。</p>
+</section>
+
+<section class="section section-chapter" id="ch-21" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第二十一章　目的不是赢人，是得人</h1>
+  <p class="chapter-subtitle">如何处理冲突？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>你的目的不是赢他，是得他。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“倘若你的弟兄得罪你，你就去，趁着只有他和你在一处的时候，指出他的错来。他若听你，你便得了你的弟兄。”（马太福音18:15）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>和别人有了矛盾，我是该忍着还是该说开？</li><li>如果对方不肯沟通，冷战怎么办？</li><li>冲突之后，怎么修复关系？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>马太福音18:15-17，给了我们一个经典的处理冲突的流程：</p>
+<p>第一步：私下说。 “趁着只有他和你在一处的时候，指出他的错来。”私下说，不当众说。当众说他会防御，私下说他可能听进去。你的目标是“得他”——把他赢回来，不是赢他。</p>
+<p>第二步：请人出面调解。 如果私下说不通，就请人出面调解。</p>
+<p>第三步：告诉组织。 如果还不听，就告诉组织。把问题交给更大的群体，让他们帮助调解。</p>
+<p>第四步：看他如外邦人。 最后这一步，不是绝交，是调整关系。不再像亲密弟兄那样相处，但该客气客气，该帮助帮助。</p>
+<p>这四步，每一步都是为了让关系恢复，而不是为了赢。</p>
+<h3 class="label">为什么我们处理不好冲突？</h3>
+<ul class="bullets"><li>逃避——假装没事，时间解决不了，只会让事发酵。</li><li>爆发——不忍了，直接开撕，赢了嘴输了关系。</li><li>找人说，不找当事人说——到处诉苦，结果当事人从别人嘴里听到，更生气。</li><li>翻旧账——这次的事扯出上次的事，账越翻越厚。</li><li>冷战——不说话，不联系，让关系在沉默中死亡。</li></ul>
+<h3 class="label">到底该怎么处理冲突？</h3>
+<p>第一步：冷静——先处理情绪，再处理事情。</p>
+<p>冲突的时候，情绪最高。这时候去沟通，等于在火药库里点火。所以第一步：等。等自己冷静下来。对自己说：“我先冷静，明天再说。”</p>
+<p>第二步：私下说——选对时间地点。</p>
+<p>冷静之后，去找对方。但一定要私下说。可以发消息问：“那件事我想跟你聊聊，你什么时候方便？”不要当众，不要在群里，不要让别人在场。</p>
+<p>第三步：用“我”开头，不用“你”开头。</p>
+<p>“你”开头：“你那天凭什么抢我功劳？”——攻击。“我”开头：“那天的事，我心里挺难受的。”——分享。前者让对方防御，后者让对方愿意听。</p>
+<p>第四步：听对方说——可能你也有错。</p>
+<p>你说完之后，让对方说。可能对方有他的理由，可能你误会了，可能你也有错。听的时候，别打断，别反驳。听完，你可能发现：事情没那么糟。</p>
+<p>第五步：达成共识——或者接受不同。</p>
+<p>沟通之后，几种结果：他道歉，你原谅——最好。你道歉，他原谅——也好。双方都认错——最好中的最好。他还是不认错——你做了你该做的，剩下的不归你管。可以调整距离，但不必绝交。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 先冷静，再沟通。</li><li><span class="num">2.</span> 私下说，不当众说。</li><li><span class="num">3.</span> 用“我”开头，不用“你”开头。</li><li><span class="num">4.</span> 听对方说——可能你也有错。</li><li><span class="num">5.</span> 目的是“得他”，不是“赢他”。</li></ol>
+<h3 class="label">金句</h3>
+<p>赢了理，失了人，算赢吗？</p>
+</section>
+
+<section class="section section-chapter" id="ch-22" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第二十二章　转过左脸来</h1>
+  <p class="chapter-subtitle">如何面对羞辱？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>打右脸给左脸，不是懦弱，是智慧。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“只是我告诉你们，不要与恶人作对。有人打你的右脸，连左脸也转过来由他打。”（马太福音5:39）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>别人打我的右脸，我真的要把左脸也给他打吗？这不是怂吗？</li><li>耶稣说这句话，到底是什么意思？</li><li>如果我不还手，对方会不会觉得我好欺负，以后更变本加厉？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>“打右脸给左脸”，是圣经里最常被误解的话之一。很多人理解为：基督徒就是软柿子，别人欺负你，你就忍着，还要笑嘻嘻地凑上去让人家再欺负一次。但耶稣自己绝对不是受气包——他掀过圣殿的桌子，骂过法利赛人，面对不公时据理力争。</p>
+<p>要理解这句话，需要先了解一下当时的背景。在耶稣的时代，打脸不是普通的打架，而是极端的羞辱。而且，打右脸的方式很特殊——只有一种情况下你会打别人的右脸：用手背打。用手掌打的是左脸，用手背打的是右脸。手背打的侮辱性远高于手掌打。</p>
+<p>所以，当有人打你的右脸，他是在用最羞辱的方式对待你，把你当奴隶、当下等人。</p>
+<p>耶稣说，这时候你转过左脸给他。什么意思？不是让你再挨一下，而是让你把选择权拿回来。你转过左脸，等于说：“你把我当奴隶用手背打？好，我现在转过左脸，你用尊重人的手掌来打吧。”这一转，就把对方置于一个尴尬的位置——他要么用尊重的方式打你（但那就不是羞辱了），要么停下来。</p>
+<p>转过左脸，不是懦弱，是拿回主动权。</p>
+<h3 class="label">耶稣自己的榜样</h3>
+<p>耶稣自己就是这句话最好的实践者。他被抓的那一夜，在大祭司面前，有一个差役用手掌打他，说：“你这样回答大祭司吗？”耶稣没有转过脸去让他再打，而是说：“我若说的不是，你可以指证那不是；我若说的是，你为什么打我呢？”</p>
+<p>你看，耶稣没有沉默，没有懦弱，他据理力争。但他也没有暴力反抗，没有以恶报恶。他选择了一条中间的路：不还手，但也不闭嘴。这正是“转过左脸”的精髓：不报复，不逃避，但也不放弃尊严。</p>
+<h3 class="label">为什么“不还手”这么难？</h3>
+<p>因为我们的心里有两个声音在打架。声音一：他打我，我必须还手！不然我就输了。声音二：算了，忍了吧，多一事不如少一事。这两个声音其实是一回事——都是被对方控制了。第一个是被对方的羞辱控制了情绪，第二个是被对方的暴力控制了行动。无论哪种，你都在对方的节奏里。</p>
+<p>真正的自由，是你可以选择不进入他的游戏。</p>
+<h3 class="label">到底该怎么面对羞辱？</h3>
+<p>第一，分清“不还手”和“不设防”。</p>
+<p>有人问：“如果我不还手，对方会不会觉得我好欺负，以后更变本加厉？”——会，如果你只是“不还手”而没有“设防”。耶稣说“转过左脸”，不是让你站在那里让他打个没完。转过一次，就够了。如果对方继续欺负你，你可以走开，可以报警，可以设立界限。不还手不等于不保护自己。</p>
+<p>第二，不还手，但不闭嘴。</p>
+<p>就像耶稣做的：不还手，但也不闭嘴。你可以平静地说：“你这样对我，是不对的。”你可以用理性和事实来回应。暴力解决不了问题，但理性能。很多时候，对方打你，就是希望你失控。你失控了，他就赢了。你平静地回应，反而让他不知所措。</p>
+<p>第三，把选择权拿回来。</p>
+<p>对方打你右脸，是他选择了羞辱你。你转过左脸，是把选择权交回给他：你可以继续，但要用尊重的方式；你可以停下来，但不能再羞辱我。这一转，你就从被动变成了主动。</p>
+<p>第四，记得你是谁。</p>
+<p>为什么能转过左脸？因为你不需要用还手来证明自己不是懦夫。你知道你是谁——你是照着老天爷的样子造的，你的价值不取决于别人怎么对待你。一个知道自己是王子的人，不需要和街边的混混打架来证明自己不是懦夫。他可以平静地走开。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> “打右脸给左脸”不是懦弱，是智慧。</li><li><span class="num">2.</span> 分清“不还手”和“不设防”。</li><li><span class="num">3.</span> 不还手，但不闭嘴。</li><li><span class="num">4.</span> 把选择权拿回来。</li><li><span class="num">5.</span> 记得你是谁。</li></ol>
+<h3 class="label">金句</h3>
+<p>不报复，不逃避，也不放弃尊严。</p>
+</section>
+
+<section class="section section-chapter" id="ch-23" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第二十三章　扫罗怒视大卫</h1>
+  <p class="chapter-subtitle">如何面对嫉妒？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>嫉妒是别人的事，不是你的错。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“扫罗甚发怒，不喜悦这话，就说：‘将万万归大卫，千千归我，只剩下王位没有给他了。’从这日起，扫罗就怒视大卫。”（撒母耳记上18:8-9）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么我什么都没做错，却被人孤立、被人说闲话？</li><li>升职加薪本来是好事，为什么反而让我失去了朋友？</li><li>如果别人因为嫉妒而针对我，我该怎么办？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>大卫打败了歌利亚，成了民族英雄。妇女们唱歌说：“扫罗杀死千千，大卫杀死万万。”扫罗听见，就甚发怒，心里想：只剩下王位没有给他了。从那天起，扫罗就怒视大卫。</p>
+<p>你看，大卫做错了什么？什么都没做。他只是打了胜仗。但扫罗受不了，开始追杀大卫，十多年，追得大卫像老鼠一样躲在山洞里。扫罗被嫉妒毁成什么样？失去理智，失去平安，最后死在战场上。</p>
+<p>而大卫呢？他什么都没做，只是继续优秀，继续逃跑，继续等。等扫罗死，等他上位。这个故事告诉我们：嫉妒是别人的事，不是你的错。你没办法让嫉妒你的人不嫉妒。继续优秀，别被拉低。</p>
+<h3 class="label">为什么人会嫉妒你？</h3>
+<p>不是你做错什么，是你拥有ta没有的。嫉妒的本质，不是恨你，是恨自己不如你。所以，嫉妒的人常常不是想害你，是想让自己好受一点。贬低你，就能抬高自己。明白这一点，你就能对嫉妒的人多一点点理解——不是原谅ta的行为，是知道ta不是冲你来的。</p>
+<h3 class="label">到底该怎么面对他人的嫉妒？</h3>
+<p>第一，别自证——“我没那么好”。</p>
+<p>被嫉妒的时候，人最容易做的事就是自证清白：“哎呀，我没有你们想的那么好……”你以为这样说能让对方好受，结果对方更难受。因为你在否定自己，但ta需要的是接受自己。你可以说：“谢谢，我确实挺努力的。”你被嫉妒，是因为你发光。别为了让人舒服，就把光灭了。</p>
+<p>第二，别反击——“你凭什么嫉妒我”。</p>
+<p>“你就是嫉妒我！”这话一说，关系彻底破裂。因为等于在说：你不如我，你还不承认。你可以不说话，可以远离，可以交给时间。但别说那句话。</p>
+<p>第三，保持距离，但不必绝交。</p>
+<p>有些人嫉妒你，是暂时的；有些人嫉妒你，是长期的。如果ta只要在你身边就酸，那就少接触。少在ta面前提好消息，少和ta一起出现在容易比较的场合。</p>
+<p>第四，继续发光，别被拉低。</p>
+<p>被嫉妒的人最容易犯的错是不敢优秀了。怕被孤立，就不敢升职了？怕被酸，就不敢发朋友圈了？你发光，不是为了刺痛别人，是为了照亮该照亮的地方。继续做你该做的事。</p>
+<p>第五，为他们祷告——最难的一步。</p>
+<p>耶稣说：“为那逼迫你们的祷告。”当你为他们祷告的时候，你的心会从“我恨他们”变成“我希望他们能好起来”。是为了他们，也是为了你自己。因为恨在心里，毒的是你。</p>
+<h3 class="label">如果你嫉妒别人怎么办？</h3>
+<p>第一步：承认。 对自己说：“我在嫉妒ta。”承认是治疗的第一步。</p>
+<p>第二步：别骂自己。 嫉妒不是罪大恶极，是人性。</p>
+<p>第三步：转化。 把嫉妒变成动力——ta能做到的，我能不能学？或者把嫉妒变成祝福——“ta好，我为他高兴”。</p>
+<p>第四步：看自己。 你嫉妒，是因为你觉得自己不够。那你能不能看到自己的价值？</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 嫉妒是别人的事，不是你的错。</li><li><span class="num">2.</span> 别自证——“我没那么好”。</li><li><span class="num">3.</span> 别反击——“你就是嫉妒我”。</li><li><span class="num">4.</span> 保持距离，但不必绝交。</li><li><span class="num">5.</span> 继续发光，别被拉低。</li><li><span class="num">6.</span> 如果你嫉妒别人——承认它，转化它。</li></ol>
+<h3 class="label">金句</h3>
+<p>继续发光，别被拉低。</p>
+</section>
+
+<section class="section section-chapter" id="ch-24" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第二十四章　“老天爷的意思原是好的”</h1>
+  <p class="chapter-subtitle">如何面对不公？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>你们的意思是要害我，但老天爷的意思原是好的。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“不要以恶报恶……你不可为恶所胜，反要以善胜恶。”（罗马书12:17,21）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么倒霉的总是我？明明没做错什么，却要受惩罚？</li><li>被冤枉、被背叛、被欺负，我该怎么办？</li><li>怎么才能不让自己变成一个充满仇恨的人？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>圣经里有一个受尽不公的人——约瑟。他的故事是最典型的“凭什么”剧本。</p>
+<p>第一轮不公：被哥哥们卖。 约瑟十七岁的时候，被哥哥们嫉妒，卖到埃及当奴隶。他去埃及的路上，一定问过：凭什么？</p>
+<p>第二轮不公：被主人下监。 约瑟在埃及忠心做事，主母勾引他，他不从，反被诬陷下监。他在监狱里，一定问过：凭什么？</p>
+<p>第三轮不公：被酒政忘记。 约瑟在监狱里帮酒政解梦，求他在法老面前提说自己。酒政官复原职，却忘了他两年。他在牢里那两年，一定问过：凭什么？</p>
+<p>约瑟受了多少不公？被亲人出卖，被主人冤枉，被朋友遗忘。每一件事，都够一个人崩溃一辈子。</p>
+<p>但约瑟最后成了埃及的宰相。当那些害他的哥哥们来求他时，他说了一句千古名言：“从前你们的意思是要害我，但老天爷的意思原是好的，要保全许多人的性命。”他不是说“没事，我不怪你们”。他是说：你们想害我，但老天爷把你们的害变成了好。</p>
+<h3 class="label">面对不公，你能做的三件事</h3>
+<p>第一，你可以难受，可以问“凭什么”。 约瑟一定问过，一定哭过。允许自己难受。被不公对待不难受，那是死人。</p>
+<p>第二，但你不用自己伸冤。 约瑟没有报复哥哥们。他有能力报复，但他没有。不是让你当受气包，是让你不用自己动手。因为伸冤这事，你干不好——你会过火，你会后悔，你会变成和对方一样的人。交给老天爷，交给时间。</p>
+<p>第三，相信老天爷能把坏事变成好事。 这是最难的一步，也是最释放的一步。约瑟说：“老天爷的意思原是好的。”你现在的委屈，也许是为了以后能帮更多的人。你的苦，不是白受的。</p>
+<h3 class="label">到底该怎么面对不公？</h3>
+<p>第一步：承认——这确实不公平。</p>
+<p>别假装没事。找一个安静的地方，对老天爷说（或者写下来）：“这件事对我太不公平了。我难受，我愤怒，我想不通。”承认，是把那个毒放出来。憋着，只会伤害自己。</p>
+<p>第二步：交托——我不自己伸冤。</p>
+<p>做一个动作：交出去。可以是：“老天爷，我把这件事交给你。你来处理，我不自己动手。”可以写一张纸，把让你不公的人和事写下来，然后撕掉。这不是认输，是放手。你不放手，就会被这件事缠住。</p>
+<p>第三步：继续活——不让他人的恶，改变你的善。</p>
+<p>被不公对待，最大的危险是：你会变成和你恨的人一样。他们恶待你，你也恶待别人。最后，你成了他们。圣经说：“不以恶报恶，倒要祝福。”不仅是为了他们，也是为了你自己。因为恶会在你心里扎根，把你变成另一个恶人。继续善良，继续做好事。不是因为你傻，是因为你不让他们的恶定义你的人生。</p>
+<p>第四步：等——时间会说话。</p>
+<p>约瑟等了十三年。老天爷的时间比我们的时间慢，但准。不是每个不公都会在今生被纠正。但圣经说：“我们若盼望那所不见的，就必忍耐等候。”等，不是干等，是在等的过程中继续好好活。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 承认——这确实不公平。</li><li><span class="num">2.</span> 交托——我不自己伸冤。</li><li><span class="num">3.</span> 继续活——不让他人的恶改变你的善。</li><li><span class="num">4.</span> 等——时间会说话。</li><li><span class="num">5.</span> 记住约瑟的话：你们的意思是要害我，但老天爷的意思原是好的。</li></ol>
+<h3 class="label">金句</h3>
+<p>不让他人的恶改变你的善。</p>
+</section>
+
+<section class="section section-chapter" id="ch-25" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第二十五章　有一朋友比弟兄更亲密</h1>
+  <p class="chapter-subtitle">如何识人、择友？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>你不是需要很多朋友，你需要对的朋友。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“滥交朋友的，自取败坏；但有一朋友，比弟兄更亲密。”（箴言18:24）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么有些人，相处起来让我越来越累，但又不好意思疏远？</li><li>怎么分辨谁是真心对我好，谁只是把我当工具？</li><li>什么样的朋友值得深交？什么样的人该保持距离？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>圣经里有一个叫参孙的人，力气大得吓人，但看人的眼光特别差。他交的朋友，是那些“陪他玩”“捧着他”的人。结果朋友出卖他，把他交给敌人。最后他孤身一人，被敌人羞辱。</p>
+<p>另一个例子是大卫。大卫有一个朋友，叫约拿单。约拿单是扫罗的儿子——扫罗是那个天天追杀大卫的国王。按道理，约拿单应该是大卫的敌人。但他“爱大卫如同爱自己的性命”，冒着风险帮助大卫。后来约拿单战死，大卫为他写挽歌：“我兄约拿单哪，我为你悲伤！”</p>
+<p>参孙有很多“朋友”，但没有一个真朋友。大卫有一个真朋友，比很多“朋友”都强。你不是需要很多朋友，你需要对的朋友。</p>
+<h3 class="label">怎么分辨：什么是“对的朋友”？</h3>
+<p>原则一：看果子认树。 一个人是什么样的人，不看他说什么，看他做什么。问自己几个问题：和ta在一起，你是更想成为好人，还是更无所谓？ta为你高兴吗？当你好的时候，ta是真的为你开心，还是酸溜溜？ta在你难的时候，会伸出援手吗？</p>
+<p>原则二：听劝的才是真朋友。 真朋友会说你不想听的话。不是故意扎你，是因为在乎你。假朋友永远顺着你，永远让你舒服。因为ta不在乎你变成什么样。那个偶尔“惹你生气”但说的都是实话的人，可能是真朋友。</p>
+<p>原则三：同负一轭。 “同负一轭”的意思是：一起拉车。两个人要往一个方向使劲，车才能走。如果你的朋友不认同你最核心的价值观，你们怎么一起拉车？最亲密的朋友，应该是能和你一起走人生路的人。</p>
+<h3 class="label">到底该怎么识人、择友？</h3>
+<p>第一步：分类——把身边的人放进三个圈。</p>
+<p>拿张纸，画三个同心圆。最里面那个圈：知己。可以交心的人，彼此建造的人。人数极少，一两个。中间那个圈：伙伴。相处愉快的人，可以一起玩、一起做事。最外面那个圈：熟人。认识的人，保持礼貌，不必深交。</p>
+<p>现在，把你认识的人都放进这三个圈。你会发现：很多人一直挤在最里面那个圈，其实ta根本不应该在那儿——就像电梯里硬要跟你聊天的那个人。这个练习，帮你看清你的人际关系地图。</p>
+<p>第二步：设限——别让不该进来的人进来。</p>
+<p>对于那些不该在最里面圈的人，你要学会说“不”。不是绝交，是调整距离。那个总找你帮忙但从不关心你的人——可以帮，但别总帮。那个把你往下拉的人——可以见面，但别常在一起。设限是为了保护自己。</p>
+<p>第三步：投资——对的人，你要主动。</p>
+<p>对于那些值得在最里面圈的人，你要投资。主动联系，主动关心，主动付出。真朋友是双向的。如果你发现一直是你在主动，那ta可能不应该在最里面圈。</p>
+<p>第四步：成为——你想交什么样的朋友，你先成为那样的人。</p>
+<p>你想交真诚的朋友，你先真诚。你想交靠谱的朋友，你先靠谱。“你想人怎样待你，你先怎样待人。”</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 滥交朋友的，自取败坏。</li><li><span class="num">2.</span> 看果子认树。</li><li><span class="num">3.</span> 画三个圈。</li><li><span class="num">4.</span> 设限保护自己。</li><li><span class="num">5.</span> 投资对的人。</li><li><span class="num">6.</span> 成为你想交的人。</li></ol>
+<h3 class="label">金句</h3>
+<p>看果子认树。</p>
+</section>
+
+<section class="section section-chapter" id="ch-26" data-part="part-2">
+<header class="chapter-header">
+  <h1 class="chapter-title">第二十六章　与刺猬共处</h1>
+  <p class="chapter-subtitle">如何与难相处的人打交道？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>和刺猬共处，你要学会保护自己，但不必变成刺猬。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“若是能行，总要尽力与众人和睦。”（罗马书12:18）“不要以恶报恶……你不可为恶所胜，反要以善胜恶。”（罗马书12:17,21）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么有些人总爱抬杠、挑刺、唱反调？</li><li>躲不开，说不通，又不想撕破脸，怎么破？</li><li>和这种人在一起，自己也要变成那样吗？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>圣经里有一个叫拿八的人，名字的意思就是“愚顽”。他有钱，但为人刚愎凶恶。大卫在旷野逃亡时，曾保护过他的牧人和羊群。后来大卫派人向他求些食物，拿八不但不给，还辱骂大卫。大卫气得要杀他全家。幸好拿八的妻子亚比该聪明，带着礼物半路迎接大卫，说了一堆好话，才平息了大卫的怒气。后来拿八回家，听亚比该说了这事，吓得魂不附体，十天后就死了。</p>
+<p>拿八就是那种你生活中一定会遇到的“难相处的人”——不讲道理，不知好歹，恩将仇报，说话还难听。</p>
+<p>还有扫罗。他对大卫，是另一种难相处。一开始喜欢，后来嫉妒，然后追杀。你永远不知道他在想什么，永远不知道明天他是友是敌。大卫在他手下，十几年如履薄冰。</p>
+<p>但大卫怎么对待扫罗？他有两次机会可以杀扫罗，但都没下手。他说：“我在耶和华面前万不敢伸手害耶和华的受膏者。”大卫不是懦弱，是他知道：有些人，不需要你来审判，老天爷会处理。</p>
+<h3 class="label">难相处的人有哪几种？</h3>
+<ul class="bullets"><li>刺猬型：浑身是刺，动不动就扎人。</li><li>变色龙型：今天对你好，明天翻脸不认人。</li><li>黑洞型：永远抱怨，永远吸收你的正能量。</li><li>杠精型：你说什么他都反对，不是因为他有道理，是因为他喜欢反对。</li></ul>
+<p>不管哪种，他们都有一个共同点：让你心累。</p>
+<h3 class="label">到底该怎么和难相处的人打交道？</h3>
+<p>第一，认清现实——你改不了他。</p>
+<p>你问：“为什么有些人总爱抬杠、挑刺、唱反调？”——因为他就是这样的人。最难相处的人，最难的地方就是：你想改他。你苦口婆心，你讲道理，你发脾气，都没用。接受这个现实，你就轻松了一半。你不是老天爷，不用改任何人。</p>
+<p>第二，保持距离——不是绝交，是少接触。</p>
+<p>能不见就不见，能少聊就少聊。见面保持客气，聊天保持平淡。他不是你的责任，你不用负责让他开心。距离产生美感，也减少摩擦。</p>
+<p>第三，不要被拉低——你不需要变成他那样。</p>
+<p>和难相处的人在一起，最大的危险是：你被他拉低了。他杠，你也杠；他骂，你也骂。最后你变成了自己讨厌的样子。圣经说：“你不可为恶所胜，反要以善胜恶。”不是让你当受气包，是让你不被他拉低。他恶是他的事，你善是你的事。</p>
+<p>第四，设好底线——不是所有的“和睦”都值得“尽力”。</p>
+<p>保罗说：“若是能行，总要尽力与众人和睦。”注意这两个字：“若是”。意思是，不是所有时候都能和睦。设好底线：哪些事可以忍，哪些事不能忍。一旦越过底线，就明确拒绝。不用吵架，平静地、坚定地说“不”。</p>
+<p>第五，交给老天爷——不是每个人都需要你来“处理”。</p>
+<p>大卫不杀扫罗，因为知道老天爷会处理。拿八后来自己吓死了，老天爷没让大卫动手。有些人，你只需要交给老天爷。你该做的做了，剩下的不归你管。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 认清现实——你改不了他。</li><li><span class="num">2.</span> 保持距离——不是绝交，是少接触。</li><li><span class="num">3.</span> 不要被拉低——你不需要变成他那样。</li><li><span class="num">4.</span> 设好底线——不是所有和睦都值得“尽力”。</li><li><span class="num">5.</span> 交给老天爷——不是每个人都需要你来“处理”。</li></ol>
+<h3 class="label">金句</h3>
+<p>你不是老天爷，不用改变任何人。</p>
+</section>
+
+<section class="section section-part" id="part-3" data-part="part-3">
+<div class="part-cover">
+  <div class="part-cover-inner">
+    <div class="part-ornament">❦</div>
+    <h1 class="part-title">第三部分　品格篇</h1>
+    <p class="part-subtitle">我要成为什么样的人？</p>
+  </div>
+</div>
+</section>
+
+<section class="section section-chapter" id="ch-27" data-part="part-3">
+<header class="chapter-header">
+  <h1 class="chapter-title">第二十七章　爱的真谛</h1>
+  <p class="chapter-subtitle">四个“凡事”</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>爱不是感觉，是选择。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“爱是恒久忍耐，又有恩慈；爱是不嫉妒；爱是不自夸，不张狂，不做害羞的事，不求自己的益处，不轻易发怒，不计算人的恶，不喜欢不义，只喜欢真理；凡事包容，凡事相信，凡事盼望，凡事忍耐。爱是永不止息。”（哥林多前书13:4-8）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>爱到底是什么？是感觉还是行动？</li><li>为什么我爱得很累，对方却不领情？</li><li>爱会消失吗？怎样才能一直爱下去？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>哥林多前书第十三章，是圣经里最著名的“爱的诗篇”。但你知道吗，这段经文不是婚礼上用的——它是写给一个充满了问题的教会的。哥林多教会分门结党，互相嫉妒。保罗写信骂了他们半天，然后说：“我现今把最妙的道指示你们。”然后写了这段“爱的诗篇”。</p>
+<p>咱们一条一条来看：</p>
+<p>“爱是恒久忍耐”——忍耐，不是忍一次，是一直忍。不是ta改了你才忍，是ta不改你还忍。爱一个人，就要忍ta的毛病，忍ta的缺点。不是一次两次，是一直。</p>
+<p>“又有恩慈”——恩慈，是对不友好的人，还对他好。不是他对我好，我才对他好。是他对我不好，我仍然选择对他好。</p>
+<p>“爱是不嫉妒”——不嫉妒，是他能好，我为他高兴。不是他好了，我酸。是他好，我真的高兴。</p>
+<p>“爱是不自夸，不张狂”——不自夸，是不显摆。不张狂，是不把自己当回事。爱让人低调。</p>
+<p>“不做害羞的事”——害羞的事，就是不合适的事。爱让人有分寸。爱要给别人“留面子”。</p>
+<p>“不求自己的益处”——不求自己的益处，是先想他。不是“我怎么舒服”，是“他怎么好”。</p>
+<p>“不轻易发怒”——给怒气一个刹车。发怒前先深呼吸三次，再停顿十秒。</p>
+<p>“不计算人的恶”——不计算，就是不记账。他三年前说过什么伤你的话，你翻出来。这叫计算。爱是不记账。不是真忘，是选择不翻旧账。</p>
+<p>“不喜欢不义，只喜欢真理”——爱的标准，不是“对我好”，是“对”。</p>
+<p>“凡事包容，凡事相信，凡事盼望，凡事忍耐”——这四个“凡事”，是爱的最高境界。</p>
+<p>“爱是永不止息”——别的东西都会过去。知识会过时，财富会花光，美貌会衰老，感觉会变淡。但爱，不过去。</p>
+<h3 class="label">到底该怎么活出爱？</h3>
+<p>第一，用“忍耐”检验。 今天，遇到让你烦的事，问自己：我能再忍一下吗？</p>
+<p>第二，用“恩慈”检验。 今天，对那个让你不舒服的人，做一件好事。可以是一句好话，一个帮忙，一个微笑。做了就做了，别指望回报。</p>
+<p>第三，用“不计算人的恶”检验。 今天，想起某个伤害你的人，对自己说：“我选择不翻旧账。”</p>
+<p>第四，用“凡事盼望”检验。 今天，遇到难处，问自己：我还能盼望吗？</p>
+<p>第五，用整章经文检验。 每天睡前，读一遍哥林多前书十三章。问自己：今天我忍耐了吗？我有恩慈吗？我嫉妒了吗？我计算人的恶了吗？我包容、相信、盼望、忍耐了吗？</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 爱不是感觉，是选择。</li><li><span class="num">2.</span> 爱是恒久忍耐——一直忍才是爱。</li><li><span class="num">3.</span> 爱是有恩慈——对不友好的人，还对他好。</li><li><span class="num">4.</span> 爱是不嫉妒、不自夸、不张狂。</li><li><span class="num">5.</span> 爱是不求自己的益处。</li><li><span class="num">6.</span> 爱是不轻易发怒、不计算人的恶。</li><li><span class="num">7.</span> 爱是凡事包容、凡事相信、凡事盼望、凡事忍耐。</li><li><span class="num">8.</span> 爱是永不止息。</li></ol>
+<h3 class="label">金句</h3>
+<p>爱是恒久忍耐，不是一时兴起。</p>
+</section>
+
+<section class="section section-chapter" id="ch-28" data-part="part-3">
+<header class="chapter-header">
+  <h1 class="chapter-title">第二十八章　骄傲</h1>
+  <p class="chapter-subtitle">败坏与跌倒的开始</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>骄傲不是装出来的，是长出来的，得从根上拔。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“骄傲在败坏以先；狂心在跌倒之前。”（箴言16:18）“神阻挡骄傲的人，赐恩给谦卑的人。”（雅各书4:6）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么我明明知道骄傲不好，可一遇到事就忍不住要显摆？</li><li>为什么别人指出我的毛病，我第一反应不是“他说得对不对”，而是“他凭什么说我”？</li><li>为什么看到别人不如我，我心里会暗暗高兴？</li><li>为什么别人夸我的时候，我嘴上说“哪里哪里”，心里却盼着他再多夸几句？</li><li>骄傲这东西，到底怎么才能去掉？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>圣经里有一个国王，叫乌西雅。他十六岁登基，在位五十二年。年轻的时候，他“行耶和华眼中看为正的事”，国力强盛，威名远扬。“他得了非常的帮助，甚是强盛。”（历代志下26:15）人一强盛，就容易飘。圣经说：“他既强盛，就心高气傲，以致行事邪僻，干犯耶和华他的神。”他非要进圣殿去烧香——那是祭司才能做的事。八十一个祭司拦他，他发怒。正发怒的时候，额上忽然长出大麻风。他从此住在别的宫里，直到死，与圣殿隔绝。一个强盛的国王，因为骄傲，最后孤零零地死去。</p>
+<p>另一个例子是希西家王。他病得要死，祷告后蒙神医治，又活了十五年。巴比伦的使者来祝贺，他得意了，把国库里所有的财宝、武库里的所有兵器，都显给使者看。先知以赛亚问他：“他们看了什么？”他说：“我家中所有的，他们都看见了。”以赛亚说：“日子必到，凡你家里所有的，并你列祖积蓄到如今的，都要被掳到巴比伦去，不留下一样。”希西家做了什么？他不过是让人看了看。就因为这点骄傲，整个国家后来的命运都被改写了。（列王纪下20:12-18）</p>
+<p>这两个故事告诉我们：骄傲的可怕，不在于它让人多讨厌，而在于它让人看不见自己。乌西雅看不见自己不是祭司，希西家看不见显摆的后果。骄傲的人不是故意犯错，是根本不知道自己已经站在悬崖边上。</p>
+<h3 class="label">骄傲为什么这么难对付？</h3>
+<p>因为骄傲不是“学来的”，是“长出来的”。人一出生，心里就住着一个皇帝，觉得自己是世界的中心。这个皇帝不穿衣服，但他自己觉得穿的是龙袍。</p>
+<p>第一，它像空气，你感觉不到它，但它在。 就像鱼在水里，不知道水是什么。人在骄傲里，不知道自己在骄傲。</p>
+<p>第二，它总披着好外衣。 把自己当回事，包装成“有自信”；听不进批评，包装成“有主见”；看不起别人，包装成“有品味”；爱显摆，包装成“分享快乐”。骄傲从不光着身子来，它总是穿着体面的衣裳。</p>
+<p>第三，它让你看不见自己。 人照镜子，永远先看见脸上的灰，看不见心里的刺。骄傲的人不是坏，是瞎。他看不见自己眼里的梁木，却能看见别人眼里的灰尘。</p>
+<h3 class="label">骄傲长什么样？</h3>
+<p>第一，它总是昂着头。 走路昂着头，说话昂着头，心里也昂着头。不是自信，是觉得自己比别人高一头。跟人说话的时候，眼睛不看人。</p>
+<p>第二，它有两副耳朵。 好听的话，听得见；不好听的话，自动过滤。别人夸它，它听得眉开眼笑；别人批评它，它听见了也当没听见。实在躲不过去了，就反问一句：“你凭什么说我？”</p>
+<p>第三，它的眼睛是歪的。 看别人，先看缺点；看自己，先看优点。别人做对了，它说“运气好”；自己做对了，它说“本事大”。别人失败了，它说“活该”；自己失败了，它说“时运不济”。</p>
+<p>第四，它的嘴永远在说“我”。 “我觉得”“我以为”“我要”“我是”。说话的主语永远是“我”，句子的重心永远是自己。</p>
+<p>第五，它的心里住着一个裁判。 这个裁判天天在打分：我比他强，我比他聪明，我比他有钱，我比他过得好。赢了，高兴；输了，不服。永远判自己赢。</p>
+<h3 class="label">骄傲的具体表现</h3>
+<p>在言语上：</p>
+<ol class="numbered"><li><span class="num">1.</span> 抢话——别人话没说完，它已经接上了。不是听懂了，是忍不住。</li><li><span class="num">2.</span> 补话——别人说一句，它补一句，显得自己更懂、更全、更高明。</li><li><span class="num">3.</span> 夸自己——明着夸，暗着也夸。说自己当年如何，说自己认识谁，说自己多么不容易。</li><li><span class="num">4.</span> 贬别人——嘴上不说，话里带刺。“你也不错”的意思是“你不如我”。</li><li><span class="num">5.</span> 不接受批评——你说一句，它有十句等着你。不是解释，是反击。</li><li><span class="num">6.</span> 爱挑错——别人发言，它专找漏洞；别人做事，它专看毛病。找出来，心里就舒服。</li></ol>
+<p>在行为上：</p>
+<ol class="numbered"><li><span class="num">1.</span> 爱显摆——买了什么，去了哪里，认识了谁，一定要让人知道。</li><li><span class="num">2.</span> 争功劳——明明是一起干的，它觉得主要是自己的功劳。</li><li><span class="num">3.</span> 不认错——错了也不认，认了也不改。认错就是丢人。</li><li><span class="num">4.</span> 不服人——别人比它强，它不学，只酸。“他有什么了不起，不过是运气好。”</li><li><span class="num">5.</span> 不听劝——你劝它，它觉得你看不起它；你帮它，它觉得你多管闲事。</li><li><span class="num">6.</span> 难相处——它总是对的，你总是错的。好，全是它的；孬，全是你的。</li></ol>
+<p>在关系上：</p>
+<ol class="numbered"><li><span class="num">1.</span> 看不起不如它的——心里暗暗瞧不上，嘴上不说，行动上疏远。</li><li><span class="num">2.</span> 嫉妒比它强的——嘴上不说，心里不舒服。别人好了，它难受。</li><li><span class="num">3.</span> 利用人——“用人朝前，不用人朝后”。用你时是朋友，不用你时是路人。过河就拆桥。</li><li><span class="num">4.</span> 不感恩——觉得一切都是自己应得的，别人帮它是应该的。</li><li><span class="num">5.</span> 不饶人——别人得罪它，它记一辈子。原谅？那是弱者的事。</li></ol>
+<p>在内心：</p>
+<ol class="numbered"><li><span class="num">1.</span> 听不得别人好——别人好了，它心里不是滋味。</li><li><span class="num">2.</span> 受不了自己差——自己不如人，就找理由，就贬低别人，就躲。</li><li><span class="num">3.</span> 需要被夸——没人夸，就自己夸；有人夸，还嫌不够。</li><li><span class="num">4.</span> 怕被看轻——做什么事，先想“别人会怎么看我”。</li><li><span class="num">5.</span> 总在比——比工作、比收入、比孩子、比房子、比谁过得好。比赢了，兴高采烈；比输了，垂头丧气。羡慕、嫉妒、恨。</li></ol>
+<h3 class="label">为什么我们自己看不见？</h3>
+<p>因为骄傲穿上了一件衣服，叫“正常”。</p>
+<ul class="bullets"><li>抢话，叫“性格直爽”</li><li>挑错，叫“追求完美”</li><li>不服人，叫“有骨气”</li><li>不认错，叫“有原则”</li><li>显摆，叫“分享快乐”</li><li>争功，叫“实事求是”</li><li>嫉妒，叫“上进心”</li><li>难相处，叫“有个性”</li></ul>
+<p>衣服穿久了，就长在身上，分不清哪是衣服，哪是肉。</p>
+<h3 class="label">怎么照见自己？</h3>
+<p>第一个办法：听别人怎么说你。</p>
+<p>如果有人委婉地说你“很自信”，你要想想，他是不是想说“你有点傲”？如果有人夸你“有主见”，你要想想，他是不是想说“你听不进话”？</p>
+<p>第二个办法：看自己怎么对弱者。</p>
+<p>你对服务员什么态度？对下属什么态度？对不如你的人什么态度？那不是教养，那是骄傲的镜子。</p>
+<p>第三个办法：问自己三个问题。</p>
+<ol class="numbered"><li><span class="num">1.</span> 别人夸我的时候，我心里是感恩，还是觉得“本来就该这样”？</li><li><span class="num">2.</span> 别人批评我的时候，我第一反应是“他说得对不对”，还是“他凭什么”？</li><li><span class="num">3.</span> 别人成功的时候，我真心为他高兴，还是心里酸溜溜？</li></ol>
+<p>第四个办法：把自己放小。</p>
+<p>试着一天不说“我”。说话的时候，把主语换成“你”“他”“我们”。你会发现，不说“我”的时候，世界还在转，你也没变小。</p>
+<h3 class="label">到底该怎么对付骄傲？</h3>
+<p>第一步，承认自己会骄傲——这是最难的一步。</p>
+<p>你问：“为什么自己往往不知道自己在骄傲？”——因为骄傲最大的本事，就是让你看不见它。所以第一步，不是“去掉骄傲”，而是承认“我里面有骄傲”。这不是骂自己，是看医生。你得先承认自己病了，才能吃药。每天睡前问自己：今天有没有在谁面前显摆？有没有听不进别人的话？有没有把功劳都往自己身上揽？问出来，别躲。</p>
+<p>第二步，把功劳分出去。</p>
+<p>你问：“为什么看到别人不如我，心里会暗暗高兴？”——因为你在比较。比赢了，就觉得自己厉害。对付这个，有个笨办法：每次觉得“我行了”，就想想这事里有谁帮过你。你的成绩，有老师教的；你的本事，有前辈带的；你的机会，有别人让的。这么一想，那点“我厉害”的水分就被挤出去了。</p>
+<p>第三步，学会听批评，别急着还嘴。</p>
+<p>你问：“为什么别人说我，我第一反应是‘他凭什么’？”——因为骄傲的人耳朵里装了个筛子，好听的全留下，不好听的全筛出去。操练谦卑，就是忍三秒。别人说你的时候，别急着反驳。等三秒，问自己：他说的有没有一点道理？如果有一点点道理，就说：“你说得对，我没想到这一点。”这句话说出来不容易，但说出来之后，你会发现对方反而尊重你。记住：真正谦卑的人不需要证明自己。</p>
+<p>第四步，学习说“我不知道”。</p>
+<p>骄傲的人什么都要装懂。谦卑的人敢说“我不知道”。不知道就是不知道，不用编，不用装，不用转移话题。说一句“我不知道”，你会发现天没塌，别人反而更信任你。</p>
+<p>第五步，找一个比你强的人，真心服他。</p>
+<p>骄傲的根是“我最厉害”。要拔这根，就得看见别人的厉害。找一个你佩服的人，不是表面客气，是心里真的服他。可能是你同事，可能是你朋友，可能是书里的人。看见他的好，你就不会觉得“我最厉害”了。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 骄傲不是“学来的”，是“长出来的”，得从根上拔。</li><li><span class="num">2.</span> 骄傲为什么难对付？因为它像空气，你感觉不到；它总披着好外衣；它让你看不见自己。</li><li><span class="num">3.</span> 骄傲的画像：昂着头、耳朵聋、眼睛歪、嘴说“我”、心里住着裁判。</li><li><span class="num">4.</span> 骄傲的表现：在言语上、在行为上、在关系上、在内心，到处都是。</li><li><span class="num">5.</span> 我们看不见自己骄傲，因为它穿了一件叫“正常”的衣服。</li><li><span class="num">6.</span> 怎么照见自己：听别人怎么说、看自己怎么对弱者、问自己三个问题、把自己放小。</li><li><span class="num">7.</span> 怎么对付骄傲：承认、分功劳、听批评、说“不知道”、找一个比你强的人。</li></ol>
+<h3 class="label">金句</h3>
+<p>骄傲在败坏以先，狂心在跌倒之前。</p>
+</section>
+
+<section class="section section-chapter" id="ch-29" data-part="part-3">
+<header class="chapter-header">
+  <h1 class="chapter-title">第二十九章　摩西为人</h1>
+  <p class="chapter-subtitle">谦卑的力量</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>谦卑不是装孙子，是知道自己是谁。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“只要存心谦卑，各人看别人比自己强。”（腓立比书2:3）“神阻挡骄傲的人，赐恩给谦卑的人。”（雅各书4:6）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>谦卑是不是就是装孙子、不敢说话？</li><li>怎么分辨是谦卑还是自卑？</li><li>我也想谦卑，但一遇到事就控制不住要争对错，怎么办？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>圣经里说：“摩西为人极其谦和，胜过世上的众人。”摩西是最谦卑的人？他不是带几百万人出埃及、过红海、领受十诫的大人物吗？他不是敢和法老叫板、敢让老天爷改变心意的强人吗？是。但他谦卑。</p>
+<p>什么叫谦卑？不是装孙子，不是觉得自己不行。是知道自己是谁，也知道自己不是谁。摩西知道：他是老天爷拣选的领袖——所以他敢站在法老面前；但他不是老天爷——所以他听从老天爷的指示；他有能力——但他不靠自己；他会犯错——所以他接受批评。当他的哥哥姐姐毁谤他，他没辩解。当百姓反对他，他没崩溃。这才是谦卑：该刚强的时候刚强，该柔软的时候柔软。知道自己能做什么，也知道自己不能做什么。</p>
+<p>耶稣说：“我心里柔和谦卑，你们当负我的轭，学我的样式。”柔和，不是软弱。是有力量，但控制得住。谦卑，不是自卑。是知道自己是谁，也尊重别人是谁。</p>
+<p>从腓立比书里，我们可以看出谦卑的几个标志：</p>
+<ul class="bullets"><li>不结党——不拉帮结派，不搞小圈子。因为不需要靠“我们”来证明“我”。</li><li>不贪图虚浮的荣耀——不追求头衔、名声、点赞。因为知道自己是谁。</li><li>看别人比自己强——真心觉得别人有比自己强的地方。</li><li>顾别人的事——不只想着自己，也想着别人。</li></ul>
+<h3 class="label">到底该怎么操练谦卑？</h3>
+<p>第一，每天找一个“别人比我强”的地方。</p>
+<p>今天，找一个你看不惯的人，找出ta比你强的地方。可能ta比你细心，可能ta比你能忍。找出来，然后对自己说：“ta这点比我强，我向他学习。”这不是贬低自己，是看见别人。</p>
+<p>第二，主动问别人的意见。</p>
+<p>开会的时候，别急着发表高见。先问：“你怎么看？”做决定的时候，先问：“你觉得呢？”问别人，不是因为你不行，是因为你尊重别人。</p>
+<p>第三，接受批评，不急着辩解。</p>
+<p>别人说你的时候，第一反应是辩解。操练谦卑，就是忍三秒。等三秒再开口。三秒里，问自己：ta说的有没有道理？如果有一点道理，就说：“你说得对，我没想到这一点。”记住：真谦卑的人不需要证明自己。</p>
+<p>第四，做一件没人知道的好事。</p>
+<p>骄傲的人，做什么都要让人知道。操练谦卑，就是做一件不让任何人知道的好事。帮一个人，不给ta说。做一件事，不留名。不是为了积德，是为了练习不被人看见也能活。</p>
+<p>第五，学习说“我不知道”。</p>
+<p>骄傲的人，什么都要装懂。谦卑的人，敢说“我不知道”。不用编，不用装。说一句“我不知道”，你会发现，天没塌，别人反而更尊重你。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 谦卑不是装孙子，是知道自己是谁。</li><li><span class="num">2.</span> 骄傲的人太在乎自己，谦卑的人眼里有别人。</li><li><span class="num">3.</span> 每天找一个“别人比我强”的地方。</li><li><span class="num">4.</span> 主动问别人的意见。</li><li><span class="num">5.</span> 接受批评，不急着辩解。</li><li><span class="num">6.</span> 做一件没人知道的好事。</li><li><span class="num">7.</span> 学习说“我不知道”。</li></ol>
+<h3 class="label">金句</h3>
+<p>只要存心谦卑，看别人比自己强。</p>
+</section>
+
+<section class="section section-chapter" id="ch-30" data-part="part-3">
+<header class="chapter-header">
+  <h1 class="chapter-title">第三十章　七十个七次</h1>
+  <p class="chapter-subtitle">放过他人，更放过自己</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>饶恕不是便宜对方，是释放自己。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“那时，彼得进前来，对耶稣说：‘主啊，我弟兄得罪我，我当饶恕他几次呢？到七次可以吗？’耶稣说：‘我对你说，不是到七次，乃是到七十个七次。’”（马太福音18:21-22）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么明明是他伤害了我，最后难受的却是我？</li><li>如果他不道歉，我还要饶恕吗？</li><li>嘴上说“没事”了，心里还是过不去，咋办？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>有一天，彼得来找耶稣，问了一个问题：“主啊，如果我弟兄得罪我，我原谅他几次够呢？七次可以吗？”彼得觉得自己已经很了不起了，因为当时的拉比教导说：原谅三次就够了。结果耶稣说：“不是七次，乃是七十个七次。”七十个七次是四百九十次，但耶稣不是让彼得记数。他是在说：饶恕这事儿，不能数。你一开始数，你就已经不在原谅里了。</p>
+<p>然后耶稣讲了一个故事：有一个仆人，欠了国王一千万两银子，一辈子也还不清。国王动了恻隐之心，免了他全部的债。这个仆人从王宫出来，路上遇到一个欠他十两银子的同事，掐住他的脖子说：“还钱！”同事求情，他不干，把同事送进了监狱。国王听说后大怒，把他下在监里，让他受苦直到还清所有债。</p>
+<p>那个仆人最蠢的地方是：他本来已经自由了，但他选择重新把自己关进去。这就是不饶恕的真相：你以为你在惩罚别人，其实你在惩罚自己。你不饶恕那个人，那个人照样过日子，你却把自己关进了牢房。</p>
+<h3 class="label">为啥饶恕这么难？</h3>
+<p>因为我们对饶恕有太多误解。</p>
+<p>误解一：饶恕 = 承认他没错。 不是。饶恕不是说他做的事是对的。饶恕是说：他做的事是错的，但我不让这个错继续伤我。</p>
+<p>误解二：饶恕 = 原谅他，然后继续让他伤害你。 不是。你可以饶恕一个人，同时划个线，不再让他靠近你。</p>
+<p>误解三：饶恕 = 忘了。 不是。有些事你根本忘不掉。饶恕不是删除记忆，是给那个记忆换一个地方——从“天天疼”的地方，移到“想起来但不那么疼”的地方。</p>
+<p>误解四：饶恕 = 便宜了他。 你不饶恕，到底便宜了谁？你难受，你睡不着，你生气——他呢？他可能根本不知道。你不饶恕，是在你自己身上捅刀。</p>
+<h3 class="label">到底该怎么处理这饶恕？</h3>
+<p>第一步：承认——我被他伤了。</p>
+<p>饶恕的第一步，不是假装没事，而是承认有事。很多人说“我早就不在乎了”，但一提那名字就炸。这不是不在乎，这是没处理。你可以找个安静的地方，对自己说：“他确实伤了我。我到现在还疼，这正常。”承认，是把那个深埋的伤口挖出来。挖出来才能处理。</p>
+<p>第二步：算账——这笔账，他赔不起。</p>
+<p>你认真算一算：他欠你多少？那些睡不着的夜，那些流过的泪，那些碎掉的信任。他能赔得起吗？大概率赔不起。就算他跪你面前道歉，那些睡不着的夜能还给你吗？不能。所以，你要一直追着一个根本赔不起的人要账，还是把这个账划掉？划掉不是因为便宜了他，是因为他根本还不起。</p>
+<p>第三步：仪式——做点啥，让这事过去。</p>
+<p>你需要一个仪式。方式A：写信，然后处理掉。给那人写封信，写下所有你想说的话，然后撕掉、烧掉。方式B：找个东西代表。找块石头，找个地方放下，对自己说：我把这事放这了，不再背着了。方式C：说一句话。“我饶恕〔名字〕对我的伤害。我把这事交出去了。”</p>
+<p>第四步：撒手——不控制结果。</p>
+<p>你可能已经决定原谅了，但对方没道歉，没改。这时候你会觉得：我原谅了，他凭啥没事？撒手的意思是：他的事归他，你的事归你。他道不道歉是他的事，你要不要继续被这事困住是你的事。撒手不是放过他，是放过你自己。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 饶恕不是便宜对方，是释放自己。</li><li><span class="num">2.</span> 饶恕不是忘记，是给那个记忆换个地方。</li><li><span class="num">3.</span> 饶恕不需要对方配合。</li><li><span class="num">4.</span> 撒手不是放过他，是放过你自己。</li></ol>
+<h3 class="label">金句</h3>
+<p>不要追着一个根本赔不起的人要账。</p>
+</section>
+
+<section class="section section-chapter" id="ch-31" data-part="part-3">
+<header class="chapter-header">
+  <h1 class="chapter-title">第三十一章　知足的秘诀</h1>
+  <p class="chapter-subtitle">不是拥有的多，而是需要的少</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>知足不是拥有的多，是需要的少。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“我无论在什么景况都可以知足，这是我已经学会了。我知道怎样处卑贱，也知道怎样处丰富……我靠着那加给我力量的，凡事都能做。”（腓立比书4:11-13）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么刷完朋友圈，本来好好的心情就变差了？</li><li>为什么得到了一直想要的东西，快乐只有三天？</li><li>怎么才能学会知足？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>腓立比书是保罗在监狱里写的。监狱啊！没有自由，没有尊严，不知道会不会被杀。在这种地方，他写：“我无论在什么景况都可以知足。”这不是鸡汤，不是自我安慰，是真的学会了。</p>
+<p>他接着说：“我知道怎样处卑贱，也知道怎样处丰富……我靠着那加给我力量的，凡事都能做。”他的秘诀，不是“什么都有”，是“我靠着那加给我力量的”。外面有什么，不重要。里面有什么，才重要。外面可以缺东西，但里面不缺力量。外面可以没钱，但里面有平安。外面可以没自由，但里面有盼望。这就是知足的秘诀：不是拥有的多，是需要的少。</p>
+<h3 class="label">为什么我们不知足？</h3>
+<p>因为我们的“需要”，被人为放大了。</p>
+<ul class="bullets"><li>比较——本来不需要的东西，看到别人有，就变成了“需要”。</li><li>广告——本来不需要的东西，被广告洗脑，就变成了“需要”。</li><li>恐惧——怕不够，怕落后，怕错过。这些怕，让我们拼命抓东西。</li><li>空虚——心里有个洞，想用东西填。但东西填不满，越填越空。</li></ul>
+<h3 class="label">到底该怎么学会知足？</h3>
+<p>第一，每天数算三件值得感恩的事。</p>
+<p>知足的反面，是抱怨。抱怨的人，眼里全是缺的。感恩的人，眼里全是有的。每天睡前，想三件今天值得感恩的事。可以很小：今天天气不错，今天吃到了好吃的，今天有人对我笑了。时间长了，你的大脑会习惯性地看见有的。</p>
+<p>第二，分清“需要”和“想要”。</p>
+<p>想买东西之前，问自己：这是我需要的，还是我想要的？“需要”是：没有它，我过不下去。“想要”是：有它更好，没有也行。如果是“想要”，再等三天。三天后，可能就不想要了。</p>
+<p>第三，少看朋友圈，多看自己。</p>
+<p>朋友圈是精选集，不是纪录片。别人只发好的，不发坏的。你拿自己的日常，比别人的高光，当然输。试试：减少刷朋友圈的时间，用那个时间做自己的事。</p>
+<p>第四，练习“有”的时候感恩，“没有”的时候接受。</p>
+<p>保罗说：我知道怎样处丰富，也知道怎样处卑贱。有的时候，感恩。好好享受，但不贪恋。没有的时候，接受。不抱怨，不嫉妒，不抓狂。这不是认命，是相信——相信自己的价值，不取决于拥有什么。</p>
+<p>第五，找到那个“加给我力量的”。</p>
+<p>保罗的秘诀，是“靠着那加给我力量的”。你也需要找到你的力量源。可以是老天爷，可以是信仰，可以是家人，可以是内心深处的一个声音。不管是什么，找到那个让你即使什么都没有，也知道自己还行的东西。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 知足不是拥有的多，是需要的少。</li><li><span class="num">2.</span> 每天数算三件感恩的事。</li><li><span class="num">3.</span> 分清“需要”和“想要”。</li><li><span class="num">4.</span> 少看朋友圈，多看自己。</li><li><span class="num">5.</span> 有的时候感恩，没有的时候接受。</li><li><span class="num">6.</span> 找到那个“加给我力量的”。</li></ol>
+<h3 class="label">金句</h3>
+<p>心里的洞只有感恩才能填满。</p>
+</section>
+
+<section class="section section-chapter" id="ch-32" data-part="part-3">
+<header class="chapter-header">
+  <h1 class="chapter-title">第三十二章　百般试炼中都要大喜乐</h1>
+  <p class="chapter-subtitle">忍耐的功课</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>忍耐不是干等，是带着目标等。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“你们落在百般试炼中，都要以为大喜乐；因为知道你们的信心经过试验，就生忍耐。但忍耐也当成功，使你们成全、完备，毫无缺欠。”（雅各书1:2-4）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么别人都熬出来了，就我还在这儿苦等？</li><li>等得心焦、等得怀疑、等得想放弃，怎么办？</li><li>怎么知道现在是该坚持还是该放弃？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>圣经里有一章，专门讲忍耐的榜样——希伯来书第十一章，被称为“信心名人堂”。里面的人，都不是一帆风顺的：亚伯拉罕——等了二十五年才得儿子；约瑟——等了十三年才出监狱；摩西——在旷野等了四十年才被呼召；大卫——等了十几年才当王；以色列人——在旷野等了四十年才进迦南。这些人，没有一个没等过。但他们都等到了。</p>
+<p>希伯来书第十二章开头说：“我们既有这许多的见证人，如同云彩围着我们，就当放下各样的重担，脱去容易缠累我们的罪，存心忍耐，奔那摆在我们前头的路程。”忍耐，不是干等，是跑。跑的意思，是带着目标等。是知道为什么等，知道等什么，知道没白等。</p>
+<h3 class="label">为什么忍耐这么难？</h3>
+<p>因为我们的心，有几个敌人。</p>
+<ul class="bullets"><li>着急——我们要快。快一点出结果，快一点有回报。慢，就难受。</li><li>怀疑——等的时候，会怀疑：是不是没希望了？是不是我错了？是不是老天爷不管我了？</li><li>比较——看别人都得到了，凭什么我要等？</li><li>忘记——等久了，就忘了当初为什么等。忘了目标，忘了意义。</li></ul>
+<h3 class="label">到底该怎么忍耐？</h3>
+<p>第一，把“为什么是我”换成“要我学什么”。</p>
+<p>遇到难处的时候，第一反应是“为什么是我”。这问题，问不出答案，只会让你更委屈。换个问题：“这件事，要我学什么？”可能学耐心，可能学信任，可能学放手，可能学珍惜。不管学什么，至少有个方向。</p>
+<p>第二，把眼光从“终点”移到“过程”。</p>
+<p>太盯着终点，会累死。因为不知道什么时候到。试着看看过程：今天我进步了一点点吗？今天我有新的收获吗？今天我比昨天更坚强了吗？如果有，那就没白等。</p>
+<p>第三，找同伴，不独行。</p>
+<p>一个人等，最难受。找人陪你等。可以是一个朋友，可以是一个小组，可以是一本书，可以是老天爷。有人陪你等，时间过得快些。</p>
+<p>第四，记下“已经过去的”。</p>
+<p>准备一个本子，记下你已经挺过来的事。每次觉得快撑不住了，翻翻看：原来我挺过那么多难的时候。能挺过以前的，就能挺过现在的。</p>
+<p>第五，相信“没白等”。</p>
+<p>希伯来书说：“你们必须忍耐，使你们行完了神的旨意，就可以得着所应许的。”有应许，就有盼头。你可能不知道等多久，但你知道没白等。这就够了。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 试炼生忍耐，忍耐生品格。</li><li><span class="num">2.</span> 把“为什么是我”换成“要我学什么”。</li><li><span class="num">3.</span> 把眼光从“终点”移到“过程”。</li><li><span class="num">4.</span> 找同伴，不独行。</li><li><span class="num">5.</span> 记下“已经过去的”。</li><li><span class="num">6.</span> 相信“没白等”。</li><li><span class="num">7.</span> 一天一天过。</li></ol>
+<h3 class="label">金句</h3>
+<p>忍耐不是无奈，而是主动的盼望。</p>
+</section>
+
+<section class="section section-chapter" id="ch-33" data-part="part-3">
+<header class="chapter-header">
+  <h1 class="chapter-title">第三十三章　常常喜乐</h1>
+  <p class="chapter-subtitle">怎么在糟心的日子里笑出来？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>喜乐不是没有痛苦，是有痛苦的时候心里还有底。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“要常常喜乐，不住地祷告，凡事谢恩；因为这是神在基督耶稣里向你们所定的旨意。”（帖撒罗尼迦前书5:16-18）“你们要靠主常常喜乐。我再说，你们要喜乐。”（腓立比书4:4）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>天天都有糟心事，怎么可能常常喜乐？</li><li>喜乐和开心是一回事吗？</li><li>那些在苦难中还能笑的人，是怎么做到的？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>腓立比书是保罗在监狱里写的。监狱啊！没有自由，没有尊严，不知道会不会被杀。但他在这个信里，用了十六次“喜乐”这个词。“你们要靠主常常喜乐。我再说，你们要喜乐。”他写这句话的时候，可能正戴着锁链，可能正被狱卒欺负，可能正不知道明天会怎样。但他选择喜乐。</p>
+<p>为什么？因为他找到了一个不依赖环境的喜乐源。他的喜乐，不来自外面有什么，来自里面有什么。不来自事情顺不顺，来自他和老天爷的关系对不对。环境可以变，关系不变。外面可以乱，里面不乱。这就是“常常喜乐”的秘诀。</p>
+<h3 class="label">为什么喜乐这么难？</h3>
+<p>因为我们都把喜乐绑在了错误的东西上。</p>
+<ul class="bullets"><li>绑在环境上——环境好，我就喜乐；环境坏，我就不喜乐。但环境天天变，喜乐就天天抖。</li><li>绑在结果上——事情成了，我就喜乐；事情不成，我就不喜乐。但结果不归我管，喜乐就不归我管。</li><li>绑在别人身上——别人对我好，我就喜乐；别人对我不好，我就不喜乐。但别人不是我，我控制不了。</li></ul>
+<p>喜乐要持久，就不能绑在这些会变的东西上。</p>
+<h3 class="label">到底该怎么常常喜乐？</h3>
+<p>第一，把喜乐和感觉分开。</p>
+<p>喜乐不是心情。心情会变，喜乐可以不变。心情是“我觉得开心”，喜乐是“我知道一切都好”。下雨了，心情不好，但你知道这场雨对庄稼好，你知道雨会停。这就是喜乐。所以，感觉不好的时候，也可以喜乐。</p>
+<p>第二，凡事谢恩。</p>
+<p>保罗说“常常喜乐”之后，紧接着说“凡事谢恩”。谢恩，是喜乐的开关。你数算恩典的时候，就看见了有的，没空想缺的。你感恩的时候，心就满了，没地方装抱怨。每天找三件值得感恩的事，不管多小。然后喜乐就来了。</p>
+<p>第三，不住祷告。</p>
+<p>“不住地祷告”，不是一天二十四小时跪着，是随时和老天爷保持连线。遇到事，跟祂说。心烦，跟祂说。高兴，也跟祂说。连线的时候，你就不是一个人。有人陪你，有事可以交出去。这本身，就让人喜乐。</p>
+<p>第四，把眼光从“已失去”转到“还拥有”。</p>
+<p>后悔的时候，看已失去的东西，会忧伤。喜乐的人，看还拥有的东西。腿断了，看眼睛还看得见。钱没了，看家人还在。人走了，看回忆还在。不是阿Q，是真的看。</p>
+<p>第五，相信万事互相效力。</p>
+<p>罗马书说：“万事都互相效力，叫爱神的人得益处。”这句话的意思是：没有一件事是白发生的。坏事，也能变成好事。难事，也能磨出品格。失去，也能让你学会珍惜。相信这个，就能在任何环境里喜乐。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 喜乐不是感觉，是选择。</li><li><span class="num">2.</span> 把喜乐和感觉分开。</li><li><span class="num">3.</span> 凡事谢恩——谢恩是喜乐的开关。</li><li><span class="num">4.</span> 不住祷告——连线的时候，就不是一个人。</li><li><span class="num">5.</span> 把眼光从“已失去”转到“还拥有”。</li><li><span class="num">6.</span> 相信万事互相效力。</li></ol>
+<h3 class="label">金句</h3>
+<p>喜乐不是一种心情，是“我知道一切都会好”。</p>
+</section>
+
+<section class="section section-chapter" id="ch-34" data-part="part-3">
+<header class="chapter-header">
+  <h1 class="chapter-title">第三十四章　凡事谢恩</h1>
+  <p class="chapter-subtitle">喜乐的开关</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>感恩不是一种感觉，是一种眼光。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“要常常喜乐，不住地祷告，凡事谢恩。”（帖撒罗尼迦前书5:16-18）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么有些人遇到什么事都能感恩，我做不到？</li><li>遇到倒霉事，还要感恩？这不是自己骗自己吗？</li><li>怎么才能培养感恩的习惯？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>路加福音里有一个故事：耶稣往耶路撒冷去，经过一个村庄，有十个长大麻风的迎面而来。他们远远地站着，高声说：“耶稣，夫子，可怜我们吧！”耶稣看见，就对他们说：“你们去，把身体给祭司察看。”他们去的时候就洁净了。内中有一个见自己已经好了，就回来大声归荣耀与神，又俯伏在耶稣脚前感谢他。耶稣说：“洁净了的不是十个人吗？那九个在哪里呢？”就对那人说：“起来，走吧！你的信救了你了。”</p>
+<p>十个得医治，只有一个回来感恩。那九个呢？他们可能忙着回家，忙着告诉家人，忙着庆祝。他们不是不感恩，只是忘了。感恩需要刻意地停下来，专门回去说“谢谢”。</p>
+<p>感恩和知足不一样。知足是“够了”，感恩是“谢谢”。知足是对自己说的，感恩是对施恩者说的。知足让你不贪，感恩让你不冷。</p>
+<h3 class="label">为什么感恩这么难？</h3>
+<p>因为感恩需要我们承认两件事：第一，我得到了我不配的。第二，我是靠别人活的。这两件事，都戳我们的骄傲。我们想靠自己，我们想一切理所当然。但感恩恰恰相反：它承认一切都是恩典。</p>
+<p>感恩的敌人是“理所当然”。当你觉得工资是你应得的，你就不会感恩老板；当你觉得健康是你应得的，你就不会感恩身体；当你觉得阳光、空气、水是理所当然的，你就不会感恩老天爷。</p>
+<h3 class="label">到底该怎么学感恩？</h3>
+<p>第一，每天睡前数算三件恩典。</p>
+<p>这是最简单也最有效的练习。不用多，三件就行。今天有人对你笑了，今天吃到了好吃的，今天天气不错，今天平安到家……三件小事，足够让你带着感恩入睡。</p>
+<p>第二，从最普通的开始。</p>
+<p>不要只感恩那些大事。能呼吸、能走路、能看见、能听见，这些最普通的事，恰恰是最大的恩典。当你为呼吸感恩，空气就变成了礼物。当你为走路感恩，双脚就变成了恩典。</p>
+<p>第三，把感恩说出来。</p>
+<p>心里想感恩是一回事，说出来是另一回事。告诉那个人“谢谢你”，告诉老天爷“谢谢你”。感恩不说出来，就只是感觉；说出来，就成了连接。</p>
+<p>第四，在最难的时候找恩典。</p>
+<p>这不是让你为坏事感恩，是让你在坏事中寻找还没被夺走的好事。病了，为还有药感恩；失业了，为还有家人感恩；失败了，为还有机会感恩。光还在，黑就吞不掉你。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 感恩不是一种感觉，是一种眼光。</li><li><span class="num">2.</span> 感恩的敌人是“理所当然”。</li><li><span class="num">3.</span> 每天数算三件恩典。</li><li><span class="num">4.</span> 从最普通的开始。</li><li><span class="num">5.</span> 把感恩说出来。</li><li><span class="num">6.</span> 在最难的时候找恩典。</li><li><span class="num">7.</span> 记住那九个麻风病人。</li></ol>
+<h3 class="label">金句</h3>
+<p>每天数算恩典，不要以为“理所当然”。</p>
+</section>
+
+<section class="section section-chapter" id="ch-35" data-part="part-3">
+<header class="chapter-header">
+  <h1 class="chapter-title">第三十五章　和平</h1>
+  <p class="chapter-subtitle">风暴中心的锚</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>真正的和平，不是风平浪静，而是风暴中你心里仍有一只稳稳的锚。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“我留下平安给你们，我将我的平安赐给你们。我所赐的，不像世人所赐的。你们心里不要忧愁，也不要胆怯。”（约翰福音14:27）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么生活里总是有冲突、焦虑和不安？是不是我哪里做得不够好？</li><li>当人际关系破裂、工作压力巨大、家里鸡飞狗跳的时候，我怎么才能让自己平静下来？</li><li>“和平”是不是就意味着忍气吞声、什么事都妥协、当老好人？</li><li>面对未来——失业、生病、孩子的前途——心里老是慌慌的，怎么办？</li><li>在家庭、职场或朋友圈里，怎样才能成为一个真正“带来和平”的人，而不是和稀泥或者火上浇油？</li></ul>
+<h3 class="label">圣经上有句话/有件事你看看是否有道理</h3>
+<p>我们先来看一个古老的故事。有一次，湖面上突然刮起大风，波浪打进船里，船几乎要满了水。船上的人惊慌失措，有的人紧紧抱住船舷，有的人开始绝望地喊叫。但在船尾，耶稣却在枕头上睡着了。他们把他叫醒，冲他喊：“我们快没命了，你不管吗？”他醒来后，站起来，对着风和浪说：“住了吧！静了吧！”风就止住，湖面就大大地平静了。然后他转过头来问他们：“你们为什么这么害怕？你们的信心在哪里呢？”</p>
+<p>这个故事里最打动人的，不是风浪被平息的那一瞬间，而是那个在风暴中还能睡着的人。他不是不知道风暴的存在，而是他里面有一种不依赖于外界环境的安宁。</p>
+<p>我们不妨想一想：船上的其他人为什么那么害怕？因为他们所有的安全感都建立在“湖面平静”这个条件上。一旦条件被打破，他们的内心就跟着翻了船。而耶稣之所以能睡着，是因为他的平安不建立在风平浪静之上，而是建立在一个更深的根基上——他相信自己是被看顾的，无论风暴多大，最终的结局不是毁灭。</p>
+<p>这就是“老天爷所赐的平安”和“世人以为的平安”最根本的区别。世人以为的平安是：问题解决了，我就平安；别人对我好了，我就平安；未来有保障了，我就平安。这种平安的本质是条件性的——条件一倒，平安就碎。而老天爷所赐的平安，是根基性的——它不依赖于风浪是否停止，而是取决于你心里那只锚是否抛对了地方。</p>
+<p>还有一个故事。保罗和西拉被人抓住，关进了监狱，后背被打得皮开肉绽，脚上上了木狗，被关在最里面的监牢里。按常理，这应该是人最绝望、最愤怒、最恐惧的时候。但到了半夜，他俩却唱起歌来，不是在抱怨，而是在感恩。其他囚犯都侧耳听着。结果半夜突然地动山摇，监狱的门全开了，锁链也松了。</p>
+<p>这个故事最让人震撼的不是后来的奇迹，而是他们在半夜唱歌这件事本身。他们的处境没有任何好转的迹象——疼还在疼，锁链还在身上，明天还不知道会怎样。但他们选择在这个时候开口感恩。这不是装出来的乐观，而是一种从深处涌出来的平安。他们的锚已经抛在了任何环境都动摇不了的地方。</p>
+<p>你看，这两件事有没有道理？风浪不会因为你害怕就停止，但你可以选择在风浪中仍然安睡。环境不会因为你焦虑就变好，但你可以选择在半夜仍然歌唱。真正的和平，从来不是没有风暴，而是风暴中你心里那只锚稳如磐石。</p>
+<h3 class="label">生活中到底应该怎么做？</h3>
+<p>第一，认清你的锚抛在哪里。</p>
+<p>请你诚实地问自己一个问题：当风暴来临时，我的平安通常建立在什么上面？是银行卡里的数字？是伴侣的态度？是工作的稳定？还是别人对我的评价？如果这些是你的锚，那么当风浪来时，它们一定会被拔起来，因为这个世界上的任何东西都是会变的。真正经得起风暴的锚，只能是一个不会改变的东西——那就是老天爷的信实。你可以用一句话来每天提醒自己：“环境会变，但老天爷不会变。”</p>
+<p>第二，在风暴来临时，先停10秒。</p>
+<p>你会发现，生活中大部分的后悔，都源于我们在风暴来临那一刻的第一反应——脱口而出的话、点下发送的邮件、摔门而出的决定。下次当你感到冲突或危机来袭时，试着做一件事：在心里默数10个数，同时对自己说一句话：“不急，我先稳住。”这10秒钟不是让你解决问题，而是让你的锚有时间沉下去。你会发现，10秒之后你说出来的话、做出来的事，和你当场爆发的结果完全不同。</p>
+<p>第三，学会“不反击”的和平。</p>
+<p>很多人以为和平是被动、软弱、退缩。恰恰相反，真正的和平需要极大的力量。举个例子：有人当众羞辱你，你的本能是骂回去或者记恨在心。但有一种更高级的回应——你平静地看着对方，不反击，但也不退缩。你的平静本身就在告诉对方：你的攻击动摇不了我。这种“不反击的和平”不是忍气吞声，而是因为你心里那只锚太重了，对方的浪打不动你。在家庭里，当伴侣发火时，你不跟着发火，而是平静地说：“我知道你现在很难受，我们等会儿再谈。”这就是和平的力量。</p>
+<p>第四，在最难的时候，开口说一句感恩的话。</p>
+<p>这听起来可能有些不可思议——在我最倒霉的时候，你还让我感恩？但请你回想一下，你生命中最糟糕的那些日子，是不是也藏着一些你没有注意到的“还好”？比如：虽然丢了工作，但身体还健康；虽然和人大吵了一架，但至少把憋了很久的话说出来了；虽然生病住院，但有人来看望你、给你带了一碗热汤。在最难的时候，刻意找一件可以感恩的小事，把它说出来，哪怕只是对自己说。这个动作会把你的注意力从“我控制不了的风浪”转移到“我仍然拥有的东西”上，你的内心会立刻发生微妙的变化。</p>
+<p>第五，做身边人的“风浪缓冲器”。</p>
+<p>如果你希望自己成为一个带来和平的人，请记住一个原则：不要做风浪的放大器，要做风浪的缓冲器。什么是放大器？别人传一句闲话给你，你马上添油加醋传出去；同事发了几句牢骚，你跟着一起骂公司；家人情绪不好，你比他更烦躁。什么是缓冲器？别人把情绪泼向你的时候，你接住它，然后让它沉淀下来，而不是原样泼回去。你可以用这样一句话来练习：“我听到了你的情绪，我们一起看看能做点什么。”就这一句话，就能让很多冲突消解于无形。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 真正的和平不是没有风浪，而是风浪中你心里有一只抛在老天爷身上的锚。</li><li><span class="num">2.</span> 世人的平安依赖环境不变，老天爷的平安让你在环境改变时仍然安稳。</li><li><span class="num">3.</span> 你控制不了风浪，但你可以选择在风暴中安睡、在半夜里歌唱。</li></ol>
+<h3 class="label">金句</h3>
+<blockquote class="scripture">“坚心倚赖你的，你必保守他十分平安，因为他倚靠你。”（以赛亚书26:3）</blockquote>
+</section>
+
+<section class="section section-chapter" id="ch-36" data-part="part-3">
+<header class="chapter-header">
+  <h1 class="chapter-title">第三十六章　恩慈</h1>
+  <p class="chapter-subtitle">不是因为可爱才爱，而是选择了爱</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>恩慈不是因为你遇到了好人，而是因为你选择成为一个好人——哪怕对方一点都不配。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“你们倒要爱仇敌，也要善待他们……你们也必作至高者的儿子，因为他恩待那忘恩的和作恶的。你们要慈悲，像你们的父慈悲一样。”（路加福音6:35-36）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>碰到那种莫名其妙对你态度很差的人——比如甩脸色的服务员、爱搭不理的同事、说话带刺的亲戚——你心里是不是也想过：“你凭什么？我欠你的吗？”</li><li>你已经对某人很好了，可对方不但不领情，还变本加厉。这时候你是不是觉得：“算了，对这种人好就是浪费感情”？</li><li>你知道“以德报怨”听起来很高尚，但做起来真的憋屈。有没有一种办法，既不让别人欺负你，又能保持自己的善良？</li><li>恩慈和“老好人”有什么区别？老好人是被人当软柿子捏，恩慈难道是高级版的软柿子？</li><li>如果我对不友好的人还保持恩慈，对方会不会觉得我好欺负，以后更加得寸进尺？</li></ul>
+<h3 class="label">圣经上有句话/有件事你看看是否有道理</h3>
+<p>先讲一件事。有一群人义愤填膺，要拿石头砸死一个犯了错的女人。他们追问耶稣：“你说怎么办？”耶稣蹲在地上画了会儿字，慢慢站起来说：“你们中间谁是没有错的，谁就可以先动手。”结果那些人一个一个走了，最后只剩下那个女人。</p>
+<p>你看，耶稣没有吵架，没有讲大道理，只是轻轻提醒了一句。那群人的怒气就像被扎了一针的气球，慢慢瘪了下去。恩慈有时候不需要你做什么大事，只需要你说一句让人冷静下来的话。</p>
+<p>还有一件事。约瑟被自己的同胞卖到国外当了奴隶，受了不少苦。后来他当上了埃及的大管家。有一年闹饥荒，当年害他的那些同胞来埃及买粮食，站在他面前却没认出他。换了一般人，这时候就该拍桌子算账了。可约瑟不但没有报复，反而安慰他们说：“不要因为把我卖掉就自责……是老天爷先让我到这里来，为要保全大家的性命。”他甚至把整个家族都接来养着。</p>
+<p>约瑟不是不记得那些伤害，而是他选择不被伤害绑住。他看事情的角度更大——那些坏事，最后反而成就了好事。</p>
+<p>这两件事有没有道理？恩慈不是忍气吞声，也不是假装没受过伤。它是在你有理由翻脸的时候，选择了一条更难但更值得的路。</p>
+<h3 class="label">生活中到底应该怎么做？</h3>
+<p>第一，分清楚“对他好”和“让他踩你”。</p>
+<p>很多人不敢对不友好的人表现恩慈，是因为怕对方得寸进尺。这个担心是有道理的——所以我们要先把一件事搞清楚：恩慈不等于没有底线。对不友好的人好，指的是你心里不存恨、不报复、不冷脸相待，但在行为上你仍然可以保护自己。比如，同事总把脏活推给你，你可以温和但坚定地说：“这次我可以帮你，但下次你要自己做。”这叫恩慈加边界。真正的恩慈，是心里不恨，嘴上不怼，但底线不破。</p>
+<p>第二，试试“三秒换脸法”。</p>
+<p>这是给那些遇到甩脸色的人准备的。比如服务员爱答不理、客服态度恶劣、快递员凶巴巴。你心里的小火苗“噌”地一下上来了，这时候你做一个动作：在心里默数三秒，然后主动冲对方笑一下——不是假笑，是“我懒得跟你一般见识”的那种笑，同时说一句温和的话，比如：“辛苦了”或者“谢谢你”。你会发现一个神奇的现象：对方的脸往往会僵住，然后不自觉地也缓和下来。就算没有，你也不会损失什么，但你心里会很爽——因为你没被他带跑。</p>
+<p>第三，把“他不配”改成“我不亏”。</p>
+<p>这是心理上最重要的一关。我们不愿意对不友好的人好，根本原因是一个逻辑：“他对我不好，他不配得到我的好。我要是对他好，我就亏了。”这个逻辑听起来很合理，但它有一个漏洞——你的善良是论斤称两卖的吗？如果你对一个人好，仅仅因为你觉得他“配得上”，那你的善良本质上是在做买卖。恩慈的一个核心是：我对你好，不是因为你好，而是因为我好。我给了你，我自己不亏。你接不接受、领不领情、改不改变，那是你的事。我把我的好给出去了，我的心是暖的，这就够了。</p>
+<p>第四，从“最轻量级”开始练习。</p>
+<p>不要一上来就挑战那个长期欺负你的领导，你会失败的。先从生活里的小摩擦开始练。比如：</p>
+<ul class="bullets"><li>有人在路上挤了你一下，没说对不起。你心里骂一句“没素质”是最省事的，但你可以试试对他点一下头，说“没事”。</li><li>外卖小哥晚到了半小时，汤还洒了。你不给差评是底线，但你可以多说一句：“路上不容易吧，辛苦了。”</li></ul>
+<p>这些小练习不会让你觉得委屈，因为你付出的成本很低，但你会发现自己的心情反而变好了。这就是恩慈的一个秘密——它最先滋养的不是别人，而是你自己。</p>
+<p>第五，给自己一个“大格局”的理由。</p>
+<p>当你实在做不到对某个讨厌的人保持恩慈的时候，试试换个角度想问题：这个人今天这么不友好，他是不是正在经历什么糟糕的事？他是不是从小就没有被好好对待过？他是不是身上背着你看不见的包袱？这不是让你替他找借口，而是让你自己从“他对不起我”这个小牢房里走出来。你看，一旦你把镜头拉远，那个把你气得半死的人就变小了，你心里的空间就变大了。恩慈，说到底是一种格局。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 恩慈不是因为你遇到了好人，而是因为你选择成为一个好人——这个选择本身，就是你的回报。</li><li><span class="num">2.</span> 对不友好的人保持恩慈，不等于让他踩你；你可以温和地守住底线，同时心里不存恨。</li><li><span class="num">3.</span> 最划算的恩慈是从小事练起——给甩脸色的人一个笑脸，先爽的是自己。</li></ol>
+<h3 class="label">金句</h3>
+<blockquote class="scripture">“你不可为恶所胜，反要以善胜恶。”（罗马书12:21）</blockquote>
+</section>
+
+<section class="section section-chapter" id="ch-37" data-part="part-3">
+<header class="chapter-header">
+  <h1 class="chapter-title">第三十七章　良善</h1>
+  <p class="chapter-subtitle">以善胜恶的力量</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>恶会传染，良善也会。区别在于：恶让人越活越窄，良善让人越活越宽。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“你不可为恶所胜，反要以善胜恶。”（罗马书12:21）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>有人故意坑你、算计你、背后说你坏话，你第一反应是不是：“等着瞧，早晚让你好看”？</li><li>你也知道“以善胜恶”听起来很高级，但现实是：你不还手，对方就更嚣张。良善真的有用吗？</li><li>做一个善良的人，在这个社会上是不是太吃亏了？那些心狠手辣的人好像活得更好啊。</li><li>良善和懦弱有什么区别？我怎么知道自己是“以善胜恶”还是在当冤大头？</li><li>如果我一直对别人好，可对方不但不改，反而变本加厉，我还要继续善良下去吗？</li></ul>
+<h3 class="label">圣经上有句话/有件事你看看是否有道理</h3>
+<p>有一个人从耶路撒冷去耶利哥，半路上遇到了强盗。强盗把他的衣服扒了，把他打了个半死，扔在路边走了。先后有两个人经过——一个是祭司，一个是利未人，都是当时社会上有头有脸的人。他们看见这个人，都绕着走过去了。最后来了一个撒玛利亚人。撒玛利亚人和犹太人是世仇，互相瞧不起。可这个撒玛利亚人看见那个受伤的人，就动了恻隐之心。他上前用酒和油清洗伤口、包扎好，扶上自己的牲口，带到客店里照应，还拿出钱来交代店主：“你照应他，额外的费用我回来还给你。”</p>
+<p>这个故事有意思的地方在于：那两个绕道走的人，可能有一百个“合理”的理由不停下来——怕自己也遇害、怕沾染不洁、怕耽误正事。而那个撒玛利亚人，反而有一个“不合理”的理由停下来——他们是仇人啊。可他偏偏停了。他不是不知道风险，不是不知道对方跟他不一路，但他选择停。</p>
+<p>这说明什么？良善不是因为你跟对方关系好，也不是因为这件事对你有利。良善是你明明可以绕过去，却选择停下来。</p>
+<p>还有一件事。扫罗因为嫉妒大卫，翻来覆去地想杀他，带着三千精兵追着他满山跑。有一次，扫罗进了一个山洞解手，而大卫和手下恰好藏在同一个山洞的深处。手下兴奋地说：“机会来了！老天爷把他交在你手里了，你动手吧！”大卫悄悄起来，没有杀扫罗，只割了他外袍的一角。割完之后，大卫心里还自责——连割人家袍角都觉得过分了。</p>
+<p>后来大卫走出去，远远地喊：“我主，我王！你听我说。今天有人让我杀你，我却不肯。你看，你袍子的一角在我手里。我没有害你，你为什么要追着杀我呢？”扫罗哭了，说：“你比我公义，因为你以善待我，我却以恶待你。”</p>
+<p>你看，大卫如果动手，那一刀下去，历史上就多了一个篡位者。可他没有。他选择在最有理由反击的时候不反击。结果呢？连追杀他的敌人都服了。这就是“以善胜恶”——不是用拳头把对方打服，而是用良善让对方心里的敌意站不住脚。</p>
+<p>这两件事有没有道理？良善不是傻白甜，它是在你有能力反击、有理由翻脸的时候，选择了一条更难走的路。而这条路，往往能走到以牙还牙走不到的地方。</p>
+<h3 class="label">生活中到底应该怎么做？</h3>
+<p>第一，先搞清楚：良善不是不设防。</p>
+<p>这是最大的误会。很多人以为“以善胜恶”就是打不还手、骂不还口、被人欺负了还笑眯眯。那不是良善，那是自虐。真正的良善，是你有底线、有能力保护自己，但你不主动用恶去报复。比如，有人在背后造谣中伤你，你可以去澄清事实、可以找领导、可以用法律保护自己——这不叫恶。恶是你也去造他的谣、用同样的手段整他。良善的人不是没有牙齿，而是不用牙齿去咬咬你的人。</p>
+<p>第二，把“我要赢”改成“我不被他带跑”。</p>
+<p>当我们被人欺负的时候，心里最强烈的一个冲动是：“我要让他知道厉害！”这个冲动很正常，但你仔细想想——你要让他知道厉害，你就得用他的方式对付他。他造谣，你也造谣；他阴你，你也阴他。结果是什么？你变成了第二个他。他把你拉到他的泥潭里，然后在泥潭里跟你打架。你就算赢了，也是满身泥。良善的胜利标准不是“把他打趴下”，而是“我没有变成他”。只要你没有被他带跑，你就已经赢了。</p>
+<p>第三，聊一个现实难题：老人倒地，扶不扶？</p>
+<p>这个话题现在很扎心。说实话，那些“扶了反被讹”的新闻，让很多人都怕了。你心里想做好事，但脑子里马上跳出一个声音：“万一他讹我怎么办？万一说不清楚怎么办？”这个担心太正常了，这不是你冷漠，是这个社会让你不得不多一个心眼。</p>
+<p>那怎么办？难道就不扶了吗？这里有几个既保持良善、又保护自己的办法：</p>
+<ul class="bullets"><li>先观察，再行动。 看看老人有没有意识，能不能说话。如果情况紧急比如流了很多血，马上打120，同时拍视频或者请旁边的人一起作证。这不是不信任老人，这是保护自己，也是保护良善——因为一旦你被讹了，下次你可能真的不敢再做好事了。</li><li>找人一起扶。 喊一下周围的人：“来，大家一起帮忙。”人多了，说不清楚的概率就小了。</li><li>如果不方便动手，至少做点什么。 比如帮忙打电话、帮忙维持秩序、帮忙去买瓶水。良善不一定要你亲手去扶，你愿意停下来、愿意出一份力，这就是良善。</li></ul>
+<p>说白了，良善不是傻大胆。真正的良善是：你知道有风险，但你仍然愿意想办法去做那件对的事，而不是因为怕风险就干脆绕着走。就像那个撒玛利亚人——他如果先算一下风险回报比，他也会绕过去。但他没有。他选择了停下来，同时他也用了当时他能用的办法（把伤者带到客店、付钱托人照应）。他不是莽撞，他是清醒地善良。</p>
+<p>第四，用“长镜头”看输赢。</p>
+<p>短期来看，善良确实可能吃亏。那个撒玛利亚人花了时间、花了钱、还冒了风险；大卫放走了追杀自己的敌人，谁知道扫罗明天会不会又来杀他？短期看，他们都“亏”了。但长期看呢？撒玛利亚人的故事被讲了整整两千年，无数人从中得到启发；大卫后来成了最受爱戴的君王。更重要的是，他们自己心里不亏——他们睡觉是踏实的，他们不用防着这个防着那个。而那些靠恶取胜的人，表面赢了，心里永远有一个窟窿：他们知道别人怕他，但不服他；别人躲他，但不敬他。你愿意选哪种赢？</p>
+<p>第五，从小事开始“反本能”。</p>
+<p>以善胜恶是反本能的，所以要从小事练起。比如：</p>
+<ul class="bullets"><li>有人在路上加塞到你前面，你本能想骂一句。你可以试着不说，甚至让一下。</li><li>外卖小哥打翻了你的饭，你本能想给差评。你可以先听他说完，然后说一句“没事，下次注意就行”。</li><li>有人在群里阴阳怪气说你，你本能想怼回去。你可以先不打字，等十分钟，然后发一句“嗯，有道理，我回头看看”。</li></ul>
+<p>这些小事练多了，你会发现：你越来越不容易被别人的情绪绑架。你越来越稳。这就是良善给你的真正回报——不是别人夸你“好人”，而是你成了自己情绪的主人。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 良善不是打不还手，而是你有能力还手的时候，选择不被恶带跑。</li><li><span class="num">2.</span> 以善胜恶的胜利标准不是把对方打趴下，而是你没有变成第二个他。</li><li><span class="num">3.</span> 良善不是傻大胆——知道有风险，但仍然愿意想办法去做对的事，而不是因为怕风险就干脆绕着走。</li></ol>
+<h3 class="label">金句</h3>
+<blockquote class="scripture">“你们愿意人怎样待你们，你们也要怎样待人。”（马太福音7:12）</blockquote>
+</section>
+
+<section class="section section-chapter" id="ch-38" data-part="part-3">
+<header class="chapter-header">
+  <h1 class="chapter-title">第三十八章　信实</h1>
+  <p class="chapter-subtitle">最珍贵的品质</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>聪明人很多，但让人放心的人不多。信实，就是你说的话，别人不用加一个问号。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“人在最小的事上忠心，在大事上也忠心。”（路加福音16:10）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>你有没有遇到过这种人——答应你的事，十次有八次做不到，理由还特别充分？你心里是不是默默给他贴了个标签：“这人不太靠谱”？</li><li>反过来想，你自己有没有答应过别人什么事，后来忘了、拖了、或者觉得“应该没事吧”就没做？</li><li>有时候不是不想守信，是真的忙不过来、或者当时一冲动就答应了，事后发现做不到。这时候怎么办？</li><li>信实是不是意味着什么事都要死扛到底？会不会被人当老实人欺负？</li><li>在这个“忽悠也能赚钱”的时代，老老实实做人、说到做到，是不是有点傻？</li></ul>
+<h3 class="label">圣经上有句话/有件事你看看是否有道理</h3>
+<p>讲一个关于“小事情”的故事。一个人要出远门，把家业交给三个仆人。一个给了五千银子，一个给了两千，一个给了一千。主人回来后，前两个仆人都赚了加倍，主人说：“好，你在不多的事上有忠心，我要把许多事派你管理。”第三个仆人把银子埋在地里，原封不动还回去。主人说：“你这又恶又懒的仆人。”</p>
+<p>这个故事告诉我们：信实不是看你能做多大的事，而是看你有没有把交到你手里的事当回事。哪怕是一件小事，你把它做好了，你就是靠得住的人。</p>
+<p>还有一件事。一群人一边被人捣乱、一边造城墙。他们一手拿兵器防身，一手干活，从天亮直到星宿出现。领头的人叫尼希米，说到做到，从不含糊。结果五十二天，城墙就造好了。那些笑话他们的人看到这结果，反而觉得害怕了。</p>
+<p>你看，一个靠得住的人，不需要喊口号、表决心。你只需要一件事一件事地把它做完、做好，时间长了，所有人都会知道：这个人，靠谱。</p>
+<p>这两件事有没有道理？信实不是天赋，是选择。你选择把每一件答应的事当回事，你就成了一个靠得住的人。</p>
+<h3 class="label">生活中到底应该怎么做？</h3>
+<p>第一，不要轻易说“没问题”。</p>
+<p>这是信实的第一条铁律。很多人之所以失信，不是因为人品差，是因为嘴巴太快。别人一开口，你不好意思拒绝，张口就来：“没问题！小事！”结果回去发现根本做不了。最后要么硬着头皮做得很烂，要么放人家鸽子。</p>
+<p>更好的做法是：别人求你帮忙的时候，你先给自己三秒钟想一想。然后可以说：“我先看一下我的时间，十分钟后回复你。”或者直接说：“这件事我不太有把握，不敢答应你。”你猜怎么着？对方不但不会觉得你不够意思，反而会觉得你是个慎重的人。你答应了，他就真的放心了。</p>
+<p>第二，把“答应了”三个字刻在脑门上。</p>
+<p>人之所以会忘记自己答应过的事，不是因为坏，是因为忙、乱、杂事多。所以你需要一个外挂系统：一个简单的备忘录、手机提醒、甚至是在手背上写一个字。只要你答应了别人一件事，不管多小——回一个电话、带一个东西、查一个资料——立刻记下来。不依赖你的脑子，因为你的脑子会骗你。信实的人不是记忆力好，是有记下来的习惯。</p>
+<p>第三，如果做不到，提前说。</p>
+<p>这是信实的最后一道防线。你再怎么努力，总有些事情确实做不到——临时有急事、身体不舒服、或者你高估了自己。这时候，最毁信用的不是“做不到”，而是“不吭声”。你拖着、躲着、装作忘了，等对方来问的时候才说“哎呀不好意思”。这时候对方的损失已经造成了，而且他会觉得你根本没把他的事放在心上。</p>
+<p>正确的做法是：一旦发现可能做不到，立刻、主动告诉对方。不要说“可能”，要说清楚：“我答应你的事，周五前可能完成不了了。最快要下周一。如果你等不了，我帮你想想别的办法。”对方虽然失望，但绝大多数人会觉得你靠谱——因为你没有让他傻等。提前说，是信实最后的体面。</p>
+<p>第四，从小事开始练“闭环”。</p>
+<p>信实是一种可以练出来的习惯，要从最小的闭环开始。什么叫闭环？就是一件事从“收到”到“完成”再到“告知对方”，全程不中断。比如：</p>
+<ul class="bullets"><li>别人给你发微信问个事，你看到了，哪怕暂时回答不了，也回一句“收到，我查一下”。</li><li>你答应还给别人的一本书，还的时候说一声“书放你桌上了”。</li><li>你开会答应了要出一份资料，出完了主动发群里，不用别人来催。</li></ul>
+<p>这些事小到几乎不用花什么力气，但它们会训练你：凡事有交代，件件有着落，事事有回音。你练上一个月，你身边的人会明显感觉到——你变了，变靠谱了。</p>
+<p>第五，老实说，信实是“长期主义者的作弊器”。</p>
+<p>现在这个时代，聪明人太多了。会说的、会演的、会包装的，到处都是。短期看，那些“嘴上跑火车”的人确实占便宜——他们把项目吹来了、把客户忽悠来了、把升职机会抢走了。你老老实实做事的人，好像总是慢半拍。</p>
+<p>但你拉长了看，三五年后，谁在台上，谁在台下？那些光说不练的人，迟早会露馅。因为人家跟他合作一次，就不想再合作第二次。而你呢？你每做成一件事，就在你的信用账户里存了一笔钱。时间越长，你的信用利息就越多。到最后你会发现：靠谱，是这个时代最稀缺的东西。而你已经有了。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 信实不是从不失信，而是你把答应的事真正当回事——哪怕只是很小的事。</li><li><span class="num">2.</span> 做不到不可怕，可怕的是做不到还不吭声。提前说，是信实最后的体面。</li><li><span class="num">3.</span> 聪明人很多，让人放心的人很少。做一个“凡事有交代”的人，时间会奖励你。</li></ol>
+<h3 class="label">金句</h3>
+<blockquote class="scripture">“人在最小的事上忠心，在大事上也忠心。”（路加福音16:10）</blockquote>
+</section>
+
+<section class="section section-chapter" id="ch-39" data-part="part-3">
+<header class="chapter-header">
+  <h1 class="chapter-title">第三十九章　节制</h1>
+  <p class="chapter-subtitle">管住自己的本事，是最大的本事</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>你是你自己的主人，而不是欲望的跟班。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“凡较力争胜的，诸事都有节制。”（哥林多前书9:25）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>手机刷短视频，说好只看十分钟，结果一抬头两个小时过去了——你是不是也干过这种事？</li><li>明明不饿，但看见零食就想吃；明明该睡觉了，但就是舍不得关灯。你是不是也觉得：“我怎么就管不住自己呢？”</li><li>跟人吵架的时候，话到嘴边了，你知道说出来会后悔，但就是憋不住——有没有？</li><li>有人说“节制就是啥都不能干，活着还有什么意思？”你是不是也觉得有点道理？</li><li>那些特别自律的人，是不是天生就比我们能忍？还是他们有什么秘诀？</li></ul>
+<h3 class="label">圣经上有句话/有件事你看看是否有道理</h3>
+<p>先讲一个故事。有一个人，叫参孙，天生神力，能空手把狮子撕成两半。但他的弱点是什么？管不住自己。看见喜欢的女人就走不动路，明知道对方在害他，还是往里钻。最后被人骗走了力气的秘密，剃了头发，挖了眼睛，在监狱里推磨。一个能打败一支军队的人，最后败给了自己的欲望。</p>
+<p>还有一个故事。有一个人叫但以理，被俘虏到国外，国王给他吃山珍海味。但他“立志不以王的膳和王所饮的酒玷污自己”，只吃素菜、喝白水。结果呢？十天后，他的气色比那些吃大餐的人还好。后来他一路做到总理，活到九十多岁。</p>
+<p>这两个人放在一起看，很有意思。参孙什么都能做，但什么都管不住自己，最后什么都没了。但以理很多东西不能做，但他管得住自己，最后什么都有了。你看，能力再大，管不住自己，等于零；能力一般，但管得住自己，反而能走很远。</p>
+<p>还有一件事，是保罗打过一个比方。他说：“凡在场上比武的，诸事都有节制。”什么意思？一个运动员要想赢，不能想吃什么就吃什么，想几点睡就几点睡。他得训练、得忌口、得早起。这些事单看都很“不自由”，但恰恰是这些“不自由”，让他能在比赛那天发挥出最好的自己。</p>
+<p>这个比方有没有道理？节制不是让你活得憋屈，而是让你把有限的精力、时间、注意力，用在真正重要的事情上。你管住了刷手机的手，才能有时间看书；你管住了乱花钱的手，才能攒下钱来去想去的地方；你管住了发火的嘴，才能留住身边重要的人。</p>
+<h3 class="label">生活中到底应该怎么做？</h3>
+<p>第一，先搞明白：你不是“意志力差”，你是“诱惑太多了”。</p>
+<p>很多人一管不住自己就骂自己：“我怎么这么没出息！”停。别急着骂。你想想，现在的手机、短视频、外卖、游戏，背后是多少顶尖的工程师、心理学家在想办法让你“上瘾”？你不是在跟自己的意志力作斗争，你是在跟一个几百亿的产业作斗争。输了很正常。</p>
+<p>那怎么办？别硬扛，躲着走。 你管不住自己刷短视频，就把App删了；你忍不住吃零食，就别往家里买；你晚上舍不得睡觉，就设一个自动关机。真正的节制高手，不是天天跟诱惑肉搏，而是根本不让自己进入“需要肉搏”的境地。这叫什么？这叫“智慧型节制”。</p>
+<p>第二，用“十分钟法则”对付冲动。</p>
+<p>你想要点那个外卖、你想发那条骂人的微信、你想打开游戏再玩一局——这时候，你跟自己说一句话：“行，可以，等十分钟再说。”然后你去做点别的事：倒杯水、上个厕所、把垃圾倒了。十分钟后你再看，那个冲动还在不在？绝大多数时候，它已经蔫了。</p>
+<p>为什么这招管用？因为冲动就像浪，来得猛，去得也快。你只要能扛过最猛的那一波，后面的浪就打不翻你了。十分钟，就是帮你扛过那一波。</p>
+<p>第三，把你的“有限弹药”用在刀刃上。</p>
+<p>人的自制力是有限的，就像手机电池，用一点少一点。你早上起床跟“再睡五分钟”斗争，用掉一格；上班路上跟加塞的人较劲，用掉一格；中午纠结吃啥，又用掉一格。到下午你想专心工作的时候，电池红了。</p>
+<p>所以高手是怎么做的？他们把重要的事放在早上做，因为那时候自制力最满。他们把不需要自制力的事（比如回邮件、整理文件）放在下午做。他们尽量减少“做决定”的次数——比如提前定好每周三吃什么、穿什么，省得每天纠结。你看，节制不是硬撑，是合理分配。</p>
+<p>第四，允许自己“偶尔崩一次”。</p>
+<p>这是最重要的一条，也是最容易被忽视的。很多人立目标：“从今天起，我再也不……”结果坚持了三天，第四天破功了，然后就觉得自己是个废物，彻底放弃。这是最亏的。</p>
+<p>正确的思路是：你设一个目标，比如“一周最多喝两次奶茶”。如果你喝了三次，没关系，下周争取只喝两次。而不是“我破戒了，干脆天天喝”。节制不是完美主义，是大方向对就行。你80%的时间管住了自己，剩下的20%留给自己喘口气。这样你才能坚持下去。追求100%的人，最后往往是0%。</p>
+<p>第五，给你的“放纵”设个时间表。</p>
+<p>完全禁止一件事，往往会让这件事变得更有诱惑力。你不让孩子玩游戏，他半夜偷偷玩；你不让自己吃甜食，你憋三天然后一口气吃五个蛋糕。不如反过来：你允许自己放纵，但有条件。</p>
+<p>比如：</p>
+<ul class="bullets"><li>每天可以刷半小时短视频，设个闹钟，响了就停。</li><li>每周可以吃一顿“罪恶餐”，随便吃，但只有一顿。</li><li>每个月可以有一天“摆烂日”，啥也不干，躺着。</li></ul>
+<p>你看，你给了自己一个出口，那个“憋得慌”的感觉就没了。而且因为你有计划，放纵完了你不会愧疚，你会想：“这是我应得的。”这就是节制的最高境界——不是苦行僧，而是有节奏地生活。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 能力再大，管不住自己，等于零；能力一般，管得住自己，反而能走很远。</li><li><span class="num">2.</span> 节制不是硬扛诱惑，而是聪明地躲着走——别跟几百亿的产业正面刚。</li><li><span class="num">3.</span> 追求100%完美的人，最后往往是0%。给自己留20%的喘息空间，你才能走得远。</li></ol>
+<h3 class="label">金句</h3>
+<p>最大的自由不是想做什么就做什么，而是不想做什么就能不做什么。</p>
+</section>
+
+<section class="section section-part" id="part-4" data-part="part-4">
+<div class="part-cover">
+  <div class="part-cover-inner">
+    <div class="part-ornament">❦</div>
+    <h1 class="part-title">第四部分　生活篇</h1>
+    <p class="part-subtitle">如何在世界行走？</p>
+  </div>
+</div>
+</section>
+
+<section class="section section-chapter" id="ch-40" data-part="part-4">
+<header class="chapter-header">
+  <h1 class="chapter-title">第四十章　像是给老天爷做的</h1>
+  <p class="chapter-subtitle">如何对待工作？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>无论做什么，都要从心里做，像是给老天爷做的，不是给人做的。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“无论做什么，都要从心里做，像是给主做的，不是给人做的。”（歌罗西书3:23）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>周一早上不想起床，是我有问题还是工作有问题？</li><li>工作就是挣钱吃饭，还能有什么意义？</li><li>老板不好、同事不靠谱、薪水不高，还要好好干吗？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>约瑟的故事，咱们前面讲过。他工作过好几个地方：在波提乏家当奴隶——他干得好，被提升为管家；在监狱里当囚犯——他干得好，被提升为管理囚犯的；在埃及当宰相——他干得好，救了整个国家。约瑟有个特点：不管在哪儿，不管干什么，他都好好干。为什么？因为他知道，他不是给老板干的，是给老天爷干的。</p>
+<p>圣经里说：“无论做什么，都要从心里做，像是给主做的，不是给人做的。”这句话，能把所有的工作都变成“圣工”。你是给人干的时候，老板好不好决定你干不干。老板坏，你就混；老板不公，你就气；老板看不见，你就偷懒。但你是给老天爷干的时候，就不一样了。老天爷好不好？老天爷公不公？老天爷看不看得见？这些问题都不用问。你就好好干，因为老天爷值得。</p>
+<h3 class="label">工作的几个错误看法</h3>
+<p>错误一：工作是被咒诅的。 有人觉得工作是因为亚当犯罪才有的，所以工作是倒霉。但创世记说，亚当被造之后，老天爷就派他“修理看守”伊甸园。工作是犯罪之前就有的。犯罪之后，工作变苦了，但工作本身不是咒诅。</p>
+<p>错误二：工作只是挣钱的手段。 工作确实挣钱，但不只挣钱。工作也是你服侍人的方式，是你用恩赐的地方，是你成长的学校。</p>
+<p>错误三：工作就是一切。 有人把工作当偶像，把人生价值全绑在工作上。结果工作顺利就高兴，工作不顺就崩溃。不对。工作不是一切。你的价值不在工作里。</p>
+<h3 class="label">到底该怎么对待工作？</h3>
+<p>第一，把工作当成服侍。</p>
+<p>不是服侍老板，是服侍老天爷。所以，不管老板在不在，你都好好干。不管别人看不看得见，你都认真干。因为你是给老天爷干的。这个心态一换，工作就不一样了。你不是在打工，你是在用工作敬拜。</p>
+<p>第二，把工作当成成长。</p>
+<p>每一份工作，都能让你成长。专业能力的成长，人际关系的能力，处理问题的能力，忍耐的能力，品格的能力。工作不顺的时候，问自己：这件事要我学什么？</p>
+<p>第三，把工作放在合适的位置。</p>
+<p>工作重要，但不是最重要。你的第一关系，不是和老板，是和家人。你的第一身份，不是职业，是儿子/女儿/父亲/母亲/丈夫/妻子。工作要干好，但别让工作吞了你。</p>
+<p>第四，在劳碌中享福。</p>
+<p>传道书说：“人人吃喝，在他一切劳碌中享福，这也是神的恩赐。”什么意思？就是：工作的时候，也能享受。享受工作的过程，不是只看结果。享受同事的关系，不是只盯着业绩指标。享受每天的一点进步，不是只等升职加薪。能在劳碌中享福，是本事。</p>
+<h3 class="label">蚂蚁的智慧</h3>
+<p>箴言里有一段话，特别适合给不想上班的你：“懒惰人哪，你去察看蚂蚁的动作，就可得智慧。蚂蚁没有元帅，没有官长，没有君王，尚且在夏天预备食物，在收割时聚敛粮食。”</p>
+<p>你看，蚂蚁没有人管它们，没有老板盯着，没有业绩指标压着，没有绩效考核追着。但它们知道该做什么。这里藏着两个智慧：第一，勤奋。 蚂蚁不懒惰。它们从早到晚忙碌，因为那是它们被造的本分。第二，预备。 蚂蚁在夏天就预备冬天的粮，在收割时就聚敛粮食。它们不是为今天焦虑，是为明天预备。</p>
+<p>耶稣叫我们看飞鸟，是叫我们不要焦虑；所罗门叫我们看蚂蚁，是叫我们不要懒惰，还要有远见。两个放在一起，才是完整的：不焦虑，但不懒惰；不忧虑，但尽本分。不为明天愁，但为明天备。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 把工作当成服侍。</li><li><span class="num">2.</span> 把工作当成成长。</li><li><span class="num">3.</span> 把工作放在合适的位置。</li><li><span class="num">4.</span> 在劳碌中享福。</li><li><span class="num">5.</span> 记住蚂蚁：不懒惰，有远见。</li></ol>
+<h3 class="label">金句</h3>
+<p>懒惰的人哪，去看看蚂蚁的动作。</p>
+</section>
+
+<section class="section section-chapter" id="ch-41" data-part="part-4">
+<header class="chapter-header">
+  <h1 class="chapter-title">第四十一章　金钱</h1>
+  <p class="chapter-subtitle">是工具，不是主人</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>钱是小事，但能看出你的心。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“你们不能又事奉神，又事奉玛门。”（路加福音16:13）“贪财是万恶之根。”（提摩太前书6:10）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>工资一到账就没了，钱都去哪儿了？</li><li>想攒钱，但总是攒不下来，怎么办？</li><li>该花的花了，该省的省了，还是不够，问题出在哪儿？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>路加福音里，耶稣讲了一个比喻：有一个管家，被主人告发浪费财物。主人要辞退他，让他交账。管家想：我被辞了怎么办？锄地没力气，讨饭怕羞。他知道怎么做了。他把欠主人债的人都叫来，问第一个：“你欠多少？”答：“一百篓油。”管家说：“拿你的账，快坐下写五十。”问第二个：“你欠多少？”答：“一百石麦子。”管家说：“拿你的账，写八十。”主人知道后，居然夸奖这个不义的管家做事聪明。</p>
+<p>耶稣讲完，说了一句让人费解的话：“今世之子，在世事之上，较比光明之子更加聪明。”什么意思？耶稣不是夸他不义，是夸他有远见。他知道自己要失业了，赶紧用钱交朋友，为将来打算。然后耶稣说：“要借着那不义的钱财结交朋友，到了钱财无用的时候，他们可以接你们到永存的帐幕里去。”意思是：钱是工具，不是主人。要用钱来做事，不是为钱做事。要用钱来帮助人，不是让人帮你攒钱。钱，会过去。但用钱做的事，会留下来。</p>
+<h3 class="label">关于金钱的几个真相</h3>
+<p>真相一：钱不是万恶之根，贪财才是。 提摩太前书说：“贪财是万恶之根。”不是钱，是贪。钱本身是中性的，可以做好事，也可以做坏事。贪钱的心，才是问题。</p>
+<p>真相二：你不能又事奉神，又事奉玛门。 “玛门”是钱的神。耶稣说，你不能同时拜两个主。你总要选一个。不是让你不工作、不挣钱，是让你不把钱当神。钱是工具，神是主。</p>
+<p>真相三：在最小的事上忠心，在大事上也忠心。 耶稣说，你在钱上忠心，老天爷才敢把更大的事托付给你。钱是小事，但能看出你的心。</p>
+<h3 class="label">到底该怎么用钱？</h3>
+<p>第一，把钱当工具，不当作主。</p>
+<p>钱是工具，不是主人。工具是用来用的，不是用来拜的。钱够花就行，多了就用来帮人。钱少就省，别让钱把你逼疯。每天对自己说一遍：钱是工具，不是主。</p>
+<p>第二，记账，别让钱偷偷溜走。</p>
+<p>很多人的钱，不是花了，是溜了。一笔一笔，都不大，加起来吓人。怎么花的，不知道。从今天开始，记账。不用多细，但要知道钱去哪儿了。看见账单，你才能管住钱。</p>
+<p>第三，量入为出，不透支未来。</p>
+<p>花呗、借呗、信用卡，都是让你提前花未来的钱。偶尔用可以，但别靠这个过日子。因为借钱的，是债主的仆人。能省就省，能攒就攒。不为别的，就为不欠人，睡得着觉。</p>
+<p>第四，用钱交朋友。</p>
+<p>耶稣说：要借着不义的钱财交朋友。什么意思？就是用钱帮助人。请人吃顿饭，给人送个礼，帮人度过难关。钱花出去，情留下来。等钱没用了的时候，那些你帮过的人，会在永恒里迎接你。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 钱是工具，不是主。</li><li><span class="num">2.</span> 记账——看见账单，才能管住钱。</li><li><span class="num">3.</span> 量入为出——不透支未来，睡得着觉。</li><li><span class="num">4.</span> 用钱交朋友——钱花出去，情留下来。</li><li><span class="num">5.</span> 在最小的事上忠心——钱是小事，但能看出你的心。</li></ol>
+<h3 class="label">金句</h3>
+<p>人若赚得全世界，赔上自己的生命，又有什么益处呢？</p>
+</section>
+
+<section class="section section-chapter" id="ch-42" data-part="part-4">
+<header class="chapter-header">
+  <h1 class="chapter-title">第四十二章　谁愿为大，必作用人</h1>
+  <p class="chapter-subtitle">如何成为好的领导者？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>谁愿为大，就必作你们的用人。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“只是在你们中间，不是这样。你们中间，谁愿为大，就必作你们的用人；在你们中间，谁愿为首，就必作众人的仆人。因为人子来，并不是要受人的服事，乃是要服事人，并且要舍命作多人的赎价。”（马可福音10:43-45）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>当领导就是管人吗？有没有别的当法？</li><li>怎么才能让下属真心服我，而不是怕我？</li><li>我没当领导，这些跟我有关系吗？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>耶稣在最后晚餐的时候，做了一件事，让门徒们目瞪口呆。他站起来，脱了衣服，拿一条手巾束腰，然后把水倒在盆里，开始给门徒洗脚。洗脚，是奴隶干的活。不是老师干的，不是主人干的，更不是神干的。但耶稣干了。</p>
+<p>洗完脚，他对门徒说：“我是你们的主，你们的夫子，尚且洗你们的脚，你们也当彼此洗脚。我给你们作了榜样，叫你们照着我向你们所做的去做。”这就是耶稣的领导力模型：不是高高在上，是弯下腰来；不是指挥别人，是服侍别人；不是坐享其成，是先做榜样。</p>
+<p>马可福音里，耶稣说得更直接：“你们中间，谁愿为大，就必作你们的用人；谁愿为首，就必作众人的仆人。”“用人”和“仆人”，都是伺候人的。这就是仆人式领导：你要领导，先伺候。你要为大，先为小。你要站前面，先跪下来。</p>
+<h3 class="label">为什么仆人式领导这么难？</h3>
+<p>因为和世界的逻辑完全相反。世界的逻辑是：领导就是管人的，伺候人是下属的事。耶稣的逻辑是：领导就是伺候人的，管人是手段，不是目的。世界的逻辑是：领导要显自己，让别人看见。耶稣的逻辑是：领导要隐藏自己，让别人看见上帝。世界的逻辑是：领导要收好处。耶稣的逻辑是：领导要付代价。所以难。因为要逆着人性走。</p>
+<h3 class="label">到底该怎么当领导？</h3>
+<p>第一，先服侍，后领导。</p>
+<p>在要求别人之前，先问问自己：我服侍了他们吗？服侍，不是卑躬屈膝，是真心为他们好。帮他们解决问题，帮他们成长，帮他们成功。你先服侍，他们才愿意被你领导。</p>
+<p>第二，先榜样，后命令。</p>
+<p>想让大家做什么，你先做。要大家准时，你先准时。要大家努力，你先努力。要大家不抱怨，你先不抱怨。榜样比命令有力一百倍。</p>
+<p>第三，先听，后说。</p>
+<p>领导最容易犯的错，是说太多，听太少。以为自己知道一切，以为别人不需要说。结果呢？错了都不知道，出事了才发现。先听。听懂了，再说。听够了，再定。</p>
+<p>第四，先扛，后推。</p>
+<p>好事，先让给别人。难事，先自己扛。锅，你先背。功，先记给别人。这不是傻，是让人看见你的心。你扛了，他们才愿意跟你扛。</p>
+<p>第五，先求他们的益处，后求自己的方便。</p>
+<p>做决定的时候，先问：这样对他们好吗？再问：这样对我方便吗？如果对他们好，对自己不方便，选对他们好。这是耶稣的路。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 先服侍，后领导。</li><li><span class="num">2.</span> 先榜样，后命令。</li><li><span class="num">3.</span> 先听，后说。</li><li><span class="num">4.</span> 先扛，后推。</li><li><span class="num">5.</span> 先求他们的益处，后求自己的方便。</li><li><span class="num">6.</span> 记住耶稣的榜样：他是来服侍人的。</li></ol>
+<h3 class="label">金句</h3>
+<p>先求他人的益处，后求自己的方便。</p>
+</section>
+
+<section class="section section-chapter" id="ch-43" data-part="part-4">
+<header class="chapter-header">
+  <h1 class="chapter-title">第四十三章　凡事都有定时</h1>
+  <p class="chapter-subtitle">如何面对人生的转折点？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>凡事都有定时，转折点可能把你带到更好的地方。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“凡事都有定期，天下万务都有定时。”（传道书3:1）“人心筹算自己的道路，惟耶和华指引他的脚步。”（箴言16:9）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>被裁员、孩子离家、父母生病、自己身体出问题……怎么接得住？</li><li>为什么计划得好好的，生活突然就拐弯了？</li><li>怎么知道这个转折是灾难还是机会？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>路得是一个面对转折的人。她原本是外邦女子，嫁给了犹太人。但丈夫死了，婆婆老了，她可以选择回娘家改嫁，开始新生活。但她选择跟着婆婆拿俄米，去一个完全陌生的地方。这是人生的大转折：从熟悉的家乡，到陌生的伯利恒；从有丈夫的日子，到寡妇的身份；从有保障的生活，到靠拾麦穗维生。但她去了。后来呢？她在伯利恒遇到了波阿斯，嫁给了他，成为大卫的曾祖母，进了耶稣的家谱。那个转折点，把她带到了一个她自己完全想不到的位置。</p>
+<p>亚伯拉罕也是。七十五岁的时候，老天爷对他说：“你要离开本地、本族、父家，往我所要指示你的地去。”七十五岁啊，不是二十岁。那时候的人，七十五岁已经是老人了。让他离开熟悉的地方，去一个不知道在哪里的地方。亚伯拉罕去了。后来呢？他成了信心之父，万国因他得福。</p>
+<p>转折点不可怕，可怕的是不敢转。</p>
+<h3 class="label">面对转折点，你需要知道的几件事</h3>
+<p>第一，转折点不一定是坏事。 有些转折，当时看是坏事，后来看是好事。约瑟被卖，是坏事；但如果不被卖，他不会成为宰相。保罗被抓，是坏事；但如果不被抓，他不会在监狱里写出那么多书信。</p>
+<p>第二，你不知道转折点会带你到哪里。 亚伯拉罕不知道要去哪里，但他去了。你不需要知道全部，只需要知道下一步。</p>
+<p>第三，转折点让你成长。 如果不是被逼到墙角，你不会发现自己有多能扛。转折点会逼出你里面平时用不到的东西。</p>
+<p>第四，转折点不是终点，是过渡。 就像坐过山车，最吓人的是那个大转弯，但转过去之后，还有很长的路。</p>
+<h3 class="label">到底该怎么面对转折？</h3>
+<p>第一步：承认——这真的发生了。</p>
+<p>别假装没事。别骗自己“过两天就好了”。承认生活变了，承认自己需要时间适应。承认，是开始。</p>
+<p>第二步：停一下，别急着跳。</p>
+<p>转折点的时候，人最容易慌，一慌就乱动。别急着做决定，别急着跳进下一个坑。先停下来，喘口气，想想清楚。传道书说：“静默有时，言语有时。”现在可能就是静默的时候。</p>
+<p>第三步：找人一起走。</p>
+<p>别一个人扛。找朋友聊聊，找家人商量，找专业人士帮忙。一个人容易钻牛角尖，有人陪着，路好走些。</p>
+<p>第四步：问自己三个问题。</p>
+<ol class="numbered"><li><span class="num">1.</span> 这件事要我学什么？</li><li><span class="num">2.</span> 这件事里，有什么是我能抓住的机会？</li><li><span class="num">3.</span> 这件事过后，我想成为什么样的人？</li></ol>
+<p>第五步：相信祂在。</p>
+<p>诗篇说：“我虽然行过死荫的幽谷，也不怕遭害，因为你与我同在。”转折点像幽谷，但你不需要怕，因为祂在。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 承认——这真的发生了。</li><li><span class="num">2.</span> 停一下，别急着跳。</li><li><span class="num">3.</span> 找人一起走。</li><li><span class="num">4.</span> 问自己三个问题。</li><li><span class="num">5.</span> 相信祂在。</li><li><span class="num">6.</span> 记住：转折点不一定是坏事。</li></ol>
+<h3 class="label">金句</h3>
+<p>如果不是被逼到墙角，你不会发现自己有多能扛。</p>
+</section>
+
+<section class="section section-chapter" id="ch-44" data-part="part-4">
+<header class="chapter-header">
+  <h1 class="chapter-title">第四十四章　一个人，但不孤独</h1>
+  <p class="chapter-subtitle">如何面对孤单？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>独处是状态，孤独是感受，你可以独处而不孤独。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“我父母离弃我，耶和华必收留我。”（诗篇27:10）“我总不撇下你，也不丢弃你。”（希伯来书13:5）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>一个人吃饭、一个人逛街、一个人过节，怎么办？</li><li>明明身边有人，还是觉得孤独，是为什么？</li><li>怎么才能不活在“等人来爱”的状态里？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>以利亚是大先知，在迦密山上一个人对抗四百五十个假先知，大获全胜。但之后王后耶洗别要杀他，他就逃到旷野，坐在一棵罗腾树下，求死说：“耶和华啊，罢了！求你取我的性命！”那个刚打赢胜仗的英雄，此刻一个人坐在旷野，孤独、绝望、想死。</p>
+<p>老天爷怎么对他？没有责备，没有讲大道理，而是先让他吃饭睡觉，然后亲自来找他，用微小的声音对他说话。以利亚以为只剩自己一个人了，老天爷告诉他：还有七千个未向巴力屈膝的。</p>
+<p>你不是一个人。这是老天爷要告诉以利亚的，也是要告诉你的。诗篇里有一句特别让人安心的话：“我父母离弃我，耶和华必收留我。”连父母都可能离弃你，但老天爷不会。</p>
+<h3 class="label">孤独从哪里来？</h3>
+<p>孤独有三种：</p>
+<ul class="bullets"><li>处境性的孤独——刚到一个新城市，身边没朋友；失恋了，那个陪伴的人走了。</li><li>关系性的孤独——身边有人，但不是懂你的人。你在人群中，却感觉格格不入。</li><li>存在性的孤独——即使一切都有，你还是觉得空洞。这种孤独，是人灵魂深处的渴望——渴望与老天爷连接。</li></ul>
+<h3 class="label">到底该怎么面对孤单？</h3>
+<p>第一，把独处和孤独分开。</p>
+<p>你问：“一个人吃饭、一个人逛街、一个人过节，怎么办？”——先分清状态和感受。独处是状态，孤独是感受。你可以一个人而不孤独，也可以在一群人中间而孤独。关键不是你身边有没有人，是你心里有没有平安。把独处当成和自己相处的时间。和自己处好了，就不那么怕一个人了。</p>
+<p>第二，主动连接，不被动等待。</p>
+<p>你问：“单身久了，真的会习惯吗？”——习惯可能会，但连接还是要主动。孤独的反面不是“有人”，是“连接”。你可以主动和朋友约饭，主动参加兴趣小组。不要坐在家里等人来找你，主动走出去。哪怕每周只一次，和人说几句真心话，也会不一样。</p>
+<p>第三，找到你存在的意义，不活在等待里。</p>
+<p>你问：“怎么才能不活在‘等人来爱’的状态里？”——找到比“等人来爱”更大的事。如果你人生的意义是等人来爱，那没人爱的时候你就崩了。如果你人生的意义是：我可以爱别人，我可以做有意义的事——那你就不怕没人爱你。帮助别人，是缓解孤独的好方法。</p>
+<p>第四，和那位永不离开的连接。</p>
+<p>你问：“老天爷真的在吗？为什么我感觉不到？”——感觉不到，不等于不在。希伯来书说：“我总不撇下你，也不丢弃你。”这是应许，不是感觉。感觉会变，应许不会变。你可以每天花一点时间和祂说话，哪怕只是几分钟。祂听得到。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 独处是状态，孤独是感受。</li><li><span class="num">2.</span> 主动连接，不被动等待。</li><li><span class="num">3.</span> 找到比“等人来爱”更大的事。</li><li><span class="num">4.</span> 和那位永不离开的连接。</li><li><span class="num">5.</span> 记住以利亚：你以为只剩自己一个人，其实还有七千个。</li></ol>
+<h3 class="label">金句</h3>
+<p>主动连接，不被动等待。</p>
+</section>
+
+<section class="section section-chapter" id="ch-45" data-part="part-4">
+<header class="chapter-header">
+  <h1 class="chapter-title">第四十五章　如果当时……</h1>
+  <p class="chapter-subtitle">如何面对人生的遗憾？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>忘记背后，努力面前，向着标竿直跑。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“弟兄们，我不是以为自己已经得着了，我只有一件事，就是忘记背后，努力面前的，向着标竿直跑。”（腓立比书3:13-14）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么我总是忍不住回想那些做错的选择、说错的话？</li><li>有些遗憾真的无法弥补，该怎么办？</li><li>怎么区分吸取教训和活在后悔里？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>保罗的人生，充满了“如果当时”。他年轻时是法利赛人，热心逼迫基督徒，把许多圣徒下在监里。后来他信了主，那些被他迫害的人，成了他的弟兄姐妹。他一定有过无数个“如果当时”——如果当时我没有迫害他们，如果当时我早点认识主……</p>
+<p>但在腓立比书里，保罗说了一句话，成了千古名言：“忘记背后，努力面前的，向着标竿直跑。”他不是说“假装没事”，也不是说“过去不重要”。他说“忘记背后”，是选择不被过去捆绑；“努力面前”，是选择向着未来奔跑。他不是失忆，他是换方向。</p>
+<p>还有一个人，叫彼得。他三次不认主，那声鸡叫成了他一辈子的痛。如果当时我没有否认，如果当时我勇敢一点……但耶稣复活后，三次问他“你爱我吗”，三次把羊托付给他。耶稣没有让彼得忘记，但耶稣给了他新的方向。</p>
+<h3 class="label">遗憾有两种</h3>
+<ul class="bullets"><li>可以弥补的遗憾。 说错的话可以道歉，做错的事可以改正，伤害的人可以挽回。这种遗憾，还有救。</li><li>无法弥补的遗憾。 人走了，机会没了，时间过了。这种遗憾，最折磨人。</li></ul>
+<p>但不管是哪种，一直活在“如果当时”里，都是对自己最大的消耗。</p>
+<h3 class="label">到底该怎么面对遗憾？</h3>
+<p>第一，承认遗憾，但不沉浸。</p>
+<p>你问：“为什么我总是忍不住回想那些做错的选择？”——因为那些事真的发生了，你疼。不要假装没事。承认那件事确实发生了，承认你确实后悔。承认，是把遗憾从潜意识里请出来。但承认之后，要告诉自己：想够了吧？该出来了。</p>
+<p>第二，分清“吸取教训”和“活在后悔里”。</p>
+<p>吸取教训是想“下次怎么做”，活在后悔里是想“当时怎么没做”。吸取教训是向前看，活在后悔里是向后看。吸取教训让你成长，活在后悔里让你停滞。所以，当你又开始“如果当时”的时候，问自己：我能从这件事里学到什么？然后把学到的东西，用在今天。</p>
+<p>第三，把无法弥补的交出去。</p>
+<p>你问：“有些遗憾真的无法弥补，该怎么办？”——交给老天爷。有些事，你做不了什么了。人走了，机会没了，时间过了。这时候，唯一的出路是交出去。你可以祷告说：“老天爷，这件事我无能为力了。我把它交给你。求你把我失去的，用别的方式补回来。”罗马书说：“万事都互相效力。”这话不是说坏事变成好事，是说在老天爷手里，连坏事也能被使用。</p>
+<p>第四，用今天活出新的故事。</p>
+<p>你问：“如果当时……这个句式，怎么才能停下来？”——用今天。人不可能既向后看又向前跑。当你把精力都用在后悔昨天，你就没力气过好今天。而今天，正是明天的“如果当时”。你希望明天怎么回忆今天？就从今天开始，做对的事，说对的话，爱对的人。最好的弥补遗憾的方式，是不制造新的遗憾。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 承认遗憾，但不沉浸。</li><li><span class="num">2.</span> 分清“吸取教训”和“活在后悔里”。</li><li><span class="num">3.</span> 把无法弥补的交出去。</li><li><span class="num">4.</span> 用今天活出新的故事。</li><li><span class="num">5.</span> 记住保罗的话：忘记背后，努力面前。</li></ol>
+<h3 class="label">金句</h3>
+<p>最好的弥补遗憾的方式，是不制造新的遗憾。</p>
+</section>
+
+<section class="section section-chapter" id="ch-46" data-part="part-4">
+<header class="chapter-header">
+  <h1 class="chapter-title">第四十六章　当所爱被夺走</h1>
+  <p class="chapter-subtitle">如何面对失去？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>赏赐的是耶和华，收取的也是耶和华，耶和华的名是应当称颂的。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“我赤身出于母胎，也必赤身归回。赏赐的是耶和华，收取的也是耶和华。耶和华的名是应当称颂的。”（约伯记1:21）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>失去了最爱的人，怎么活下去？</li><li>为什么好人也要经历失去？</li><li>失去之后，还要继续信靠老天爷吗？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>圣经里有一个极致经历失去的人——约伯。他失去了一切。</p>
+<p>一天之内，他的财产没了——牛、驴、羊、骆驼，全被抢走或烧死。一天之内，他的孩子没了——十个儿女，在一场风暴中全部压死。然后，他的健康也没了——浑身长满毒疮，坐在炉灰里拿瓦片刮身体。</p>
+<p>他的妻子对他说：“你弃掉神，死了吧！”他的三个朋友来“安慰”他，其实是来指责他，说他一定是犯了罪才受这苦。</p>
+<p>但约伯在失去一切之后，说了一句千古名言：“我赤身出于母胎，也必赤身归回。赏赐的是耶和华，收取的也是耶和华。耶和华的名是应当称颂的。”</p>
+<p>他不是不疼，他不是不明白。他后来也和老天爷辩论，也问“为什么”。但他始终抓住一件事：老天爷还是老天爷，即使我失去一切，祂仍是老天爷。</p>
+<h3 class="label">面对失去，你需要知道的几件事</h3>
+<p>第一，失去不是惩罚。 约伯的朋友说，你一定是有罪。但老天爷亲口说，约伯是完全正直的人。失去不一定是惩罚，更多时候，是生活在提醒你：你不是这个世界的主人，你只是客旅。</p>
+<p>第二，失去让你知道什么是真正的财富。 当你失去健康，才知道健康多值钱；当你失去亲人，才知道相聚多宝贵。失去像一面镜子，照出平时看不见的东西。</p>
+<p>第三，失去带不走老天爷。 约伯失去了所有，但他没有失去老天爷。而且，在失去之后，他更深地认识了老天爷。他说：“我从前风闻有你，现在亲眼看见你。”失去，让他看见了以前看不见的。</p>
+<h3 class="label">到底该怎么面对失去？</h3>
+<p>第一，允许自己难受。</p>
+<p>你问：“失去了最爱的人，怎么活下去？”——先允许自己哭。不要急着“坚强”，不要急着“走出来”，不要听人说“别哭了，ta去了更好的地方”。疼就是疼，想哭就哭。耶稣面对拉撒路的死，也哭了。哭，是承认失去的重量。允许自己难受，是治愈的开始。</p>
+<p>第二，不要一个人扛。</p>
+<p>失去之后，最危险的就是把自己关起来。你不想见人，不想说话，不想被打扰。但一个人待着，脑子里的声音会越来越大，而且全是负面的。找一个人陪着你。可以是朋友，可以是家人。不需要他们说什么，只要他们坐在旁边。有人陪着，黑就没那么黑。</p>
+<p>第三，抓住不变的那一位。</p>
+<p>你问：“失去之后，还要继续信靠老天爷吗？”——要，更难，但要。约伯最伟大的地方，不是他不哭不痛，而是他在哭中、在痛中仍然抓住老天爷。他说：“祂必杀我，我仍要信靠祂。”当一切都摇动的时候，要抓住那个不摇动的。你可以和老天爷吵架，但别和老天爷分手。</p>
+<p>第四，寻找失去中的得着。</p>
+<p>你问：“怎么才能从失去中走出来？”——不是“走出来”，是“走过去”。失去不会过去，但你会走过去。走过去的意思，是带着失去继续活。你会发现，失去之后，你变了。你更懂得珍惜了，更懂得爱了，更懂得什么是重要的了。那些，是失去给你的。</p>
+<p>第五，把失去交还给老天爷。</p>
+<p>最后一步，是把失去的人或事，交还给老天爷。不是忘记，不是割舍，是承认：ta本来就不是你的，是老天爷暂时借给你的。现在老天爷收回了，你把ta还给老天爷。这不是冷漠，是信任。你相信，有一天你们会再见。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 允许自己难受。</li><li><span class="num">2.</span> 不要一个人扛。</li><li><span class="num">3.</span> 抓住不变的那一位。</li><li><span class="num">4.</span> 寻找失去中的得着。</li><li><span class="num">5.</span> 把失去交还给老天爷。</li><li><span class="num">6.</span> 记住约伯的话。</li></ol>
+<h3 class="label">金句</h3>
+<p>失去像一面镜子，照出平时看不见的东西。</p>
+</section>
+
+<section class="section section-chapter" id="ch-47" data-part="part-4">
+<header class="chapter-header">
+  <h1 class="chapter-title">第四十七章　外体虽然毁坏</h1>
+  <p class="chapter-subtitle">如何面对身体的衰老？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>外体虽然毁坏，内心却一天新似一天。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“所以，我们不丧胆。外体虽然毁坏，内心却一天新似一天。”（哥林多后书4:16）“白发为老年人的尊荣。”（箴言20:29）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>看着镜子里的自己一天天老去，心里难受怎么办？</li><li>老了就不中用了吗？还有价值吗？</li><li>怎么面对那些“年轻时候能做，现在不能做”的事？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>圣经里有一个叫迦勒的人。他八十五岁的时候，说了一段特别霸气的话：“看哪，现今我八十五岁了，我还是强壮，像摩西打发我去的那天一样。无论是争战是出入，我的力量那时如何，现在还是如何。”八十五岁，他说他和四十五岁时一样强壮。他不是吹牛，他真的去打仗，真的拿下了希伯仑。</p>
+<p>还有摩西，死的时候一百二十岁，圣经说“眼目没有昏花，精神没有衰败”。当然，不是每个人都能这样。但这两个人告诉我们：衰老不一定等于衰败。</p>
+<p>保罗说得更透彻：“外体虽然毁坏，内心却一天新似一天。”这句话把“衰老”和“更新”放在一起。外面在变老，里面却在变新。这是面对衰老的秘诀：身体在走下坡路，灵魂在走上坡路。</p>
+<p>箴言也说：“白发为老年人的尊荣。”在圣经里，白发不是衰老的记号，是尊荣的记号。因为你走过的路，你经历的岁月，你积累的智慧，都在白发里。</p>
+<h3 class="label">面对衰老，你需要知道的几件事</h3>
+<p>第一，衰老不是咒诅，是自然。 从出生那一刻，我们就在走向衰老。这是被造物的规律。抗拒衰老，就像抗拒吃饭睡觉一样没用。</p>
+<p>第二，衰老不等于没用。 年轻时有年轻的用处，年老时有年老的用处。年轻人可以跑得快，老年人可以看得远。你的价值不取决于你能做什么，取决于你是谁。</p>
+<p>第三，身体在衰残，灵魂在更新。 这是保罗给我们的应许。外面一天不如一天，里面可以一天好过一天。</p>
+<h3 class="label">到底该怎么面对衰老？</h3>
+<p>第一，从“抗老”到“敬老”。</p>
+<p>你问：“看着镜子里的自己一天天老去，心里难受怎么办？”——因为你还在和衰老对抗。试着换个角度：当你看到白发，不把它当成失败，而把它当成勋章。你走过的每一步路，受过的每一次苦，付出的每一次爱，都在那白发里。白发不是衰败，是收获。</p>
+<p>第二，感恩还在的，不纠结失去的。</p>
+<p>你问：“体力不如从前，记性越来越差，怎么接受？”——数算恩典。腿不如从前了，但还能走；眼不如从前了，但还能看；记性不如从前了，但还能记住最重要的。把目光从“已经失去的”转到“还拥有的”，你会发现，你拥有的其实还有很多。</p>
+<p>第三，找到这个年纪能做的事。</p>
+<p>你问：“老了就不中用了吗？还有价值吗？”——有，而且是年轻人做不了的价值。老了可以陪伴，可以倾听，可以安慰，可以祷告。年轻人忙，你没那么忙；年轻人焦虑，你经历多了看得开。这个年纪最大的价值，不是“做什么”，是“在”。你在，家就在；你平安，小辈就心安。</p>
+<p>第四，把眼光从身体转向灵魂。</p>
+<p>你问：“怎么面对那些‘年轻时候能做，现在不能做’的事？”——接受身体的衰残，专注灵魂的更新。身体越来越弱，灵魂可以越来越强。多读经，多祷告，多思考，多祝福。外面一天不如一天，里面一天好过一天。</p>
+<p>第五，盼望那个永远不会老的身体。</p>
+<p>最后，面对衰老还有一个终极盼望：有一天，我们要得着一个不会老的身体。保罗说：“我们这地上的帐棚若拆毁了，必得神所造，不是人手所造，在天上永存的房屋。”衰老不是终点，是过渡。就像毛毛虫变蝴蝶，必须经过茧的衰残。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 衰老不是咒诅，是自然。</li><li><span class="num">2.</span> 衰老不等于没用。</li><li><span class="num">3.</span> 从“抗老”到“敬老”。</li><li><span class="num">4.</span> 感恩还在的，不纠结失去的。</li><li><span class="num">5.</span> 找到这个年纪能做的事。</li><li><span class="num">6.</span> 把眼光从身体转向灵魂。</li><li><span class="num">7.</span> 盼望那个永远不会老的身体。</li><li><span class="num">8.</span> 记住迦勒：八十五岁，他还说“我的力量那时如何，现在还是如何”。</li></ol>
+<h3 class="label">金句</h3>
+<p>白发是你的尊荣，你走过的每一步路、受过的每一次苦、付出的每一次爱都在这白发里。</p>
+</section>
+
+<section class="section section-chapter" id="ch-48" data-part="part-4">
+<header class="chapter-header">
+  <h1 class="chapter-title">第四十八章　万事都互相效力</h1>
+  <p class="chapter-subtitle">如何面对苦难？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>万事都互相效力，叫爱神的人得益处。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“我们晓得万事都互相效力，叫爱神的人得益处。”（罗马书8:28）“我想，现在的苦楚若比起将来要显于我们的荣耀，就不足介意了。”（罗马书8:18）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>为什么是我？为什么好人要受苦？</li><li>苦难有意义吗？还是就是白白受罪？</li><li>那些在苦难中还能平安的人，他们有什么秘诀？</li></ul>
+<h3 class="label">圣经上有个故事，你看看有没有道理</h3>
+<p>圣经里有一个受苦的冠军——约伯。约伯是个好人。圣经说他是“完全正直，敬畏神，远离恶事”。他没做错任何事。但一天之内，他失去了所有：财产没了，孩子死了，健康没了，妻子嘲笑，朋友指责。他坐在炉灰里，拿瓦片刮身体。他问的问题，和你一样：为什么？</p>
+<p>老天爷没直接回答他。老天爷让他看宇宙、看星辰、看动物，然后问他：“我立大地根基的时候，你在哪里？”意思是：你不知道的事多了。你不知道宇宙怎么转，你不知道星星怎么发光，你不知道动物怎么生活。你不知道的事，不影响它们转。苦难也是这样。你不明白，不代表没有意义。你看不见，不代表老天爷不在。</p>
+<p>最后约伯说：“我从前风闻有你，现在亲眼看见你。”他受苦，但认识了老天爷。这就够了。</p>
+<h3 class="label">苦难的几个真相</h3>
+<p>真相一：苦难不是惩罚。 有人受苦，就有人说：他一定是犯了罪。约伯的朋友就这样说。但耶稣说：西罗亚楼倒塌压死十八个人，不是因为他们更有罪。苦难不一定是惩罚。</p>
+<p>真相二：苦难不白受。 罗马书说：“万事都互相效力，叫爱神的人得益处。”“万事”包括好事，也包括坏事。坏事也能变好事，看你用什么眼光看。</p>
+<p>真相三：现在的苦楚，和将来的荣耀没法比。 保罗说：现在的苦楚，比起将来要显于我们的荣耀，就不足介意了。不是说不疼，是说：和结局比，过程没那么重要。</p>
+<p>真相四：老天爷与你同在。 诗篇说：“我虽然行过死荫的幽谷，也不怕遭害，因为你与我同在。”最深的幽谷里，祂也在。</p>
+<h3 class="label">到底该怎么面对苦难？</h3>
+<p>第一，承认——这真的很难。</p>
+<p>别假装没事。别对自己说“我不疼”。疼就是疼。难就是难。想不通就是想不通。对老天爷说：“老天爷，我受不了了。”对朋友说：“我需要你。”对自己说：“这真的很难。”承认，是开始。</p>
+<p>第二，问——但别只问“为什么”。</p>
+<p>“为什么”可以问，但别只问“为什么”。因为这个问题，不一定有答案。换几个问题：这件事要我学什么？这件事能让我成为什么样的人？这件事里，有谁需要我去爱？这件事过后，我能帮谁？这些问题，有答案。</p>
+<p>第三，靠——别一个人扛。</p>
+<p>一个人扛，会垮。找老天爷，祷告。找朋友，倾诉。找小组，同哭。找专业帮助，别硬撑。你扛不住的事，大家一起扛。</p>
+<p>第四，等——别急着要结果。</p>
+<p>苦难常常没答案，等。等着等着，可能答案就来了。等着等着，可能就不需要答案了。等着等着，可能就过去了。罗马书说：“我们若盼望那所不见的，就必忍耐等候。”等，不是干等。是在等的时候，继续活。</p>
+<p>第五，信——相信没白受。</p>
+<p>最后一步，是选择相信。相信万事互相效力。相信现在的苦楚和将来的荣耀没法比。相信祂在，哪怕看不见。不是信“明天就会好”，是信“好不好祂都在”。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 承认——这真的很难。</li><li><span class="num">2.</span> 问——但别只问“为什么”。</li><li><span class="num">3.</span> 靠——别一个人扛。</li><li><span class="num">4.</span> 等——别急着要结果。</li><li><span class="num">5.</span> 信——相信没白受。</li><li><span class="num">6.</span> 记住：死荫幽谷，祂也在。</li></ol>
+<h3 class="label">金句</h3>
+<p>我从前风闻有你，现在亲眼看见你。</p>
+</section>
+
+<section class="section section-chapter" id="ch-49" data-part="part-4">
+<header class="chapter-header">
+  <h1 class="chapter-title">第四十九章　不是结束，是搬家</h1>
+  <p class="chapter-subtitle">如何面对死亡？</p>
+  <div class="chapter-rule"></div>
+</header>
+<h3 class="label">最要紧的一句话</h3>
+<p>死不是结束，是搬家。</p>
+<h3 class="label">核心经文</h3>
+<blockquote class="scripture">“死啊，你得胜的权势在哪里？死啊，你的毒钩在哪里？……感谢神，使我们藉着我们的主耶稣基督得胜。”（哥林多前书15:55-57）“复活在我，生命也在我。信我的人虽然死了，也必复活。”（约翰福音11:25）</blockquote>
+<h3 class="label">你看看这些问题，是不是也有过</h3>
+<ul class="bullets"><li>人死了就什么都没了吗？还是还有以后？</li><li>怎么面对亲人的离去？那道坎怎么过得去？</li><li>活着的时候，该做什么准备，走的时候才不慌？</li></ul>
+<h3 class="label">圣经上有句话，你看看有没有道理</h3>
+<p>保罗说：“我们在这帐棚里叹息劳苦，并非愿意脱下这个，乃是愿意穿上那个。”他把身体比作帐篷，把死亡比作脱帐篷。帐篷，是临时住的。刮风下雨冷热，都不舒服。但有一天，你要脱了这个帐篷，搬进房子里。房子，是永久的。不漏风，不漏雨，舒服。所以死亡不是结束，是搬家。不是没了，是换个更好的地方。</p>
+<p>耶稣说：“复活在我，生命也在我。信我的人虽然死了，也必复活。”“死了”是身体的死，“必复活”是生命的复活。身体会死，生命不会。</p>
+<p>哥林多前书第十五章，整章都在讲复活。最后保罗说：“死啊，你得胜的权势在哪里？死啊，你的毒钩在哪里？”“毒钩”是什么？是罪。罪的工价是死。但耶稣替我们死了，罪的账还了，死的毒钩就没了。所以面对死亡，可以笑看死。不是装酷，是真的知道：死后面还有复活。</p>
+<h3 class="label">关于死亡的几个真相</h3>
+<p>真相一：死是必然的，不是意外。 圣经说：“按着定命，人人都有一死，死后且有审判。”死不是意外，是定命。不因为你不谈，它就不来。面对它，比逃避它好。</p>
+<p>真相二：死不是结束，是搬家。 对信的人来说，死不是没了，是换了地方。从地上到天上，从帐篷到房子，从劳苦到安息。</p>
+<p>真相三：死后的复活是真的。 耶稣复活了，信祂的人也必复活。不是灵魂不灭，是身体复活。一个新的身体，不再有病痛，不再有眼泪，不再有死亡。</p>
+<p>真相四：现在活着，是为那天准备。 不是消极等死，是积极预备。每天活得有价值，那天才不慌张。</p>
+<h3 class="label">到底该怎么面对死亡？</h3>
+<p>第一，想，不怕想。</p>
+<p>别逃避。偶尔想想死亡，是好事。想的时候问自己：如果今天是我最后一天，我会怎么过？如果今晚就要走了，我有什么遗憾？我想对谁说“我爱你”？我想对谁说“对不起”？我想做什么还没做的事？这些问题，能让你的今天不一样。</p>
+<p>第二，预备，不怕预备。</p>
+<p>预备死，不是盼着死，是不慌。可以写个遗嘱，不是为了分家产，是为了不给人添乱。可以交代后事，不是为了早死，是为了走得体面。可以买保险，不是为了发财，是为了家人有保障。预备了，就不怕。</p>
+<p>第三，活好每一天。</p>
+<p>面对死亡最好的方式，是好好活着。不是活得紧张，是活得认真。爱想爱的人，做想做的事，说想说的话。不留遗憾，不欠人情，不拖到明天。活好今天，明天就没什么好怕的。</p>
+<p>第四，知道去哪儿。</p>
+<p>耶稣说：“我去原是为你们预备地方去。”祂在天上预备地方。你知道你有地方去，就不怕走。不知道去哪儿，才怕走。</p>
+<p>第五，把盼头传给家人。</p>
+<p>你最怕的不是自己死，是家人死。是吗？把盼头传给家人。让他们也知道，死不是结束，复活是真的。这样，他们走的时候你不慌，你走的时候他们不慌。</p>
+<h3 class="label">这一章说到底就几句话</h3>
+<ol class="numbered"><li><span class="num">1.</span> 死不是结束，是搬家。</li><li><span class="num">2.</span> 想，不怕想。</li><li><span class="num">3.</span> 预备，不怕预备。</li><li><span class="num">4.</span> 活好每一天。</li><li><span class="num">5.</span> 知道去哪儿。</li><li><span class="num">6.</span> 把盼头传给家人。</li></ol>
+<h3 class="label">金句</h3>
+<p>活好今天，明天就没有什么好怕的。</p>
+</section>
+
+<section class="section section-back" id="sec-56">
+<header class="front-header">
+  <h1 class="front-title">后  记</h1>
+  <div class="chapter-rule"></div>
+</header>
+<p><strong>活出来——把书上的话，变成脚下的路</strong></p>
+<p>书写完了。但我有个秘密要告诉你：这本书，其实还没写完。</p>
+<p>真正的最后一章，不在你手里，在你生活里。你得用自己的日子，一笔一划地写出来。</p>
+<p>你知道吗？两千年前，有个人在山坡上坐着，下面围着一群人。他不讲大道理，不讲神学，不讲高深的学问。他就讲生活——天空的飞鸟，野地的百合，撒种的农夫……</p>
+<p>那些听的人，回去之后，不一定记得他说的每句话。但他们看鸟的时候，会想起点什么。看花的时候，会想起点什么。撒种的时候，会想起点什么。和老婆吵架的时候，会想起点什么。那些话，变成了他们的眼光。</p>
+<p>这就是我所求的。</p>
+<p>这本书里的每一章，都是一个眼光：</p>
+<ul class="bullets"><li>看自己的时候，记得你是照着老天爷的样子造的——你不用和别人比，你已经值钱。</li><li>生气的时候，记得“不可含怒到日落”——今天的事今天了，别让气过夜。</li><li>焦虑的时候，去看看野地里的百合花——它们不焦虑，但活得比谁都好看。</li><li>失败的时候，记得彼得——他三次不认主，但主三次问他“你爱我吗”。</li><li>被人嫉妒的时候，记得扫罗——他追杀了大卫十几年，最后死的却是他自己。</li><li>面对不公的时候，记得约瑟——你们的意思是要害我，但老天爷的意思原是好的。</li><li>面对羞辱的时候，记得耶稣——他转过左脸，不是怂，是自由。</li><li>面对死亡的时候，记得保罗——脱了帐篷，是为了住进房子。</li></ul>
+<p>这些眼光，不能消除你的难处，但能让你在难处里站住。就像那个在ICU里说“我不开心，但我有喜乐”的朋友——不开心是因为疼，喜乐是因为知道疼会过去，而且疼的时候他不是一个人。</p>
+<p>书写完了，但你的书才开始写。</p>
+<p>每一天，你都在写自己的那一章。用你的选择写，用你的话说，用你的爱写。写得不好没关系，可以改。写得慢没关系，可以慢慢写。写得和别人不一样没关系，本来就不是同一本书。</p>
+<p>最重要的是：别停笔。</p>
+<p>有些章节会很难写——比如失去，比如失败，比如背叛。但最难写的那些章，往往是后来回头看时，最让你自己动容的篇章。</p>
+<p>有一天，当你站在老天爷面前，祂不会问你“你读了多少书”，祂会问你“你活出了多少”。祂不会看你的书架上有多少本《圣经》，祂会看你的生活里有多少活出来的真理。</p>
+<p>那时候，愿你听到祂说：</p>
+<p>“好，你这又实在又靠谱的人。”</p>
+<p>——安子谦</p>
+</section>
+
+<section class="section section-back" id="sec-57">
+<header class="front-header">
+  <h1 class="front-title">致  谢</h1>
+  <div class="chapter-rule"></div>
+</header>
+<p>这本书能来到你面前，要感谢很多人。</p>
+<p>感谢那些提出问题的朋友，你们的问题，成了这本书的起点。</p>
+<p>感谢那些在法庭上怒目相向、最后握手言和的当事人，你们让我看见，人心最深处的渴望，不是赢，是和。</p>
+<p>感谢我的家人，在我深夜写作时，你们给我留一盏灯，一杯清水。你们是这本书的第一读者，提出了许多中肯的意见和建议,并在本书的排版、校对、装帧、出版等方面付出了许多宝贵的时间和精力。</p>
+<p>感谢那位两千年前在山坡上讲故事的人。祂的故事，让这本书有了灵魂。</p>
+<p>最后，感谢你。感谢你愿意花时间，陪一个退休法官聊聊天。</p>
+<p>愿这本书，成为你生活里的一束微光——不刺眼，但有用。就像序言里说的那个手电筒，在你偶尔睡不着的夜里，陪着你等天亮。</p>
+<p>——安子谦</p>
+</section>
+
+<section class="section section-back" id="sec-58">
+<header class="front-header">
+  <h1 class="front-title">附录：书中主要典故简介</h1>
+  <div class="chapter-rule"></div>
+</header>
+<ol class="numbered"><li><span class="num">1.</span> <strong>1. 浪子回头</strong></li></ol>
+<p><strong>圣经出处：</strong> 路加福音15:11-32</p>
+<p><strong>典故讲解：</strong> 小儿子向父亲分家产，跑出去花天酒地，钱花光后沦落到喂猪。他醒悟回家想当雇工，父亲却远远跑过去抱他，宰了肥牛犊庆祝。大儿子生气，父亲说：“你这个兄弟是死而复活、失而又得的。”</p>
+<p><strong>书中用法：</strong> 序二——耶稣讲故事的方式</p>
+<p><strong>金句：</strong> “你这个兄弟是死而复活、失而又得的。”</p>
+<p><strong>一句话点题：</strong> 父爱的本质，是跑过去拥抱。</p>
+<ol class="numbered"><li><span class="num">2.</span> <strong>2. 约伯记</strong></li></ol>
+<p><strong>圣经出处：</strong> 约伯记1-42章</p>
+<p><strong>典故讲解：</strong> 约伯是个完全正直的人。魔鬼攻击他，一天之内他失去所有财产、儿女、健康。他坐在炉灰里，妻子劝他“弃掉老天爷死了吧”，朋友指责他“你一定犯了罪”。约伯与老天爷争辩，最后老天爷显现，约伯说：“我从前风闻有你，现在亲眼看见你。”</p>
+<p><strong>书中用法：</strong> 第一章（“我知道我这条命还有救”）、第四十六章（如何面对失去）、第四十八章（如何面对苦难）</p>
+<p><strong>金句：</strong> “我从前风闻有你，现在亲眼看见你。”</p>
+<p><strong>一句话点题：</strong> 苦难没有答案，但苦难中有祂。</p>
+<ol class="numbered"><li><span class="num">3.</span> <strong>3. 彼得三次不认主</strong></li></ol>
+<p><strong>圣经出处：</strong> 路加福音22:54-62</p>
+<p><strong>典故讲解：</strong> 耶稣被捕那夜，彼得跟着混进大祭司院子。有人认出他是耶稣的门徒，他三次否认。第三次发咒起誓说不认识耶稣。鸡叫了，耶稣转过身看他，彼得出去痛哭。</p>
+<p><strong>书中用法：</strong> 第四章（失败之后怎么办？）、第四十五章（如何面对人生的遗憾？）</p>
+<p><strong>金句：</strong> “他就出去痛哭。”</p>
+<p><strong>一句话点题：</strong> 失败之后，你还在名单上。</p>
+<ol class="numbered"><li><span class="num">4.</span> <strong>4. 耶稣恢复彼得</strong></li></ol>
+<p><strong>圣经出处：</strong> 约翰福音21:15-19</p>
+<p><strong>典故讲解：</strong> 耶稣复活后，在湖边找到彼得。三次问他“你爱我吗”，彼得三次回答“你知道我爱你”。耶稣三次说“你喂养我的羊”。三次，正好对应彼得的三次不认主。</p>
+<p><strong>书中用法：</strong> 第四章（失败后的恢复）</p>
+<p><strong>金句：</strong> “你喂养我的羊。”</p>
+<p><strong>一句话点题：</strong> 每一次否认，都被一次“你爱我吗”覆盖。</p>
+<ol class="numbered"><li><span class="num">5.</span> <strong>5. 摩西的谦和</strong></li></ol>
+<p><strong>圣经出处：</strong> 民数记12:3</p>
+<p><strong>典故讲解：</strong> 圣经说：“摩西为人极其谦和，胜过世上的众人。”当他的哥哥亚伦、姐姐米利暗毁谤他时，他不辩解。当百姓反对他时，他不崩溃。他知道自己是谁，也知道自己不是谁。</p>
+<p><strong>书中用法：</strong> 第二十九章（谦卑的力量）</p>
+<p><strong>金句：</strong> “摩西为人极其谦和，胜过世上的众人。”</p>
+<p><strong>一句话点题：</strong> 真谦卑的人，不需要证明自己。</p>
+<ol class="numbered"><li><span class="num">6.</span> <strong>6. 所罗门的智慧</strong></li></ol>
+<p><strong>圣经出处：</strong> 列王纪上3:5-13</p>
+<p><strong>典故讲解：</strong> 所罗门年轻时，老天爷对他说：“你愿我赐你什么？”所罗门不求长寿、财富、权力，只求智慧治理百姓。老天爷很高兴，赐他超乎常人的智慧，还把长寿、财富、权力也一并赐给他。</p>
+<p><strong>书中用法：</strong> 第三章（所罗门的荣耀）、第七章（如何做出明智的选择？）</p>
+<p><strong>金句：</strong> “求你赐我智慧，可以判断你的民，能辨别是非。”</p>
+<p><strong>一句话点题：</strong> 当你先求对的事，其他事会跟着来。</p>
+<ol class="numbered"><li><span class="num">7.</span> <strong>7. 客西马尼园的祷告</strong></li></ol>
+<p><strong>圣经出处：</strong> 马太福音26:36-46</p>
+<p><strong>典故讲解：</strong> 耶稣被钉十字架前夜，在客西马尼园祷告。他说：“父啊，倘若可行，求你叫这杯离开我。”接着又说：“然而，不要照我的意思，只要照你的意思。”</p>
+<p><strong>书中用法：</strong> 第七章（如何做出明智的选择？）</p>
+<p><strong>金句：</strong> “不要照我的意思，只要照你的意思。”</p>
+<p><strong>一句话点题：</strong> 最明智的选择，是放下自己的意思。</p>
+<ol class="numbered"><li><span class="num">8.</span> <strong>8. 不饶恕的仆人</strong></li></ol>
+<p><strong>圣经出处：</strong> 马太福音18:23-35</p>
+<p><strong>典故讲解：</strong> 国王免了仆人一千万两银子的债。仆人出门后，揪住欠他十两银子的同伴下监。国王知道后，把他下在监里受苦直到还清所有债。</p>
+<p><strong>书中用法：</strong> 第三十章（七十个七次）</p>
+<p><strong>金句：</strong> “你不该怜悯你的同伴，像我怜悯你吗？”</p>
+<p><strong>一句话点题：</strong> 你不饶恕，就把自己关进了监狱。</p>
+<ol class="numbered"><li><span class="num">9.</span> <strong>9. 尼哥底母夜访耶稣</strong></li></ol>
+<p><strong>圣经出处：</strong> 约翰福音3:1-21</p>
+<p><strong>典故讲解：</strong> 法利赛人尼哥底母夜里来见耶稣，承认耶稣是从老天爷那里来的。耶稣和他谈重生。后来耶稣被钉十字架，尼哥底母带着没药沉香来收尸。</p>
+<p><strong>书中用法：</strong> 第十九章（当意见相反时）</p>
+<p><strong>金句：</strong> “人若不重生，就不能见老天爷的国。”</p>
+<p><strong>一句话点题：</strong> 寻求的心，比立场更重要。</p>
+<ol class="numbered"><li><span class="num">10.</span> <strong>10. 亚居拉和百基拉</strong></li></ol>
+<p><strong>圣经出处：</strong> 使徒行传18:24-26</p>
+<p><strong>典故讲解：</strong> 亚波罗很有学问，最能讲解圣经，但对耶稣的认识不全。亚居拉和百基拉夫妇把他接来，将老天爷的道给他讲解更详细。后来亚波罗成为早期教会的重要传道人。</p>
+<p><strong>书中用法：</strong> 第十九章（当意见相反时）</p>
+<p><strong>金句：</strong> “他们就把亚波罗接来，将老天爷的道给他讲解更加详细。”</p>
+<p><strong>一句话点题：</strong> 私下指正，比公开驳斥更有力量。</p>
+<ol class="numbered"><li><span class="num">11.</span> <strong>11. 参孙的朋友</strong></li></ol>
+<p><strong>圣经出处：</strong> 士师记16章</p>
+<p><strong>典故讲解：</strong> 参孙力大无穷，但看人的眼光特别差。他交的朋友是那些“陪他玩”“捧着他”的人。结果朋友出卖他，把他交给敌人；他的女人欺骗他，让他失去力量。最后他孤身一人，眼睛被挖掉，被敌人羞辱。</p>
+<p><strong>书中用法：</strong> 第二十五章（如何识人、择友？）</p>
+<p><strong>一句话点题：</strong> 让你舒服的人，不一定是真朋友。</p>
+<ol class="numbered"><li><span class="num">12.</span> <strong>12. 大卫和约拿单</strong></li></ol>
+<p><strong>圣经出处：</strong> 撒母耳记上18-20章，撒母耳记下1:26</p>
+<p><strong>典故讲解：</strong> 约拿单是扫罗的儿子，本是大卫的敌人，却“爱大卫如同爱自己的性命”。他冒着风险帮助大卫，把自己的袍子、刀、弓都送给他。约拿单战死后，大卫为他写挽歌：“我兄约拿单哪，我为你悲伤！你向我发的爱情奇妙非常，过于妇女的爱情。”</p>
+<p><strong>书中用法：</strong> 第二十五章（如何识人、择友？）</p>
+<p><strong>金句：</strong> “我兄约拿单哪，我为你悲伤！你向我发的爱情奇妙非常，过于妇女的爱情。”</p>
+<p><strong>一句话点题：</strong> 有一个真朋友，比许多熟人更强。</p>
+<ol class="numbered"><li><span class="num">13.</span> <strong>13. 大卫和扫罗</strong></li></ol>
+<p><strong>圣经出处：</strong> 撒母耳记上18-31章</p>
+<p><strong>典故讲解：</strong> 大卫杀死歌利亚后，妇女们唱“扫罗杀死千千，大卫杀死万万”。扫罗嫉妒，开始追杀大卫，追了十几年。大卫有多次机会杀扫罗，都因尊重扫罗是老天爷的受膏者而放过他。</p>
+<p><strong>书中用法：</strong> 第二十三章（如何面对他人的嫉妒？）</p>
+<p><strong>金句：</strong> “扫罗杀死千千，大卫杀死万万。”</p>
+<p><strong>一句话点题：</strong> 嫉妒的人把自己毁了，被嫉妒的人活下来了。</p>
+<ol class="numbered"><li><span class="num">14.</span> <strong>14. 拿单责备大卫</strong></li></ol>
+<p><strong>圣经出处：</strong> 撒母耳记下12:1-7</p>
+<p><strong>典故讲解：</strong> 大卫犯了奸淫杀人罪。先知拿单去见他，讲了一个故事：一个富人舍不得自己的羊，却杀了穷人的唯一羊羔给客人吃。大卫听后大怒，拿单说：“你就是那人！”大卫认罪。</p>
+<p><strong>书中用法：</strong> 第十八章（怎么说真话不伤人？）</p>
+<p><strong>金句：</strong> “你就是那人！”</p>
+<p><strong>一句话点题：</strong> 用故事说真话，比直接指责更有力。</p>
+<ol class="numbered"><li><span class="num">15.</span> <strong>15. 约瑟的故事</strong></li></ol>
+<p><strong>圣经出处：</strong> 创世记37-50章</p>
+<p><strong>典故讲解：</strong> 约瑟被哥哥们卖到埃及当奴隶，在主母面前被冤枉下监，帮酒政解梦却被遗忘两年。最后成为埃及宰相，在饥荒中救了全地。哥哥们来求粮，他说：“从前你们的意思是要害我，但老天爷的意思原是好的。”</p>
+<p><strong>书中用法：</strong> 第二十四章（如何面对不公？）、第十五章（如何处理兄弟姐妹关系？）、第四十章（如何对待工作？）</p>
+<p><strong>金句：</strong> “从前你们的意思是要害我，但老天爷的意思原是好的。”</p>
+<p><strong>一句话点题：</strong> 在老天爷手里，坏事也能变成好事。</p>
+<ol class="numbered"><li><span class="num">16.</span> <strong>16. 行淫时被拿的妇人</strong></li></ol>
+<p><strong>圣经出处：</strong> 约翰福音8:1-11</p>
+<p><strong>典故讲解：</strong> 法利赛人带了一个行淫时被拿的妇人来试探耶稣。耶稣说：“你们中间谁是没有罪的，谁就可以先拿石头打她。”那些人从老到少一个一个都出去了。耶稣对妇人说：“我也不定你的罪。去吧，从此不要再犯罪了。”</p>
+<p><strong>书中用法：</strong> 第十一章（当婚姻出现裂痕）</p>
+<p><strong>金句：</strong> “我也不定你的罪。去吧，从此不要再犯罪了。”</p>
+<p><strong>一句话点题：</strong> 恩典之后，是命令。</p>
+<ol class="numbered"><li><span class="num">17.</span> <strong>17. 何西阿和歌篾</strong></li></ol>
+<p><strong>圣经出处：</strong> 何西阿书1-3章</p>
+<p><strong>典故讲解：</strong> 先知何西阿娶歌篾为妻，歌篾却离开他去跟别的男人。老天爷对何西阿说：“你再去爱一个淫妇……好像以色列人，虽然偏向别神，耶和华还是爱他们。”何西阿去把歌篾买回来，付代价赎回来。</p>
+<p><strong>书中用法：</strong> 第十一章（当婚姻出现裂痕）</p>
+<p><strong>一句话点题：</strong> 真正的爱，是付代价买回来。</p>
+<ol class="numbered"><li><span class="num">18.</span> <strong>18. 耶稣托付母亲</strong></li></ol>
+<p><strong>圣经出处：</strong> 约翰福音19:26-27</p>
+<p><strong>典故讲解：</strong> 耶稣被钉在十字架上，看见母亲马利亚站在十字架下，对她说：“母亲，看，你的儿子！”又对门徒约翰说：“看，你的母亲！”从此约翰把马利亚接到自己家里照顾。</p>
+<p><strong>书中用法：</strong> 第十二章（如何面对父母的衰老和离世？）</p>
+<p><strong>金句：</strong> “母亲，看，你的儿子！”“看，你的母亲！”</p>
+<p><strong>一句话点题：</strong> 最痛苦的时候，还在安排父母的将来。</p>
+<ol class="numbered"><li><span class="num">19.</span> <strong>19. 路得跟随拿俄米</strong></li></ol>
+<p><strong>圣经出处：</strong> 路得记1:16-17</p>
+<p><strong>典故讲解：</strong> 路得的丈夫死了，婆婆拿俄米让她回娘家改嫁。路得说：“你往哪里去，我也往那里去；你在哪里住宿，我也在那里住宿；你的国就是我的国，你的老天爷就是我的老天爷。你在哪里死，我也在那里死，也葬在那里。”</p>
+<p><strong>书中用法：</strong> 第十二章（如何面对父母的衰老和离世？）、第四十三章（如何面对人生的转折点？）</p>
+<p><strong>金句：</strong> “你往哪里去，我也往那里去；你在哪里住宿，我也在那里住宿；你的国就是我的国，你的老天爷就是我的老天爷。”</p>
+<p><strong>一句话点题：</strong> 不离不弃的人，老天爷不亏待。</p>
+<ol class="numbered"><li><span class="num">20.</span> <strong>20. 以撒和雅各重逢</strong></li></ol>
+<p><strong>圣经出处：</strong> 创世记35:27</p>
+<p><strong>典故讲解：</strong> 以撒的两个儿子以扫和雅各从小不和，雅各骗了长子的名分后逃到远方。二十年后雅各回来，以撒还在等他。父子重逢，没有责备，没有追问，就是在一起吃饭。</p>
+<p><strong>书中用法：</strong> 第十三章（如何处理与子女的关系？）、第十五章（如何处理兄弟姐妹关系？）</p>
+<p><strong>一句话点题：</strong> 成年后的关系，是“在一起吃饭”就够了。</p>
+<ol class="numbered"><li><span class="num">21.</span> <strong>21. 拿俄米和路得</strong></li></ol>
+<p><strong>圣经出处：</strong> 路得记1-4章</p>
+<p><strong>典故讲解：</strong> 拿俄米丧夫丧子后，让两个儿媳回娘家改嫁。大儿媳回去了，小儿媳路得坚决跟随她。她们回到伯利恒，路得靠拾麦穗养活婆婆，后来遇到波阿斯，成为大卫的曾祖母。</p>
+<p><strong>书中用法：</strong> 第十三章（如何处理与子女的关系？）</p>
+<p><strong>一句话点题：</strong> 放手，是最好的爱。</p>
+<ol class="numbered"><li><span class="num">22.</span> <strong>22. 该隐和亚伯</strong></li></ol>
+<p><strong>圣经出处：</strong> 创世记4章</p>
+<p><strong>典故讲解：</strong> 该隐和亚伯是亚当和夏娃的儿子。该隐种地，亚伯牧羊。该隐因老天爷看中亚伯的供物而不看中自己的，就大大发怒，在田间把亚伯杀了。这是人类历史上第一桩谋杀案。</p>
+<p><strong>书中用法：</strong> 第十五章（如何处理兄弟姐妹关系？）</p>
+<p><strong>一句话点题：</strong> 嫉妒，是杀人的刀。</p>
+<ol class="numbered"><li><span class="num">23.</span> <strong>23. 雅各和以扫</strong></li></ol>
+<p><strong>圣经出处：</strong> 创世记25-33章</p>
+<p><strong>典故讲解：</strong> 雅各和以扫是双胞胎兄弟。雅各用一碗红豆汤骗了以扫长子的名分，又用诡计骗了父亲以撒的祝福。以扫恨他，要杀他。雅各逃到远方，二十年不敢回家。后来他们重逢，以扫跑过去抱着雅各，两人都哭了。</p>
+<p><strong>书中用法：</strong> 第十五章（如何处理兄弟姐妹关系？）</p>
+<p><strong>一句话点题：</strong> 二十年后的拥抱，还是热的。</p>
+<ol class="numbered"><li><span class="num">24.</span> <strong>24. 拿八</strong></li></ol>
+<p><strong>圣经出处：</strong> 撒母耳记上25章</p>
+<p><strong>典故讲解：</strong> 拿八是个愚顽的人。大卫在旷野保护过他的牧人和羊群，后来派人向他求些食物，他不但不给，还辱骂大卫。大卫气得要杀他，拿八的妻子亚比该带着礼物半路迎接大卫，平息了大卫的怒气。拿八回家后吓得魂不附体，十天后就死了。</p>
+<p><strong>书中用法：</strong> 第二十六章（如何与难相处的人打交道？）</p>
+<p><strong>一句话点题：</strong> 有些人，老天爷会替你处理。</p>
+<ol class="numbered"><li><span class="num">25.</span> <strong>25. 以利亚在旷野</strong></li></ol>
+<p><strong>圣经出处：</strong> 列王纪上19章</p>
+<p><strong>典故讲解：</strong> 以利亚在迦密山战胜四百五十个假先知后，王后耶洗别要杀他。他逃到旷野，坐在罗腾树下求死。老天爷派天使给他送食物，又用微小的声音对他说话，告诉他还有七千个未向巴力屈膝的人。</p>
+<p><strong>书中用法：</strong> 第四十四章（如何面对孤单？）</p>
+<p><strong>一句话点题：</strong> 你以为只剩自己，其实还有七千个。</p>
+<ol class="numbered"><li><span class="num">26.</span> <strong>26. 十个麻风病人</strong></li></ol>
+<p><strong>圣经出处：</strong> 路加福音17:11-19</p>
+<p><strong>典故讲解：</strong> 耶稣医治了十个长大麻风的人，只有一个撒玛利亚人回来感谢他。耶稣说：“洁净了的不是十个人吗？那九个在哪里呢？”感恩的人，得着了更大的祝福。</p>
+<p><strong>书中用法：</strong> 第三十四章（喜乐的开关）</p>
+<p><strong>金句：</strong> “起来，走吧！你的信救了你了。”</p>
+<p><strong>一句话点题：</strong> 感恩的人，得着更大的祝福。</p>
+<ol class="numbered"><li><span class="num">27.</span> <strong>27. 保罗的“忘记背后”</strong></li></ol>
+<p><strong>圣经出处：</strong> 腓立比书3:13-14</p>
+<p><strong>典故讲解：</strong> 保罗说：“我只有一件事，就是忘记背后，努力面前的，向着标竿直跑。”他不是失忆，是选择不被过去捆绑，向着未来奔跑。</p>
+<p><strong>书中用法：</strong> 第四十五章（如何面对人生的遗憾？）</p>
+<p><strong>金句：</strong> “忘记背后，努力面前的，向着标竿直跑。”</p>
+<p><strong>一句话点题：</strong> 最好的弥补遗憾的方式，是不制造新的遗憾。</p>
+<ol class="numbered"><li><span class="num">28.</span> <strong>28. 迦勒</strong></li></ol>
+<p><strong>圣经出处：</strong> 约书亚记14:10-12</p>
+<p><strong>典故讲解：</strong> 迦勒八十五岁时说：“我还是强壮，像摩西打发我去的那天一样。无论是争战是出入，我的力量那时如何，现在还是如何。”他真的去打仗，拿下了希伯仑。</p>
+<p><strong>书中用法：</strong> 第四十七章（如何面对身体的衰老？）</p>
+<p><strong>金句：</strong> “我的力量那时如何，现在还是如何。”</p>
+<p><strong>一句话点题：</strong> 衰老不等于衰败。</p>
+<ol class="numbered"><li><span class="num">29.</span> <strong>29. 蚂蚁的智慧</strong></li></ol>
+<p><strong>圣经出处：</strong> 箴言6:6-8</p>
+<p><strong>典故讲解：</strong> “懒惰人哪，你去察看蚂蚁的动作，就可得智慧。蚂蚁没有元帅，没有官长，没有君王，尚且在夏天预备食物，在收割时聚敛粮食。”蚂蚁教导我们两件事：勤奋和预备。</p>
+<p><strong>书中用法：</strong> 第四十章（如何对待工作？）</p>
+<p><strong>金句：</strong> “你去察看蚂蚁的动作，就可得智慧。”</p>
+<p><strong>一句话点题：</strong> 不焦虑，但不懒惰；不忧虑，但尽本分。</p>
+<ol class="numbered"><li><span class="num">30.</span> <strong>30. 耶稣的榜样（转过左脸）</strong></li></ol>
+<p><strong>圣经出处：</strong> 马太福音5:39，约翰福音18:22-23</p>
+<p><strong>典故讲解：</strong> 耶稣教导“有人打你的右脸，连左脸也转过来由他打”。这不是懦弱，而是把选择权拿回来。当差役打他时，他没有沉默，而是说：“我若说的不是，你可以指证那不是；我若说的是，你为什么打我呢？”他不还手，但不闭嘴。</p>
+<p><strong>书中用法：</strong> 第二十二章（如何面对羞辱？）</p>
+<p><strong>金句：</strong> “我若说的不是，你可以指证那不是；我若说的是，你为什么打我呢？”</p>
+<p><strong>一句话点题：</strong> 不还手，但不闭嘴。</p>
+</section>
+
+<section class="section section-back" id="sec-59">
+<header class="front-header">
+  <h1 class="front-title">圣经版本说明</h1>
+  <div class="chapter-rule"></div>
+</header>
+<p>本书引用的圣经经文，均采用中文和合本（1919年版）。这是中文世界最通行的圣经译本，语言典雅，影响深远。</p>
+<p>个别经文为了更贴近现代读者的理解，在括号内提供了意译，但核心经文均保留和合本原文。</p>
+<p>（全书完）</p>
+</section>
+
+  <footer class="book-end">
+    <p>（全书完）</p>
+  </footer>
+</main>
+
+<button class="back-to-top" id="back-to-top" aria-label="回到顶部">
+  <svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 15l7-7 7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<script>(function() {
+  'use strict';
+
+  const body = document.body;
+  const drawer = document.getElementById('drawer');
+  const backdrop = document.getElementById('drawer-backdrop');
+  const menuBtn = document.getElementById('menu-btn');
+  const closeBtn = document.querySelector('.toc-close');
+  const themeBtn = document.getElementById('theme-toggle');
+  const fontInc = document.getElementById('font-inc');
+  const fontDec = document.getElementById('font-dec');
+  const progressFill = document.getElementById('progress-fill');
+  const backToTop = document.getElementById('back-to-top');
+  const tocLinks = document.querySelectorAll('.toc-link');
+
+  const STORAGE_KEY = 'zh-book-prefs-v1';
+  const fontSizes = ['font-sm', 'font-md', 'font-lg', 'font-xl'];
+
+  // === Load preferences ===
+  function loadPrefs() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return {};
+      return JSON.parse(raw);
+    } catch (e) { return {}; }
+  }
+  function savePrefs(p) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch (e) {}
+  }
+  const prefs = loadPrefs();
+
+  // Apply theme
+  if (prefs.theme === 'dark') {
+    body.classList.remove('theme-light');
+    body.classList.add('theme-dark');
+  }
+  // Apply font size
+  if (prefs.fontSize && fontSizes.includes(prefs.fontSize)) {
+    fontSizes.forEach(c => body.classList.remove(c));
+    body.classList.add(prefs.fontSize);
+  }
+
+  // === Drawer / TOC ===
+  function openDrawer() {
+    drawer.classList.add('open');
+    backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer() {
+    drawer.classList.remove('open');
+    backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  menuBtn.addEventListener('click', openDrawer);
+  closeBtn.addEventListener('click', closeDrawer);
+  backdrop.addEventListener('click', closeDrawer);
+
+  tocLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      // Let the browser handle the hash jump, then close drawer
+      setTimeout(closeDrawer, 60);
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDrawer();
+  });
+
+  // === Theme toggle ===
+  themeBtn.addEventListener('click', () => {
+    if (body.classList.contains('theme-dark')) {
+      body.classList.remove('theme-dark');
+      body.classList.add('theme-light');
+      prefs.theme = 'light';
+    } else {
+      body.classList.remove('theme-light');
+      body.classList.add('theme-dark');
+      prefs.theme = 'dark';
+    }
+    // Update meta theme-color
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', prefs.theme === 'dark' ? '#1a1611' : '#f4ecd8');
+    savePrefs(prefs);
+  });
+
+  // === Font size ===
+  function currentFontIndex() {
+    for (let i = 0; i < fontSizes.length; i++) {
+      if (body.classList.contains(fontSizes[i])) return i;
+    }
+    return 1;
+  }
+  function setFontIndex(idx) {
+    idx = Math.max(0, Math.min(fontSizes.length - 1, idx));
+    fontSizes.forEach(c => body.classList.remove(c));
+    body.classList.add(fontSizes[idx]);
+    prefs.fontSize = fontSizes[idx];
+    savePrefs(prefs);
+  }
+  fontInc.addEventListener('click', () => setFontIndex(currentFontIndex() + 1));
+  fontDec.addEventListener('click', () => setFontIndex(currentFontIndex() - 1));
+
+  // === Progress bar ===
+  let ticking = false;
+  function updateProgress() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docH > 0 ? (scrollTop / docH) * 100 : 0;
+    progressFill.style.width = pct + '%';
+    // Back-to-top visibility
+    if (scrollTop > 400) backToTop.classList.add('visible');
+    else backToTop.classList.remove('visible');
+    // Save progress
+    prefs.scroll = scrollTop;
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(updateProgress);
+      ticking = true;
+    }
+  }, { passive: true });
+  updateProgress();
+
+  // Save scroll position periodically
+  let saveTimer;
+  window.addEventListener('scroll', () => {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      savePrefs(prefs);
+    }, 400);
+  }, { passive: true });
+
+  // === Back to top ===
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // === Restore scroll (only if no hash) ===
+  window.addEventListener('load', () => {
+    if (!location.hash && prefs.scroll && prefs.scroll > 100) {
+      // Delay slightly to allow layout
+      setTimeout(() => {
+        window.scrollTo({ top: prefs.scroll, behavior: 'auto' });
+      }, 50);
+    }
+  });
+
+  // === Active TOC highlighting via IntersectionObserver ===
+  const sections = document.querySelectorAll('section[id]');
+  const linkMap = new Map();
+  tocLinks.forEach(l => {
+    const href = l.getAttribute('href');
+    if (href && href.startsWith('#')) linkMap.set(href.slice(1), l);
+  });
+
+  if ('IntersectionObserver' in window && sections.length) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          const link = linkMap.get(id);
+          if (link) {
+            document.querySelectorAll('.toc-link.active').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            // Scroll active link into view within drawer (only if drawer open)
+            if (drawer.classList.contains('open')) {
+              link.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+          }
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+    sections.forEach(s => io.observe(s));
+  }
+
+  // === Prevent horizontal swipe on drawer from triggering navigation ===
+  drawer.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+
+})();
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"75124c326cb447fe934cde04713ae013","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
